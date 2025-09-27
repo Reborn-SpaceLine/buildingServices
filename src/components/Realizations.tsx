@@ -1,7 +1,10 @@
 import { Eye, Calendar, MapPin } from 'lucide-react';
 import '../styles/realizations.css';
+// import salon from '../assets/salon.jpg';
 import salon from '../assets/salon.jpg';
+// import cuisine from '../assets/cuisine.jpg';
 import cuisine from '../assets/cuisine.jpg';
+// import chambre from '../assets/chambre.jpg'; 
 import chambre from '../assets/chambre.jpg';
 import carousel from '../assets/carousel.jpg';
 import renovation from '../assets/renovation.jpg';
