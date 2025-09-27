@@ -1,0 +1,146 @@
+/* =======================
+   Floating Contact Buttons
+   ======================= */
+.floating-contact {
+  position: fixed;
+  top: 70%;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1000;
+  opacity: 0;               /* départ invisible */
+  transform: translateX(20px); /* départ légèrement décalé */
+  animation: floatIn 0.6s ease forwards; /* animation d'entrée */
+}
+
+/* Animation fade-in + slide */
+@keyframes floatIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Bouton circulaire */
+.contact-item {
+  background: #1f2937;
+  color: white;
+  padding: 14px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+/* Hover + focus (desktop) */
+.contact-item:hover,
+.contact-item:focus {
+  background: #dc2626;
+  color: #fff;
+  transform: translateX(-6px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(220,38,38,0.4);
+  outline: none;
+}
+
+/* Tooltip (desktop) */
+.contact-tooltip {
+  position: absolute;
+  right: 110%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #111827;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.contact-item:hover .contact-tooltip,
+.contact-item:focus .contact-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-5px);
+}
+
+/* =======================
+   Responsive
+   ======================= */
+
+/* Tablettes / petits écrans */
+@media (max-width: 768px) {
+  .floating-contact {
+    right: 15px;
+    gap: 12px;
+    top: 65%;
+  }
+  .contact-item {
+    padding: 12px;
+    font-size: 18px;
+  }
+  .contact-tooltip {
+    font-size: 12px;
+  }
+}
+
+/* Mobile (smartphones) */
+@media (max-width: 480px) {
+  .floating-contact {
+    position: fixed;
+    top: auto;
+    bottom: 35px; /* Plus haut pour éviter les barres de navigation */
+    right: 15px;
+    flex-direction: column;
+    display: flex;
+    opacity: 1; /* visible dès l'ouverture sur mobile */
+    transform: translateX(0); /* pas de slide sur mobile */
+    animation: none; /* on peut désactiver l'animation pour mobiles */
+    gap: 10px;
+    /* Assurer que tous les éléments sont visibles */
+    /* max-height: calc(100vh - 120px); Limite la hauteur pour éviter le débordement */
+  }
+  
+  .contact-item {
+    padding: 10px;
+    font-size: 16px;
+    min-width: 44px; /* Taille minimum recommandée pour le touch */
+    min-height: 44px;
+    flex-shrink: 0; /* Empêche la compression */
+  }
+  
+  .contact-tooltip {
+    display: none; /* Masquer les tooltips sur mobile */
+  }
+}
+
+/* Très petits écrans */
+@media (max-width: 360px) {
+  .floating-contact {
+    bottom: 80px;
+    right: 10px;
+    gap: 8px;
+  }
+  
+  .contact-item {
+    padding: 8px;
+    font-size: 14px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* Correction pour éviter le scroll horizontal */
+@media (max-width: 480px) {
+  /* S'assurer que le container floating ne cause pas de débordement */
+  .floating-contact {
+    max-width: calc(100vw - 30px); /* Limite la largeur */
+  }
+}

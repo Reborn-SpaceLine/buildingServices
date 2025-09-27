@@ -1,0 +1,90 @@
+/* Bouton de retour en haut */
+.scroll-to-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 10rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(100px);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1000;
+}
+
+.scroll-to-top.visible {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-to-top:hover {
+  background-color: #b91c1c;
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+}
+
+.scroll-to-top:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* Animation de pulsation subtile */
+.scroll-to-top.visible {
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5), 0 0 0 8px rgba(220, 38, 38, 0.1);
+  }
+}
+.chevronup{
+  color: white;
+  width: 50px;
+  height: 50px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .scroll-to-top {
+    bottom: 1.5rem;
+    right: 2.5rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .scroll-to-top svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scroll-to-top {
+    bottom: 1.5rem;
+    right: 5rem; /* réduit pour petit écran */
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  
+  .chevronup{
+    color: white;
+    width: 50px;
+    height: 50px;
+  }
+
+
+}
+

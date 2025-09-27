@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+
+.welcome {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.welcome-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.welcome-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.welcome-content {
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.welcome-text {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.welcome-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.title-building {
+  color: #dc2626;
+  font-family: 'Dancing Script', cursive;
+  font-style: italic;
+}
+
+.title-service {
+  color: #ffffff;
+}
+
+/* .welcome-tagline {
+  font-size: 1.125rem;
+  color: #fbbf24;
+  font-style: italic;
+  margin-bottom: 1rem;
+  font-weight: 500;
+} */
+
+.welcome-description {
+  font-size: 1.25rem;
+  color: #e5e7eb;
+  margin-bottom: 2rem;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.welcome-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #b91c1c;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn-outline-white {
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  background-color: transparent;
+}
+
+.btn-outline-white:hover {
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
+.scroll-arrow {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0px);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+.scroll-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.scroll-link:hover {
+  color: #fca5a5;
+}
+
+.scroll-text {
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.scroll-link:hover .scroll-text {
+  opacity: 1;
+}
+
+.scroll-link svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Responsive Design */
+@media (min-width: 640px) {
+  .welcome-buttons {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 768px) {
+  .welcome-title {
+    font-size: 4.5rem;
+  }
+
+  .welcome-description {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .welcome-title {
+    font-size: 2.25rem;
+  }
+
+  .welcome-description {
+    font-size: 1.125rem;
+  }
+}
