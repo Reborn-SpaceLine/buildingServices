@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "render-build": "echo 'No build needed on Render'",
+    "render-start port": "npx serve dist -s -p $PORT",
     "render-start": "npx serve dist -s"
   },
   "dependencies": {
