@@ -52,8 +52,11 @@
 }
 .chevronup{
   color: white;
-  width: 50px;
-  height: 50px;
+  
+  width: 2.5rem;
+  height: 2.5rem;
+  /* width: 80px; */
+  /* height: 80px; */
 }
 
 /* Responsive */
@@ -79,12 +82,11 @@
     height: 2.75rem;
   }
   
-  .chevronup{
+  /* .chevronup{
     color: white;
     width: 50px;
     height: 50px;
-  }
-
+  } */
 
 }
 

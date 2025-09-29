@@ -35,7 +35,7 @@ export function ScrollToTop() {
       onClick={scrollToTop}
       aria-label="Retour en haut"
     >
-      <ChevronUp size={100} className='chevronup' />
+      <ChevronUp size={50} className='chevronup' />
     </button>
   );
 }
