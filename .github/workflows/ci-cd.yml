@@ -1,0 +1,99 @@
+# Intégration continue + déploiement continu
+#
+#  Pull Request  → vérification (lint, TypeScript, build) → aperçu en ligne temporaire (lien posté dans la PR)
+#  Push sur main → vérification → mise en production sur Firebase Hosting
+#
+# Rien n'est publié si la vérification échoue.
+
+name: CI / CD
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Une nouvelle poussée sur la même PR / branche annule l'exécution précédente
+concurrency:
+  group: ci-cd-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verification:
+    name: Vérification (lint, TypeScript, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: TypeScript + build de production
+        run: npm run build
+
+      - name: Conserver le site construit
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist
+          retention-days: 7
+
+  apercu:
+    name: Aperçu avant validation
+    needs: verification
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: dist
+
+      - name: Publication sur un canal d'aperçu Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BUILDING_SERVICES_2024 }}
+          projectId: building-services-2024
+          expires: 7d
+
+  production:
+    name: Mise en production
+    needs: verification
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://building-services-2024.web.app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: dist
+
+      - name: Publication sur Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BUILDING_SERVICES_2024 }}
+          projectId: building-services-2024
+          channelId: live

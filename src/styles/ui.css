@@ -1,0 +1,272 @@
+/* =========================
+   Marquee
+   ========================= */
+.marquee {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-track img {
+  width: clamp(240px, 30vw, 380px);
+  height: clamp(200px, 24vw, 300px);
+  object-fit: cover;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-50% - 10px));
+  }
+}
+
+/* =========================
+   Accordion
+   ========================= */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.accordion-item {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-soft);
+}
+
+.accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.1rem 1.4rem;
+  border: 0;
+  background: var(--color-dark);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.accordion-item.open .accordion-trigger,
+.accordion-trigger:hover {
+  color: #fca5a5;
+}
+
+.accordion-icon {
+  flex-shrink: 0;
+  transition: transform 0.4s ease;
+}
+
+.accordion-item.open .accordion-icon {
+  transform: rotate(180deg);
+}
+
+.accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s ease;
+}
+
+.accordion-item.open .accordion-panel {
+  grid-template-rows: 1fr;
+}
+
+.accordion-panel-inner {
+  overflow: hidden;
+}
+
+.accordion-panel p {
+  padding: 1.1rem 1.4rem;
+  color: var(--color-muted);
+}
+
+/* =========================
+   Lightbox
+   ========================= */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(10, 8, 7, 0.92);
+  animation: fade-in 0.25s ease;
+}
+
+.lightbox img {
+  max-width: min(1100px, 100%);
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  background: var(--color-accent);
+}
+
+.lightbox-close {
+  top: 16px;
+  right: 16px;
+}
+
+.lightbox-nav.prev {
+  left: 16px;
+}
+
+.lightbox-nav.next {
+  right: 16px;
+}
+
+.lightbox-count {
+  position: absolute;
+  bottom: 16px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* =========================
+   PageHero
+   ========================= */
+.page-hero {
+  padding-top: calc(var(--header-h) + 32px);
+}
+
+.page-hero-box {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(40px, 7vw, 90px) clamp(20px, 5vw, 60px);
+  border-radius: var(--radius);
+  background-color: var(--color-soft);
+  background-size: cover;
+  background-position: center;
+}
+
+.page-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(20, 16, 14, 0.85), rgba(20, 16, 14, 0.35));
+}
+
+.page-hero-content {
+  position: relative;
+  max-width: 760px;
+}
+
+.page-hero-content h1 {
+  font-size: clamp(1.9rem, 4.5vw, 3.5rem);
+  margin-bottom: 1rem;
+}
+
+.page-hero-content p {
+  font-size: 1.1rem;
+  color: var(--color-muted);
+}
+
+.page-hero-content.on-image h1 {
+  color: var(--color-white);
+}
+
+.page-hero-content.on-image p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* =========================
+   CtaBanner
+   ========================= */
+.cta-banner {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  min-height: 480px;
+  padding: clamp(28px, 5vw, 56px);
+  border-radius: var(--radius);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.cta-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 16, 14, 0.25), rgba(20, 16, 14, 0.7));
+}
+
+.cta-banner-content,
+.cta-banner-note {
+  position: relative;
+}
+
+.cta-banner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.cta-banner h2 {
+  max-width: 620px;
+  color: var(--color-white);
+  font-size: clamp(1.7rem, 4vw, 3.1rem);
+}
+
+.cta-banner-note {
+  align-self: flex-end;
+  max-width: 440px;
+  padding: 1.25rem 1.5rem;
+  border-radius: 15px;
+  background: rgba(73, 73, 73, 0.67);
+  backdrop-filter: blur(6px);
+  color: var(--color-white);
+}
+
+/* fixed-attachment est ignoré ou saccadé sur mobile */
+@media (max-width: 1024px), (hover: none) {
+  .cta-banner {
+    background-attachment: scroll;
+  }
+}

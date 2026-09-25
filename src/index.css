@@ -1,68 +1,361 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&family=Dancing+Script:wght@700&display=swap');
+
+/* =========================
+   1. Design tokens
+   Changer ces valeurs suffit pour adapter toute la charte.
+   ========================= */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --color-dark: #1f1a17;        /* blocs sombres : header, réalisations, footer */
+  --color-accent: #dc2626;      /* rouge Building Service : boutons, liens actifs */
+  --color-accent-dark: #b91c1c;
+  --color-soft: #fbf1ec;        /* fond crème des cartes */
+  --color-grey: #efefef;
+  --color-white: #ffffff;
+  --color-text: #2c2c2c;
+  --color-muted: #5b5552;
+  --color-glass: rgba(255, 255, 255, 0.08);
+  --color-gray-900: #1f2937;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --font-heading: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+  --container: 1200px;
+  --section-space: 90px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --header-h: 84px;
+
+  /* Logo en filigrane des sections : taille et intensité */
+  --watermark-size: min(90vmin, 760px);
+  --watermark-opacity: 0.06;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* =========================
+   2. Base
+   ========================= */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-a:hover {
-  color: #535bf2;
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Empêche le défilement horizontal. `clip` (contrairement à `hidden`) ne casse pas
+   les éléments collants (en-tête de l'admin, fiche latérale des pages détail). */
+html,
+body {
+  overflow-x: hidden;
+}
+
+@supports (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  background: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-dark);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Le pied de page reste en bas, même sur les pages courtes */
+.app {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.app > main {
+  flex: 1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.section {
+  padding: var(--section-space) 0;
+}
+
+.highlight {
+  color: var(--color-accent);
+}
+
+/* =========================
+   3. Boutons
+   ========================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.6rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-heading);
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  font-size: 1rem;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  white-space: nowrap;
 }
 
-@media (prefers-color-scheme: light) {
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-dark);
+}
+
+.btn-light {
+  background: var(--color-white);
+  color: var(--color-dark);
+}
+
+.btn-light:hover {
+  background: var(--color-soft);
+}
+
+.btn-dark {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+.btn-dark:hover {
+  background: var(--color-accent);
+}
+
+.btn-outline {
+  border-color: currentColor;
+  color: var(--color-dark);
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background: var(--color-dark);
+  border-color: var(--color-dark);
+  color: var(--color-white);
+}
+
+.btn-sm {
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+}
+
+/* =========================
+   4. En-tête de section (pastille + titre + texte)
+   ========================= */
+.eyebrow {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.section-intro {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+
+.section-intro h2 {
+  font-size: clamp(1.6rem, 3.4vw, 2.75rem);
+}
+
+.section-intro p {
+  color: var(--color-muted);
+  font-size: 1.05rem;
+}
+
+.section-intro.centered {
+  text-align: center;
+  justify-items: center;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-intro.on-dark h2 {
+  color: var(--color-white);
+}
+
+.section-intro.on-dark p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (min-width: 900px) {
+  .section-intro:not(.centered) {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 4rem;
+  }
+
+  .section-intro:not(.centered) p {
+    text-align: right;
+  }
+}
+
+/* =========================
+   5. Apparition au scroll
+   ========================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* =========================
+   6. Logo de remplacement et filigrane
+   ========================= */
+
+/* Image absente : le logo s'affiche, centré, sur fond crème */
+img.img-fallback {
+  object-fit: contain !important;
+  padding: 12%;
+  background: var(--color-soft);
+}
+
+/* Sections sans image de fond : logo en filigrane, fixe au centre de l'écran.
+   Il ne bouge jamais : ce sont les sections qui défilent devant lui.
+   `clip-path` limite l'affichage du logo fixe à la surface de chaque section. */
+.section:not(.no-mark) {
+  position: relative;
+  isolation: isolate;
+  clip-path: inset(0);
+}
+
+.section:not(.no-mark)::before {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: var(--watermark-size);
+  aspect-ratio: 1;
+  background: url('./assets/logo.svg') no-repeat center / contain;
+  opacity: var(--watermark-opacity);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+/* Bandeau de page sans photo : même filigrane */
+.page-hero-box:not([style]) {
+  isolation: isolate;
+}
+
+.page-hero-box:not([style])::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 4%;
+  width: clamp(140px, 22vw, 260px);
+  aspect-ratio: 1;
+  background: url('./assets/logo.svg') no-repeat center / contain;
+  opacity: 0.1;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .section:not(.no-mark)::before {
+    width: 95vw;
+  }
+
+  .page-hero-box:not([style])::after {
+    opacity: 0.07;
+  }
+}
+
+@media (max-width: 768px) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+    --section-space: 56px;
   }
 }

@@ -1,0 +1,548 @@
+{
+  "videos": [],
+  "company": {
+    "name": "Building Service",
+    "tagline": "Construire, rénover et aménager des espaces qui durent.",
+    "phone": "+237 656524739",
+    "whatsapp": "237656524739",
+    "email": "buldingservices97@gmail.com",
+    "website": "www.buldingservices.com",
+    "city": "Yaoundé & Douala, Cameroun",
+    "hours": "Lun – Sam : 8h00 – 18h00",
+    "mapQuery": "Yaoundé, Cameroun",
+    "socials": {
+      "facebook": "https://www.facebook.com/share/1KAN9FQNa5/?mibextid=wwXIfr",
+      "instagram": "",
+      "tiktok": "",
+      "youtube": "",
+      "linkedin": ""
+    }
+  },
+  "hero": {
+    "eyebrow": "Construction · Rénovation · Aménagement",
+    "description": "De la conception des plans à la remise des clés, nous construisons, rénovons et aménageons vos espaces avec un seul interlocuteur et un chantier maîtrisé.",
+    "slides": [
+      "/images/carousel.jpg",
+      "/images/cuisine11.jpg",
+      "/images/salon1.jpg",
+      "/images/chambre11.jpg",
+      "/images/services1.jpg"
+    ]
+  },
+  "stats": [
+    {
+      "value": 500,
+      "prefix": "+",
+      "suffix": "",
+      "label": "Clients accompagnés"
+    },
+    {
+      "value": 10,
+      "prefix": "+",
+      "suffix": "",
+      "label": "Années d’expérience"
+    },
+    {
+      "value": 1000,
+      "prefix": "+",
+      "suffix": "",
+      "label": "Chantiers réalisés"
+    },
+    {
+      "value": 13,
+      "prefix": "",
+      "suffix": "",
+      "label": "Corps de métier coordonnés"
+    }
+  ],
+  "services": [
+    {
+      "slug": "plans-architecture",
+      "title": "Plans d’architecture & conception",
+      "category": "Conception",
+      "icon": "plans",
+      "short": "Plans de construction, permis, modélisation 3D : votre projet est dessiné, chiffré et validé avant les travaux.",
+      "intro": "Tout projet réussi commence par de bons plans. Nous réalisons les relevés, les plans d’exécution (masse, niveaux, coupes, façades), les plans techniques et les rendus 3D. Vous visualisez votre futur bâtiment, ajustez chaque pièce et disposez d’un dossier complet pour le permis de construire et le chiffrage.",
+      "image": "/images/about.jpg",
+      "features": [
+        "Relevés et étude du terrain",
+        "Plans de masse, niveaux, coupes et façades",
+        "Plans techniques : plomberie, électricité",
+        "Modélisation et rendus 3D photoréalistes",
+        "Dossier de permis de construire",
+        "Estimation budgétaire détaillée"
+      ],
+      "steps": [
+        "Rencontre et cahier des charges",
+        "Esquisse et avant-projet",
+        "Rendus 3D et ajustements",
+        "Plans définitifs et dossier technique"
+      ],
+      "featured": true,
+      "videos": []
+    },
+    {
+      "slug": "architecture-interieur",
+      "title": "Architecture intérieure",
+      "category": "Conception",
+      "icon": "maison",
+      "short": "Aménagement, circulation, lumière, matériaux : des intérieurs fonctionnels et élégants, validés en 3D.",
+      "intro": "Nous repensons vos espaces de vie et de travail pour qu’ils soient à la fois pratiques et beaux. Redistribution des pièces, choix des matériaux, des couleurs et de l’éclairage : chaque décision est prise avec vous, sur plan et en 3D, avant le premier coup de marteau.",
+      "image": "/images/services2.jpg",
+      "features": [
+        "Plans d’aménagement intérieur",
+        "Rendus 3D et planches d’ambiance",
+        "Choix des matériaux et des coloris",
+        "Optimisation des volumes et de la lumière"
+      ],
+      "steps": [
+        "Visite et relevé des lieux",
+        "Esquisse et rendus 3D",
+        "Validation du devis",
+        "Suivi jusqu’à la livraison"
+      ],
+      "featured": true,
+      "videos": []
+    },
+    {
+      "slug": "design-interieur-exterieur",
+      "title": "Design intérieur & extérieur",
+      "category": "Conception",
+      "icon": "arbres",
+      "short": "Façades, terrasses, jardins et intérieurs pensés comme un tout, pour une maison cohérente de l’entrée au salon.",
+      "intro": "Une maison se vit dedans comme dehors. Nous concevons des ambiances cohérentes, de la façade à la terrasse, du jardin au salon : revêtements extérieurs, pergolas, éclairage paysager, décoration intérieure et mobilier.",
+      "image": "/images/unplash.jpg",
+      "features": [
+        "Habillage et mise en valeur des façades",
+        "Terrasses, pergolas et espaces extérieurs",
+        "Éclairage d’ambiance intérieur et extérieur",
+        "Décoration et stylisme d’intérieur"
+      ],
+      "steps": [
+        "Analyse du lieu et de vos envies",
+        "Planches d’ambiance et 3D",
+        "Sélection des matériaux",
+        "Réalisation et mise en scène"
+      ],
+      "featured": false,
+      "videos": []
+    },
+    {
+      "slug": "plomberie",
+      "title": "Plomberie & sanitaires",
+      "category": "Gros œuvre & installations",
+      "icon": "eau",
+      "short": "Réseaux d’eau, évacuations et sanitaires encastrés, installés proprement et testés avant fermeture.",
+      "intro": "Nous installons et rénovons vos réseaux d’alimentation et d’évacuation, vos sanitaires et vos équipements d’eau chaude. Les réseaux sont encastrés, les pentes respectées et chaque installation est testée avant la fermeture des cloisons.",
+      "image": "/images/installation.jpg",
+      "features": [
+        "Alimentation et évacuation",
+        "WC suspendus et bâti-supports",
+        "Douches à l’italienne",
+        "Chauffe-eau et surpresseurs"
+      ],
+      "steps": [
+        "Étude du réseau existant",
+        "Plan d’implantation",
+        "Installation encastrée",
+        "Tests d’étanchéité et mise en service"
+      ],
+      "featured": true,
+      "videos": []
+    },
+    {
+      "slug": "electricite",
+      "title": "Électricité & éclairage",
+      "category": "Gros œuvre & installations",
+      "icon": "eclair",
+      "short": "Installations électriques neuves ou rénovées, éclairage d’ambiance et mise en sécurité.",
+      "intro": "Tableau, câblage, prises, éclairage décoratif et mise en sécurité : nous réalisons vos installations électriques de A à Z avec des équipements fiables, pensés pour votre confort et votre sécurité.",
+      "image": "/images/interieur.jpg",
+      "features": [
+        "Tableaux et câblage",
+        "Éclairage LED et d’ambiance",
+        "Mise en sécurité",
+        "Prises, interrupteurs et domotique"
+      ],
+      "steps": [
+        "Diagnostic",
+        "Schéma électrique",
+        "Installation",
+        "Contrôle et mise en service"
+      ],
+      "featured": false,
+      "videos": []
+    },
+    {
+      "slug": "baies-vitrees-fer-metal",
+      "title": "Baies vitrées, fer & métal",
+      "category": "Gros œuvre & installations",
+      "icon": "fenetre",
+      "short": "Baies vitrées, garde-corps, portails et escaliers métalliques qui allient sécurité et design.",
+      "intro": "Nous fabriquons et posons des ouvrages en aluminium, verre et acier : baies coulissantes, fenêtres, garde-corps, portails, grilles de protection et escaliers. Des structures solides, sûres et soignées dans le détail.",
+      "image": "/images/image.jpg",
+      "features": [
+        "Baies coulissantes et fenêtres aluminium",
+        "Garde-corps verre et métal",
+        "Portails, portes et grilles de sécurité",
+        "Escaliers et structures métalliques"
+      ],
+      "steps": [
+        "Prise de cotes",
+        "Plan et choix des profilés",
+        "Fabrication en atelier",
+        "Pose et réglages"
+      ],
+      "featured": false,
+      "videos": []
+    },
+    {
+      "slug": "staff-peinture",
+      "title": "Staff & peinture",
+      "category": "Finitions",
+      "icon": "pinceau",
+      "short": "Faux plafonds, corniches, gorges lumineuses et peinture décorative pour des finitions nettes.",
+      "intro": "Le staff et la peinture font la différence entre un espace fini et un espace soigné. Faux plafonds, corniches, gorges lumineuses, enduits et peintures décoratives : nous travaillons avec des produits de qualité et des supports bien préparés.",
+      "image": "/images/services3.jpg",
+      "features": [
+        "Faux plafonds et corniches en staff",
+        "Gorges lumineuses et spots intégrés",
+        "Peinture intérieure et extérieure",
+        "Enduits et effets décoratifs"
+      ],
+      "steps": [
+        "Diagnostic des supports",
+        "Préparation et enduits",
+        "Pose du staff",
+        "Mise en peinture et finitions"
+      ],
+      "featured": true,
+      "videos": []
+    },
+    {
+      "slug": "carrelage",
+      "title": "Carrelage & revêtements",
+      "category": "Finitions",
+      "icon": "carreau",
+      "short": "Carrelage grand format, faïence, mosaïque et revêtements de sol posés avec précision.",
+      "intro": "Sols, murs, salles de bain, terrasses : nous posons tous types de carreaux, du grand format rectifié à la mosaïque, avec une préparation soignée des supports, un calepinage étudié et des joints réguliers.",
+      "image": "/images/careaux.jpg",
+      "features": [
+        "Carrelage grand format",
+        "Faïence et mosaïque",
+        "Chapes et ragréages",
+        "Plinthes et finitions d’angles"
+      ],
+      "steps": [
+        "Préparation des supports",
+        "Calepinage",
+        "Pose et jointoiement",
+        "Nettoyage de fin de chantier"
+      ],
+      "featured": false,
+      "videos": []
+    },
+    {
+      "slug": "travaux-finition",
+      "title": "Travaux de finition",
+      "category": "Finitions",
+      "icon": "finition",
+      "short": "Portes, plinthes, habillages, retouches et nettoyage : les détails qui font un chantier impeccable.",
+      "intro": "Les finitions sont ce que l’on voit tous les jours. Nous prenons en charge les dernières étapes de votre chantier : pose des portes et quincailleries, plinthes, habillages, joints, retouches de peinture et nettoyage complet avant la remise des clés.",
+      "image": "/images/renovation.jpg",
+      "features": [
+        "Portes intérieures et quincaillerie",
+        "Plinthes, habillages et joints",
+        "Retouches et réglages",
+        "Nettoyage de fin de chantier"
+      ],
+      "steps": [
+        "Liste des finitions à réaliser",
+        "Exécution par corps de métier",
+        "Contrôle qualité",
+        "Réception et remise des clés"
+      ],
+      "featured": false,
+      "videos": []
+    },
+    {
+      "slug": "menuiserie-decoration",
+      "title": "Menuiserie & ébénisterie",
+      "category": "Menuiserie & aménagement",
+      "icon": "marteau",
+      "short": "Dressings, placards, portes et habillages en bois fabriqués sur mesure, au millimètre près.",
+      "intro": "Nos menuisiers et ébénistes fabriquent en atelier puis posent des éléments qui s’adaptent exactement à vos murs et à vos usages : dressings, placards, bibliothèques, portes, têtes de lit et habillages muraux, en bois massif ou en panneaux.",
+      "image": "/images/services1.jpg",
+      "features": [
+        "Dressings et placards sur mesure",
+        "Bibliothèques et têtes de lit",
+        "Portes et habillages muraux",
+        "Bois massif, MDF, mélaminé"
+      ],
+      "steps": [
+        "Prise de mesures",
+        "Plan et choix des finitions",
+        "Fabrication en atelier",
+        "Pose et ajustements"
+      ],
+      "featured": true,
+      "videos": []
+    },
+    {
+      "slug": "cuisines-sur-mesure",
+      "title": "Cuisines sur mesure",
+      "category": "Menuiserie & aménagement",
+      "icon": "cuisine",
+      "short": "Cuisines en I, L, U ou avec îlot, dessinées en 3D et fabriquées pour votre espace.",
+      "intro": "La cuisine est le cœur de la maison. Nous la concevons avec vous en 3D, selon votre façon de cuisiner, puis nous la fabriquons et l’installons : caissons, façades, plans de travail, rangements et intégration de l’électroménager.",
+      "image": "/images/cuisine11.jpg",
+      "features": [
+        "Conception 3D ergonomique",
+        "Cuisines en I, L, U et avec îlot",
+        "Façades bois, laquées ou mélaminées",
+        "Intégration de l’électroménager"
+      ],
+      "steps": [
+        "Relevé et besoins",
+        "Plan 3D et devis",
+        "Fabrication",
+        "Pose et raccordements"
+      ],
+      "featured": true,
+      "videos": []
+    },
+    {
+      "slug": "tapisserie-mobilier",
+      "title": "Tapisserie & mobilier",
+      "category": "Menuiserie & aménagement",
+      "icon": "canape",
+      "short": "Canapés, fauteuils, têtes de lit et chaises fabriqués ou rénovés, dans les tissus de votre choix.",
+      "intro": "Nous fabriquons et restaurons votre mobilier rembourré : canapés, fauteuils, chaises, têtes de lit et banquettes. Structure, mousse et tissu sont choisis pour durer et s’accorder à votre intérieur.",
+      "image": "/images/salon1.jpg",
+      "features": [
+        "Canapés et fauteuils sur mesure",
+        "Têtes de lit et banquettes",
+        "Réfection et changement de tissu",
+        "Large choix de tissus et coloris"
+      ],
+      "steps": [
+        "Choix du modèle et des dimensions",
+        "Sélection des tissus",
+        "Fabrication",
+        "Livraison et installation"
+      ],
+      "featured": false,
+      "videos": []
+    },
+    {
+      "slug": "deco-murale-tv",
+      "title": "Déco murale & meubles TV",
+      "category": "Menuiserie & aménagement",
+      "icon": "tv",
+      "short": "Murs TV, panneaux décoratifs et meubles suspendus avec câbles cachés et éclairage intégré.",
+      "intro": "Le mur TV structure souvent tout le salon. Nous concevons des ensembles sur mesure : panneaux décoratifs, niches, meubles suspendus, rangements, éclairage LED intégré et gestion invisible des câbles.",
+      "image": "/images/carousel.jpg",
+      "features": [
+        "Murs TV et panneaux décoratifs",
+        "Meubles TV suspendus",
+        "Éclairage LED intégré",
+        "Câbles et boîtiers dissimulés"
+      ],
+      "steps": [
+        "Mesures et choix du style",
+        "Plan 3D",
+        "Fabrication",
+        "Pose et câblage"
+      ],
+      "featured": false,
+      "videos": []
+    }
+  ],
+  "projects": [
+    {
+      "slug": "villa-moderne-salon",
+      "title": "Villa moderne – salon principal",
+      "service": "architecture-interieur",
+      "location": "Yaoundé",
+      "year": "2024",
+      "duration": "6 semaines",
+      "surface": "45 m²",
+      "image": "/images/carousel.jpg",
+      "gallery": [
+        "/images/carousel.jpg",
+        "/images/salon1.jpg",
+        "/images/interieur.jpg"
+      ],
+      "description": "Transformation complète d’un salon : design contemporain, mobilier sur mesure et éclairage indirect.",
+      "details": "Le client souhaitait un salon ouvert et lumineux. Nous avons revu l’agencement, créé un faux plafond avec gorges lumineuses, fabriqué le meuble TV sur mesure et harmonisé les teintes des murs et du mobilier.",
+      "client": {
+        "visibility": "anonyme",
+        "label": "Particulier"
+      },
+      "steps": [
+        {
+          "title": "Conception",
+          "text": "Relevé du salon, plan d’aménagement et rendus 3D validés avec le client.",
+          "image": ""
+        },
+        {
+          "title": "Staff et électricité",
+          "text": "Pose du faux plafond, des gorges lumineuses et des spots encastrés.",
+          "image": "/images/interieur.jpg"
+        },
+        {
+          "title": "Menuiserie et finitions",
+          "text": "Fabrication et pose du meuble TV, peinture et mise en place du mobilier.",
+          "image": "/images/salon1.jpg"
+        }
+      ],
+      "videos": [],
+      "published": true
+    },
+    {
+      "slug": "cuisine-haut-de-gamme",
+      "title": "Cuisine haut de gamme avec îlot",
+      "service": "cuisines-sur-mesure",
+      "location": "Douala",
+      "year": "2024",
+      "duration": "4 semaines",
+      "surface": "18 m²",
+      "image": "/images/cuisine11.jpg",
+      "gallery": [
+        "/images/cuisine11.jpg",
+        "/images/services1.jpg",
+        "/images/image.jpg"
+      ],
+      "description": "Cuisine moderne avec îlot central, finitions premium et menuiserie entièrement personnalisée.",
+      "details": "Conception en 3D, fabrication des caissons et façades en atelier, pose du plan de travail et intégration de l’électroménager. L’îlot central sert à la fois d’espace de préparation et de coin repas.",
+      "client": {
+        "visibility": "anonyme",
+        "label": "Particulier"
+      },
+      "steps": [],
+      "videos": [],
+      "published": true
+    },
+    {
+      "slug": "suite-parentale",
+      "title": "Suite parentale élégante",
+      "service": "architecture-interieur",
+      "location": "Yaoundé",
+      "year": "2023",
+      "duration": "5 semaines",
+      "surface": "32 m²",
+      "image": "/images/chambre11.jpg",
+      "gallery": [
+        "/images/chambre11.jpg",
+        "/images/about.jpg",
+        "/images/unplash.jpg"
+      ],
+      "description": "Chambre parentale avec dressing intégré, salle de bain ouverte et décoration raffinée.",
+      "details": "Nous avons redistribué l’espace pour intégrer un dressing sur mesure et une salle de bain ouverte, avec une tête de lit habillée et un éclairage indirect.",
+      "client": {
+        "visibility": "anonyme",
+        "label": "Particulier"
+      },
+      "steps": [],
+      "videos": [],
+      "published": true
+    },
+    {
+      "slug": "salle-de-bain-moderne",
+      "title": "Salle de bain moderne",
+      "service": "staff-peinture",
+      "location": "Douala",
+      "year": "2024",
+      "duration": "3 semaines",
+      "surface": "9 m²",
+      "image": "/images/renovation.jpg",
+      "gallery": [
+        "/images/renovation.jpg",
+        "/images/careaux.jpg",
+        "/images/services3.jpg"
+      ],
+      "description": "Rénovation complète : staff décoratif, carrelage grand format et peinture anti-humidité.",
+      "details": "Dépose de l’existant, reprise des supports, pose d’un faux plafond en staff avec spots, carrelage grand format et peinture anti-humidité.",
+      "client": {
+        "visibility": "anonyme",
+        "label": "Particulier"
+      },
+      "steps": [],
+      "videos": [],
+      "published": true
+    },
+    {
+      "slug": "installation-sanitaire",
+      "title": "Installation sanitaire encastrée",
+      "service": "plomberie",
+      "location": "Yaoundé",
+      "year": "2023",
+      "duration": "1 semaine",
+      "surface": "",
+      "image": "/images/ploberie.jpg",
+      "gallery": [
+        "/images/ploberie.jpg",
+        "/images/installation.jpg"
+      ],
+      "description": "Réseau de plomberie encastré avec bâti-support WC : fonctionnel, durable et esthétique.",
+      "details": "Création d’un réseau d’alimentation et d’évacuation encastré, pose d’un bâti-support et d’un WC suspendu, tests d’étanchéité avant fermeture des cloisons.",
+      "client": {
+        "visibility": "anonyme",
+        "label": "Professionnel"
+      },
+      "steps": [],
+      "videos": [],
+      "published": true
+    },
+    {
+      "slug": "salle-a-manger",
+      "title": "Salle à manger chaleureuse",
+      "service": "menuiserie-decoration",
+      "location": "Douala",
+      "year": "2023",
+      "duration": "3 semaines",
+      "surface": "25 m²",
+      "image": "/images/salon1.jpg",
+      "gallery": [
+        "/images/salon1.jpg",
+        "/images/work.jpg",
+        "/images/carousel.jpg"
+      ],
+      "description": "Aménagement complet d’une salle à manger : ambiance chaleureuse et mobilier sur mesure.",
+      "details": "Buffet et habillage mural sur mesure, luminaire central mis en valeur par une corniche en staff, et palette de couleurs chaudes.",
+      "client": {
+        "visibility": "anonyme",
+        "label": "Particulier"
+      },
+      "steps": [],
+      "videos": [],
+      "published": true
+    }
+  ],
+  "faq": [
+    {
+      "q": "Le devis est-il gratuit ?",
+      "a": "Oui. Après un premier échange et, si nécessaire, une visite sur place, nous vous remettons un devis détaillé, gratuit et sans engagement."
+    },
+    {
+      "q": "Pouvez-vous réaliser mes plans et mon dossier de permis ?",
+      "a": "Oui. Nous réalisons les plans d’architecture, les plans techniques et les rendus 3D, et préparons le dossier nécessaire à votre demande de permis de construire."
+    },
+    {
+      "q": "Puis-je suivre mon chantier à distance ?",
+      "a": "Oui. Nous vous envoyons régulièrement des photos et vidéos de l’avancement et restons joignables par téléphone ou WhatsApp, même si vous vivez à l’étranger."
+    },
+    {
+      "q": "Les délais sont-ils garantis ?",
+      "a": "Le planning est défini et validé avec vous avant le démarrage. Nous nous engageons à le respecter et vous prévenons immédiatement en cas d’imprévu."
+    },
+    {
+      "q": "Proposez-vous une formule clés en main ?",
+      "a": "Oui. Nous coordonnons tous les corps de métier, des plans aux finitions : vous n’avez qu’un seul interlocuteur."
+    },
+    {
+      "q": "Mon projet restera-t-il confidentiel ?",
+      "a": "Oui. Nous ne publions jamais votre nom ni votre adresse sans votre accord. Les photos que nous partageons sont choisies pour ne pas permettre de vous identifier."
+    }
+  ]
+}

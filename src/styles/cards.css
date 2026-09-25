@@ -1,0 +1,267 @@
+/* =========================
+   Carte service
+   ========================= */
+.service-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  height: 100%;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--color-soft);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+
+.service-card-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem;
+}
+
+.service-card-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.service-card h3 {
+  font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+}
+
+.service-card p {
+  color: var(--color-muted);
+}
+
+.service-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: auto;
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+.service-card-link svg {
+  transition: transform 0.25s ease;
+}
+
+.service-card:hover .service-card-link svg {
+  transform: translateX(4px);
+}
+
+.service-card-media {
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  min-height: 260px;
+  border-radius: var(--radius);
+}
+
+.service-card-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.service-card:hover .service-card-media img {
+  transform: scale(1.05);
+}
+
+@media (min-width: 768px) {
+  .service-card.horizontal {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .service-card.horizontal .service-card-text {
+    flex: 0 0 40%;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .service-card.horizontal .service-card-media {
+    min-height: 380px;
+  }
+}
+
+/* =========================
+   Carte projet
+   ========================= */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  border-radius: var(--radius);
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+}
+
+.project-card.light {
+  background: var(--color-white);
+  box-shadow: var(--shadow);
+}
+
+.project-card.glass {
+  background: var(--color-glass);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.project-card-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: calc(var(--radius) - 6px);
+}
+
+.project-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.project-card:hover .project-card-media img {
+  transform: scale(1.06);
+}
+
+.project-card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-dark);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.project-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 1.1rem 0.5rem 0.5rem;
+}
+
+.project-card-body h3 {
+  font-size: 1.3rem;
+}
+
+.project-card-body p {
+  font-size: 0.95rem;
+}
+
+.project-card.light p {
+  color: var(--color-muted);
+}
+
+.project-card.glass h3 {
+  color: #f87171;
+}
+
+.project-card.glass p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.project-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.project-card.glass .project-card-meta {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.project-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.project-card-btn {
+  margin-top: auto;
+  border-radius: 15px;
+}
+
+.project-card.light .project-card-btn {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.project-card.light .project-card-btn:hover {
+  background: var(--color-dark);
+}
+
+.project-card.glass .project-card-btn {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
+
+.project-card.glass .project-card-btn:hover {
+  background: var(--color-accent);
+}
+
+.project-card-video {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+p.project-card-client {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+}
+
+.project-card.light .project-card-client {
+  background: var(--color-soft);
+  color: var(--color-muted);
+}
+
+.project-card.light .project-card-client strong {
+  color: var(--color-dark);
+}
+
+.project-card.glass .project-card-client {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.project-card.glass .project-card-client strong {
+  color: var(--color-white);
+}

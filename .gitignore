@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Données privées de l'admin (noms des clients, notes, brouillons, sauvegardes) : ne jamais publier
+content-private/

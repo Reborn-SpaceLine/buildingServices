@@ -1,0 +1,100 @@
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
+import { ExternalLink, Film, Link2, Check } from 'lucide-react';
+import { TikTokIcon, FacebookIcon, InstagramIcon, YouTubeIcon, WhatsAppIcon, LinkedInIcon } from './SocialIcons';
+import type { MediaLink, Platform } from '../content/types';
+import { platforms, youtubeId } from '../content/platforms';
+import '../styles/media.css';
+
+export function PlatformIcon({ platform, size = 20 }: { platform: Platform; size?: number }) {
+  switch (platform) {
+    case 'youtube': return <YouTubeIcon size={size} />;
+    case 'tiktok': return <TikTokIcon size={size} />;
+    case 'instagram': return <InstagramIcon size={size} />;
+    case 'facebook': return <FacebookIcon size={size} />;
+    case 'fichier': return <Film size={size} />;
+    default: return <ExternalLink size={size} />;
+  }
+}
+
+export function MediaEmbed({ media }: { media: MediaLink }) {
+  const info = platforms[media.platform] ?? platforms.autre;
+  const ytId = media.platform === 'youtube' ? youtubeId(media.url) : null;
+
+  if (ytId) {
+    return (
+      <figure className="media-card">
+        <div className="media-frame">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${ytId}`}
+            title={media.title || 'Vidéo YouTube'}
+            loading="lazy"
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+        {media.title && <figcaption>{media.title}</figcaption>}
+      </figure>
+    );
+  }
+
+  if (media.platform === 'fichier') {
+    return (
+      <figure className="media-card">
+        <div className="media-frame">
+          <video src={media.url} controls preload="metadata" playsInline />
+        </div>
+        {media.title && <figcaption>{media.title}</figcaption>}
+      </figure>
+    );
+  }
+
+  return (
+    <a href={media.url} target="_blank" rel="noopener noreferrer" className="media-link" style={{ '--platform': info.color } as CSSProperties}>
+      <span className="media-link-icon"><PlatformIcon platform={media.platform} size={22} /></span>
+      <span className="media-link-text">
+        <strong>{media.title || `Voir la vidéo`}</strong>
+        <span>Voir sur {info.label}</span>
+      </span>
+      <ExternalLink size={18} />
+    </a>
+  );
+}
+
+export function MediaList({ videos }: { videos: MediaLink[] }) {
+  const valid = videos.filter(v => v.url);
+  if (valid.length === 0) return null;
+  return (
+    <div className="media-list">
+      {valid.map((v, i) => <MediaEmbed key={`${v.url}-${i}`} media={v} />)}
+    </div>
+  );
+}
+
+/** Partage d'une page (projet, service) sur les réseaux */
+export function ShareButtons({ title }: { title: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = typeof window !== 'undefined' ? window.location.href : '';
+  const encoded = encodeURIComponent(url);
+  const text = encodeURIComponent(`${title} – Building Service`);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt('Copiez ce lien :', url);
+    }
+  };
+
+  return (
+    <div className="share">
+      <span>Partager :</span>
+      <a href={`https://wa.me/?text=${text}%20${encoded}`} target="_blank" rel="noopener noreferrer" aria-label="Partager sur WhatsApp"><WhatsAppIcon size={18} /></a>
+      <a href={`https://www.facebook.com/sharer/sharer.php?u=${encoded}`} target="_blank" rel="noopener noreferrer" aria-label="Partager sur Facebook"><FacebookIcon size={18} /></a>
+      <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encoded}`} target="_blank" rel="noopener noreferrer" aria-label="Partager sur LinkedIn"><LinkedInIcon size={18} /></a>
+      <button onClick={copy} aria-label="Copier le lien">{copied ? <Check size={18} /> : <Link2 size={18} />}</button>
+    </div>
+  );
+}

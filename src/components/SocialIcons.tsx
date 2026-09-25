@@ -1,7 +1,8 @@
 import '../styles/socialIcons.css';
+import { company } from '../data/site';
 
 // TikTok Icon component (since it's not in lucide-react)
-const TikTokIcon = ({ size = 24, className = "" }) => (
+export const TikTokIcon = ({ size = 24, className = "" }) => (
   <svg
     width={size}
     height={size}
@@ -14,7 +15,7 @@ const TikTokIcon = ({ size = 24, className = "" }) => (
 );
 
 // Facebook Icon component
-const FacebookIcon = ({ size = 24, className = "" }) => (
+export const FacebookIcon = ({ size = 24, className = "" }) => (
   <svg
     width={size}
     height={size}
@@ -27,7 +28,7 @@ const FacebookIcon = ({ size = 24, className = "" }) => (
 );
 
 // Instagram Icon component
-const InstagramIcon = ({ size = 24, className = "" }) => (
+export const InstagramIcon = ({ size = 24, className = "" }) => (
   <svg
     width={size}
     height={size}
@@ -40,7 +41,7 @@ const InstagramIcon = ({ size = 24, className = "" }) => (
 );
 
 // WhatsApp Icon component
-const WhatsAppIcon = ({ size = 24, className = "" }) => (
+export const WhatsAppIcon = ({ size = 24, className = "" }) => (
   <svg
     width={size}
     height={size}
@@ -53,7 +54,7 @@ const WhatsAppIcon = ({ size = 24, className = "" }) => (
 );
 
 // YouTube Icon component
-const YouTubeIcon = ({ size = 24, className = "" }) => (
+export const YouTubeIcon = ({ size = 24, className = "" }) => (
   <svg
     width={size}
     height={size}
@@ -66,7 +67,7 @@ const YouTubeIcon = ({ size = 24, className = "" }) => (
 );
 
 // LinkedIn Icon component
-const LinkedInIcon = ({ size = 24, className = "" }) => (
+export const LinkedInIcon = ({ size = 24, className = "" }) => (
   <svg
     width={size}
     height={size}
@@ -88,37 +89,37 @@ export function SocialIcons({ variant = 'dark', size = 'md', className = "" }: S
   const socialLinks = [
     {
       name: "TikTok",
-      href: "#",
+      href: company.socials.tiktok,
       icon: TikTokIcon,
       color: "#000000"
     },
     {
       name: "Facebook",
-      href: "#",
+      href: company.socials.facebook,
       icon: FacebookIcon,
       color: "#1877F2"
     },
     {
       name: "Instagram",
-      href: "#",
+      href: company.socials.instagram,
       icon: InstagramIcon,
       color: "#E4405F"
     },
     {
       name: "WhatsApp",
-      href: "#",
+      href: company.socials.whatsapp,
       icon: WhatsAppIcon,
       color: "#25D366"
     },
     {
       name: "YouTube",
-      href: "#",
+      href: company.socials.youtube,
       icon: YouTubeIcon,
       color: "#FF0000"
     },
     {
       name: "LinkedIn",
-      href: "#",
+      href: company.socials.linkedin,
       icon: LinkedInIcon,
       color: "#0A66C2"
     }
@@ -134,13 +135,16 @@ export function SocialIcons({ variant = 'dark', size = 'md', className = "" }: S
 
   return (
     <div className={`social-icons-container ${className}`}>
-      {socialLinks.map((social, index) => {
+      {socialLinks.filter(social => social.href).map((social, index) => {
         const Icon = social.icon;
         return (
           <div key={index} className="social-icon-wrapper">
             <a
               href={social.href}
               className={`social-icon-link ${variant} ${size}`}
+              aria-label={social.name}
+              target="_blank"
+              rel="noopener noreferrer"
               onMouseEnter={(e) => handleMouseEnter(e, social.color)}
               onMouseLeave={handleMouseLeave}
             >
