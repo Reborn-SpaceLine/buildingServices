@@ -67,7 +67,113 @@
 .a-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
+}
+
+/* Ordinateur : la barre se fond dans l'en-tête → nom | onglets | actions */
+.a-bar {
+  display: contents;
+}
+
+.a-brand {
+  order: 0;
+}
+
+.a-tabs {
+  order: 1;
+}
+
+.a-actions {
+  order: 2;
+}
+
+/* Bouton Enregistrer : point orange quand des modifications attendent */
+.a-save {
+  position: relative;
+}
+
+.a-dirty {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-dark);
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+/* Menu « ⋮ » : uniquement sur mobile */
+.a-more {
+  position: relative;
+  display: none;
+}
+
+.a-more-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.a-more-btn[aria-expanded='true'] {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.a-more-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: 0.4rem;
+  border-radius: 12px;
+  background: var(--color-white);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  animation: a-menu-in 0.15s ease;
+}
+
+.a-more-menu a,
+.a-more-menu button {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--color-dark);
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.a-more-menu a:hover,
+.a-more-menu button:hover {
+  background: #f6f3f1;
+}
+
+.a-more-menu .danger {
+  margin-top: 0.25rem;
+  border-top: 1px solid #f0e8e4;
+  border-radius: 0 0 8px 8px;
+  color: #b91c1c;
+}
+
+@keyframes a-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
 }
 
 .a-header .a-btn-ghost {
@@ -761,41 +867,81 @@
   border-color: var(--color-accent);
 }
 
-/* Mobile : en-tête compact, onglets sur une ligne qui défile */
+/* =========================
+   Mobile : ligne 1 = nom + Enregistrer + menu ⋮ ; ligne 2 = onglets qui défilent
+   ========================= */
 @media (max-width: 720px) {
   .a-header {
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
+    display: block;
+    padding: 0;
+  }
+
+  .a-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem 0.5rem;
   }
 
   .a-brand span {
-    display: none;
+    font-size: 0.72rem;
   }
 
   .a-actions {
-    margin-left: auto;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
   }
 
-  .a-actions .a-btn {
-    padding: 0.45rem 0.6rem;
+  .a-secondary {
+    display: none;
   }
 
-  /* Seules les icônes restent sur les boutons secondaires */
-  .a-actions .a-btn-ghost {
-    font-size: 0;
-    gap: 0;
+  .a-more {
+    display: block;
+  }
+
+  .a-save {
+    height: 40px;
+    padding: 0 0.9rem;
   }
 
   .a-tabs {
-    order: 3;
-    flex: 1 1 100%;
     flex-wrap: nowrap;
+    gap: 0.35rem;
+    padding: 0 0.75rem 0.6rem;
     overflow-x: auto;
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    /* Fondu sur les bords : montre qu'il y a d'autres onglets */
+    mask-image: linear-gradient(to right, transparent 0, #000 16px, #000 calc(100% - 24px), transparent 100%);
+  }
+
+  .a-tabs::-webkit-scrollbar {
+    display: none;
   }
 
   .a-tabs button {
     flex-shrink: 0;
+    padding: 0.5rem 0.95rem;
+    background: rgba(255, 255, 255, 0.08);
+    scroll-snap-align: center;
+  }
+
+  .a-tabs button.active {
+    background: var(--color-white);
+  }
+
+  .a-status {
+    margin: 0.75rem 12px 0;
+  }
+}
+
+/* Très petits écrans : le mot « Administration » laisse la place */
+@media (max-width: 380px) {
+  .a-brand span {
+    display: none;
   }
 }
 /* Traductions */

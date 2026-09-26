@@ -97,7 +97,7 @@ export function Header() {
       <div className="header-bar">
         <Link to="/" className="header-logo" onDoubleClick={() => navigate('/admin')} aria-label={ui.nav.homeLabel}>
           <img src={Logo} alt="" className="header-logo-image" />
-          <div className="header-logo-text">
+          <div className="header-logo-text" translate="no">
             <span className="logo-main">BUILDING</span>
             <span className="logo-sub">SERVICE</span>
           </div>

@@ -39,7 +39,7 @@ export function ProjectCard({ project, variant = 'light' }: { project: Project; 
       </Link>
       <div className="project-card-body">
         <h3>{project.title}</h3>
-        <p className="project-card-client"><UserRound size={14} /> {ui.common.client} : <strong>{project.client.label}</strong></p>
+        <p className="project-card-client"><UserRound size={14} /> {ui.common.client}{ui.locale.startsWith('fr') ? ' :' : ':'} <strong>{project.client.label}</strong></p>
         <p>{project.description}</p>
         <div className="project-card-meta">
           <span><MapPin size={14} /> {project.location}</span>

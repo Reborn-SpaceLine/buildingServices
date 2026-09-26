@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, KeyRound, LogOut } from 'lucide-react';
+import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, KeyRound, LogOut, MoreVertical } from 'lucide-react';
 import { authStatus, setupPassword, login, logout, fetchContent, saveContent, downloadJson, AuthError } from './api';
 import { GeneralTab, ServicesTab, ProjectsTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
 import { TextInput } from './fields';
@@ -96,6 +96,28 @@ export default function AdminPage() {
   const [saved, setSaved] = useState('');
   const [tab, setTab] = useState<TabId>('general');
   const [status, setStatus] = useState<Status>({ type: 'idle' });
+  const [menuOpen, setMenuOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  // Menu « ⋮ » (mobile) : se ferme au clic à l'extérieur ou avec Échap
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onPointer = (e: PointerEvent) => {
+      if (!moreRef.current?.contains(e.target as Node)) setMenuOpen(false);
+    };
+    const onKey = (e: globalThis.KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false);
+    document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
+  // Onglets (mobile) : l'onglet actif est ramené au centre de la ligne qui défile
+  useEffect(() => {
+    document.querySelector('.a-tabs .active')?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  }, [tab]);
 
   /** Charge le contenu après connexion (sans écraser des modifications en cours) */
   const loadContent = async () => {
@@ -158,6 +180,10 @@ export default function AdminPage() {
     }
   };
 
+  const exportContent = () => {
+    if (content) downloadJson(content, `building-service-contenu-${new Date().toISOString().split('T')[0]}.json`);
+  };
+
   const handleLogout = async () => {
     if (dirty && !confirm('Des modifications ne sont pas enregistrées. Se déconnecter quand même ?')) return;
     await logout();
@@ -209,28 +235,69 @@ export default function AdminPage() {
   return (
     <div className="admin">
       <header className="a-header">
-        <div className="a-brand">
-          <strong>Building Service</strong>
-          <span>Administration</span>
+        <div className="a-bar">
+          <div className="a-brand">
+            <strong translate="no">Building Service</strong>
+            <span>Administration</span>
+          </div>
+
+          <div className="a-actions">
+            {/* Ordinateur : toutes les actions visibles */}
+            <a className="a-btn a-btn-ghost a-secondary" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /> Voir le site</a>
+            <button className="a-btn a-btn-ghost a-secondary" onClick={exportContent}>
+              <Download size={16} /> Exporter
+            </button>
+
+            <button className="a-btn a-btn-primary a-save" disabled={!dirty || status.type === 'saving'} onClick={save}>
+              {status.type === 'saving' ? <Loader2 size={16} className="a-spin" /> : <Save size={16} />}
+              {dirty ? 'Enregistrer' : 'Enregistré'}
+              {dirty && <span className="a-dirty" aria-label="Modifications non enregistrées" />}
+            </button>
+
+            <button className="a-btn a-btn-ghost a-logout a-secondary" onClick={handleLogout} title="Se déconnecter">
+              <LogOut size={16} /> Déconnexion
+            </button>
+
+            {/* Mobile : actions secondaires regroupées dans un menu */}
+            <div className="a-more" ref={moreRef}>
+              <button
+                className="a-more-btn"
+                aria-label="Plus d’actions"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(open => !open)}
+              >
+                <MoreVertical size={20} />
+              </button>
+              {menuOpen && (
+                <div className="a-more-menu" role="menu">
+                  <a role="menuitem" href="/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+                    <ExternalLink size={16} /> Voir le site
+                  </a>
+                  <button role="menuitem" onClick={() => { exportContent(); setMenuOpen(false); }}>
+                    <Download size={16} /> Exporter le contenu
+                  </button>
+                  <button role="menuitem" className="danger" onClick={() => { setMenuOpen(false); handleLogout(); }}>
+                    <LogOut size={16} /> Déconnexion
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
         <nav className="a-tabs" aria-label="Sections de l’administration">
           {tabs.map(t => (
-            <button key={t.id} className={tab === t.id ? 'active' : ''} onClick={() => setTab(t.id)}>{t.label}</button>
+            <button
+              key={t.id}
+              className={tab === t.id ? 'active' : ''}
+              aria-current={tab === t.id ? 'page' : undefined}
+              onClick={() => setTab(t.id)}
+            >
+              {t.label}
+            </button>
           ))}
         </nav>
-        <div className="a-actions">
-          <a className="a-btn a-btn-ghost" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /> Voir le site</a>
-          <button className="a-btn a-btn-ghost" onClick={() => downloadJson(content, `building-service-contenu-${new Date().toISOString().split('T')[0]}.json`)}>
-            <Download size={16} /> Exporter
-          </button>
-          <button className="a-btn a-btn-primary" disabled={!dirty || status.type === 'saving'} onClick={save}>
-            {status.type === 'saving' ? <Loader2 size={16} className="a-spin" /> : <Save size={16} />}
-            {dirty ? 'Enregistrer' : 'Enregistré'}
-          </button>
-          <button className="a-btn a-btn-ghost a-logout" onClick={handleLogout} title="Se déconnecter">
-            <LogOut size={16} /> Déconnexion
-          </button>
-        </div>
       </header>
 
       {status.message && (

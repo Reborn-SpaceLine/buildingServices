@@ -27,6 +27,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
+    // Un choix explicite l'emporte sur un lien ?lang=… : on le retire de l'adresse
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('lang')) {
+      url.searchParams.delete('lang');
+      window.history.replaceState(window.history.state, '', url);
+    }
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {

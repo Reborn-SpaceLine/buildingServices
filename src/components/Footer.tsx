@@ -20,13 +20,13 @@ export function Footer() {
           </Link>
         </div>
 
-        <p className="footer-watermark" aria-hidden="true">Building Service</p>
+        <p className="footer-watermark" aria-hidden="true" translate="no">Building Service</p>
 
         <div className="footer-grid">
           <div className="footer-brand">
             <Link to="/" className="footer-logo">
               <img src={Logo} alt="" />
-              <div>
+              <div translate="no">
                 <span className="logo-main">BUILDING</span>
                 <span className="logo-sub">SERVICE</span>
               </div>
@@ -67,7 +67,7 @@ export function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p>© {year} Building Service. {ui.footer.rights}</p>
+        <p>© {year} <span translate="no">Building Service</span>. {ui.footer.rights}</p>
       </div>
     </footer>
   );

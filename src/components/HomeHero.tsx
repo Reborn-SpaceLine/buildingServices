@@ -70,7 +70,7 @@ export function HomeHero() {
             </p>
           )}
 
-          <h1 className="hero-title">
+          <h1 className="hero-title" translate="no">
             <span className="hero-title-script">Building</span>
             <span className="hero-title-main">SERVICE</span>
           </h1>
