@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { KeyboardEvent, TouchEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, FileText, Phone } from 'lucide-react';
 import { SocialIcons } from './SocialIcons';
@@ -17,7 +17,7 @@ export function HomeHero() {
   const slides = useMemo(() => (hero.slides.length > 0 ? hero.slides : [images.carousel]), [hero.slides]);
 
   const [slide, setSlide] = useState(0);
-  // « Découvrir » (tablette / mobile) : visible en haut de page, masqué dès qu'on fait défiler
+  // « Découvrir » (mobile / tablette) : visible en haut de page, masqué dès qu'on fait défiler
   const [atTop, setAtTop] = useState(true);
   useEffect(() => {
     const onScroll = () => setAtTop(window.scrollY < 60);
@@ -29,20 +29,6 @@ export function HomeHero() {
   const [autoplay] = useState(() => slides.length > 1 && !prefersReducedMotion());
 
   const go = (index: number) => setSlide((index + slides.length) % slides.length);
-
-  // Glisser du doigt pour changer de photo (écrans tactiles)
-  const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const onTouchStart = (e: TouchEvent) => {
-    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  };
-  const onTouchEnd = (e: TouchEvent) => {
-    const start = touchStart.current;
-    touchStart.current = null;
-    if (!start) return;
-    const dx = e.changedTouches[0].clientX - start.x;
-    const dy = e.changedTouches[0].clientY - start.y;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? slide + 1 : slide - 1);
-  };
 
   // Flèches du clavier quand le diaporama a le focus
   const onKeyDown = (e: KeyboardEvent) => {
@@ -71,8 +57,6 @@ export function HomeHero() {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
       onKeyDown={onKeyDown}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
     >
       {/* Photos en fondu */}
       {slides.map((src, i) => (
@@ -128,7 +112,7 @@ export function HomeHero() {
 
       {/* Légende + commandes du diaporama */}
       <div className="container hero-bottom">
-        <div className="hero-caption" aria-live="polite">
+        <div className={`hero-caption ${atTop ? '' : 'is-hidden'}`} aria-live="polite">
           {caption ? (
             <Link to={`/realisations/${caption.slug}`}>
               <span>{ui.hero.realization}</span>
