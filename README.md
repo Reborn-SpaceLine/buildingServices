@@ -39,7 +39,7 @@ npm install
 npm run dev
 ```
 
-- Site : <http://localhost:5173> — administration : <http://localhost:5173/admin> (ou double-clic sur le logo).
+- Site : <http://localhost:5173> — administration : <http://localhost:5173/admin> (ou triple clic sur le logo).
 - À la première ouverture de `/admin` en local, vous créez le mot de passe.
 - En local, les données sont rangées dans le projet : `src/content/content.json` (contenu public, sert aussi de contenu initial en production), `public/uploads/` (médias), `content-private/` (clients, brouillons, mot de passe, messages — hors Git).
 

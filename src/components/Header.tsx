@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import type { MouseEvent } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown, CalendarDays, Phone } from 'lucide-react';
 import '../styles/header.css';
@@ -42,6 +43,18 @@ export function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  // Logo : 1 clic = accueil (lien normal) ; 3 clics rapprochés = administration
+  const logoClicks = useRef<number[]>([]);
+  const handleLogoClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    const now = Date.now();
+    logoClicks.current = [...logoClicks.current.filter(t => now - t < 800), now];
+    if (logoClicks.current.length >= 3) {
+      e.preventDefault();
+      logoClicks.current = [];
+      navigate('/admin');
+    }
+  };
   const { company, navItems } = useSite();
   const ui = useUi();
   const isHome = pathname === '/';
@@ -95,7 +108,7 @@ export function Header() {
   return (
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
       <div className="header-bar">
-        <Link to="/" className="header-logo" onDoubleClick={() => navigate('/admin')} aria-label={ui.nav.homeLabel}>
+        <Link to="/" className="header-logo" onClick={handleLogoClick} aria-label={ui.nav.homeLabel}>
           <img src={Logo} alt="" className="header-logo-image" />
           <div className="header-logo-text" translate="no">
             <span className="logo-main">BUILDING</span>
