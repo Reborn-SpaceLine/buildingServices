@@ -420,24 +420,20 @@
   }
 }
 
-/* Mobile / petite tablette : la légende de la réalisation en bas de l'écran, au-dessus de « Découvrir »
-   (en bas du hero, elle n'était visible qu'après défilement) ; masquée dès qu'on fait défiler */
+/* Mobile / petite tablette : la légende de la réalisation reste dans le hero, en bas de la photo,
+   au-dessus des flèches et des indicateurs (elle était masquée sur ces écrans) */
 @media (max-width: 768px) {
   .hero-bottom {
-    position: static;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
   }
 
   .hero-caption {
-    position: fixed;
-    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 52px);
-    left: 16px;
-    right: 16px;
-    z-index: 40;
     display: flex;
     justify-content: center;
+    max-width: 100%;
     min-width: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, visibility 0.3s;
   }
 
   .hero-caption a {
@@ -445,9 +441,6 @@
     min-width: 0;
     padding: 0.45rem 0.85rem;
     font-size: 0.82rem;
-    background: rgba(15, 11, 9, 0.6);
-    backdrop-filter: blur(8px);
-    pointer-events: auto;
   }
 
   .hero-caption strong {
@@ -459,15 +452,6 @@
 
   .hero-caption svg {
     flex-shrink: 0;
-  }
-
-  .hero-caption.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  .hero-caption.is-hidden a {
-    pointer-events: none;
   }
 }
 /* Mobile / tablette : « Découvrir » en pastille fixée en bas de l'écran,

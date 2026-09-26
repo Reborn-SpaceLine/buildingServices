@@ -112,7 +112,7 @@ export function HomeHero() {
 
       {/* Légende + commandes du diaporama */}
       <div className="container hero-bottom">
-        <div className={`hero-caption ${atTop ? '' : 'is-hidden'}`} aria-live="polite">
+        <div className="hero-caption" aria-live="polite">
           {caption ? (
             <Link to={`/realisations/${caption.slug}`}>
               <span>{ui.hero.realization}</span>
