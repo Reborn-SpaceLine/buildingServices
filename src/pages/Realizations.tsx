@@ -3,31 +3,34 @@ import { ShieldCheck } from 'lucide-react';
 import { PageHero, Reveal, CtaBanner } from '../components/ui';
 import { ProjectCard } from '../components/Cards';
 import { usePageTitle } from '../lib/usePageTitle';
-import { images, projects, projectFilters } from '../data/site';
+import { images } from '../data/site';
+import { useSite, useUi } from '../i18n/context';
 import '../styles/pages.css';
 
 export function RealizationsPage() {
-  usePageTitle('Nos réalisations');
+  const t = useUi().realizations;
+  const { projects, projectFilters } = useSite();
+  usePageTitle(t.title);
   const [params, setParams] = useSearchParams();
   const active = params.get('service') ?? 'tous';
   const visible = active === 'tous' ? projects : projects.filter(p => p.service === active);
 
   const select = (slug: string) => {
-    setParams(slug === 'tous' ? {} : { service: slug }, { replace: true });
+    setParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (slug === 'tous') next.delete('service');
+      else next.set('service', slug);
+      return next;
+    }, { replace: true });
   };
 
   return (
     <>
-      <PageHero
-        eyebrow="Réalisations"
-        title="Notre savoir-faire, chantier après chantier."
-        text="Des plans à la remise des clés, découvrez une sélection de projets réalisés à Yaoundé, Douala et partout au Cameroun."
-        image={images.salon}
-      />
+      <PageHero eyebrow={t.heroEyebrow} title={t.heroTitle} text={t.heroText} image={images.salon} />
 
       <section className="section">
         <div className="container">
-          <div className="filter-bar" role="tablist" aria-label="Filtrer par service">
+          <div className="filter-bar" role="tablist" aria-label={t.filterLabel}>
             {projectFilters.map(filter => {
               const count = filter.slug === 'tous' ? projects.length : projects.filter(p => p.service === filter.slug).length;
               return (
@@ -45,7 +48,7 @@ export function RealizationsPage() {
           </div>
 
           {visible.length === 0 ? (
-            <p className="empty-state">Aucun projet publié dans cette catégorie pour le moment.</p>
+            <p className="empty-state">{t.empty}</p>
           ) : (
             <div className="cards-grid-3">
               {visible.map((project, i) => (
@@ -58,16 +61,12 @@ export function RealizationsPage() {
 
           <p className="privacy-note">
             <ShieldCheck size={18} />
-            Nous respectons la vie privée de nos clients : leur nom n’est publié qu’avec leur accord, et aucune adresse précise n’est communiquée.
+            {t.privacy}
           </p>
         </div>
       </section>
 
-      <CtaBanner
-        image={images.chambre}
-        title="Votre projet, notre prochaine réalisation."
-        text="Chaque projet est unique. Contactez-nous pour discuter de vos idées et obtenir un devis personnalisé."
-      />
+      <CtaBanner image={images.chambre} title={t.ctaTitle} text={t.ctaText} />
     </>
   );
 }

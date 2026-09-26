@@ -2,6 +2,19 @@
    Modèle de contenu du site, modifiable depuis /admin
    ========================= */
 
+/* ---------- Langues ----------
+   Le français est la langue de référence : tous les textes existent en français.
+   Les autres langues sont des traductions, rangées dans le champ `i18n` de chaque élément.
+   Une traduction manquante affiche le texte français. */
+export const defaultLanguage = 'fr' as const;
+export const translatedLanguages = ['en'] as const;
+
+export type TranslatedLang = typeof translatedLanguages[number];
+export type Lang = typeof defaultLanguage | TranslatedLang;
+
+/** Traductions d'un élément : { en: { title: '…' } } */
+export type Translations<T> = Partial<Record<TranslatedLang, Partial<T>>>;
+
 export type Platform = 'youtube' | 'tiktok' | 'instagram' | 'facebook' | 'fichier' | 'autre';
 
 /** Vidéo ou publication liée : lien vers un réseau social ou fichier vidéo hébergé sur le site */
@@ -9,6 +22,7 @@ export interface MediaLink {
   platform: Platform;
   url: string;
   title: string;
+  i18n?: Translations<{ title: string }>;
 }
 
 export interface Company {
@@ -28,12 +42,14 @@ export interface Company {
     youtube: string;
     linkedin: string;
   };
+  i18n?: Translations<{ tagline: string; city: string; hours: string }>;
 }
 
 export interface Hero {
   eyebrow: string;           // petite étiquette au-dessus du titre
   description: string;
   slides: string[];
+  i18n?: Translations<{ eyebrow: string; description: string }>;
 }
 
 export interface Stat {
@@ -41,6 +57,7 @@ export interface Stat {
   prefix: string;
   suffix: string;
   label: string;
+  i18n?: Translations<{ label: string }>;
 }
 
 export const serviceCategories = [
@@ -64,6 +81,7 @@ export interface Service {
   steps: string[];
   featured: boolean;         // affiché sur la page d'accueil
   videos: MediaLink[];
+  i18n?: Translations<{ title: string; short: string; intro: string; features: string[]; steps: string[] }>;
 }
 
 /**
@@ -86,6 +104,7 @@ export interface ProjectStep {
   title: string;
   text: string;
   image: string;
+  i18n?: Translations<{ title: string; text: string }>;
 }
 
 export interface Project {
@@ -104,11 +123,13 @@ export interface Project {
   steps: ProjectStep[];      // documentation du chantier, étape par étape
   videos: MediaLink[];
   published: boolean;        // brouillon = jamais publié sur le site
+  i18n?: Translations<{ title: string; description: string; details: string; location: string; duration: string; clientLabel: string }>;
 }
 
 export interface FaqItem {
   q: string;
   a: string;
+  i18n?: Translations<{ q: string; a: string }>;
 }
 
 export interface SiteContent {

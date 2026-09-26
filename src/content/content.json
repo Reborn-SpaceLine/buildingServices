@@ -16,6 +16,13 @@
       "tiktok": "",
       "youtube": "",
       "linkedin": ""
+    },
+    "i18n": {
+      "en": {
+        "tagline": "Building, renovating and fitting out spaces that last.",
+        "city": "Yaoundé & Douala, Cameroon",
+        "hours": "Mon – Sat: 8:00 am – 6:00 pm"
+      }
     }
   },
   "hero": {
@@ -27,32 +34,58 @@
       "/images/salon1.jpg",
       "/images/chambre11.jpg",
       "/images/services1.jpg"
-    ]
+    ],
+    "i18n": {
+      "en": {
+        "eyebrow": "Construction · Renovation · Interior fit-out",
+        "description": "From architectural plans to handing over the keys, we build, renovate and fit out your spaces with a single point of contact and a well-managed site."
+      }
+    }
   },
   "stats": [
     {
       "value": 500,
       "prefix": "+",
       "suffix": "",
-      "label": "Clients accompagnés"
+      "label": "Clients accompagnés",
+      "i18n": {
+        "en": {
+          "label": "Clients served"
+        }
+      }
     },
     {
       "value": 10,
       "prefix": "+",
       "suffix": "",
-      "label": "Années d’expérience"
+      "label": "Années d’expérience",
+      "i18n": {
+        "en": {
+          "label": "Years of experience"
+        }
+      }
     },
     {
       "value": 1000,
       "prefix": "+",
       "suffix": "",
-      "label": "Chantiers réalisés"
+      "label": "Chantiers réalisés",
+      "i18n": {
+        "en": {
+          "label": "Projects completed"
+        }
+      }
     },
     {
       "value": 13,
       "prefix": "",
       "suffix": "",
-      "label": "Corps de métier coordonnés"
+      "label": "Corps de métier coordonnés",
+      "i18n": {
+        "en": {
+          "label": "Trades coordinated"
+        }
+      }
     }
   ],
   "services": [
@@ -79,7 +112,28 @@
         "Plans définitifs et dossier technique"
       ],
       "featured": true,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Architectural plans & design",
+          "short": "Construction drawings, permits, 3D modelling: your project is drawn, costed and approved before work begins.",
+          "intro": "Every successful project starts with good plans. We carry out surveys, construction drawings (site plan, floor plans, sections, elevations), technical plans and 3D renderings. You can visualise your future building, adjust every room and get a complete file for your building permit and costing.",
+          "features": [
+            "Site survey and analysis",
+            "Site plans, floor plans, sections and elevations",
+            "Technical plans: plumbing, electrical",
+            "Photorealistic 3D modelling and renderings",
+            "Building permit file",
+            "Detailed budget estimate"
+          ],
+          "steps": [
+            "Meeting and project brief",
+            "Sketch and preliminary design",
+            "3D renderings and adjustments",
+            "Final plans and technical file"
+          ]
+        }
+      }
     },
     {
       "slug": "architecture-interieur",
@@ -102,7 +156,26 @@
         "Suivi jusqu’à la livraison"
       ],
       "featured": true,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Interior architecture",
+          "short": "Layout, flow, light, materials: functional and elegant interiors, approved in 3D.",
+          "intro": "We redesign your living and working spaces so they are both practical and beautiful. Room layout, choice of materials, colours and lighting: every decision is made with you, on plan and in 3D, before the first hammer blow.",
+          "features": [
+            "Interior layout plans",
+            "3D renderings and mood boards",
+            "Choice of materials and colours",
+            "Optimising volumes and natural light"
+          ],
+          "steps": [
+            "Site visit and measurements",
+            "Sketch and 3D renderings",
+            "Quote approval",
+            "Supervision until handover"
+          ]
+        }
+      }
     },
     {
       "slug": "design-interieur-exterieur",
@@ -125,7 +198,26 @@
         "Réalisation et mise en scène"
       ],
       "featured": false,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Interior & exterior design",
+          "short": "Façades, terraces, gardens and interiors designed as a whole, for a coherent home from the entrance to the living room.",
+          "intro": "A home is lived in inside and out. We design coherent atmospheres, from façade to terrace, from garden to living room: exterior cladding, pergolas, landscape lighting, interior decoration and furniture.",
+          "features": [
+            "Façade cladding and enhancement",
+            "Terraces, pergolas and outdoor areas",
+            "Indoor and outdoor ambient lighting",
+            "Interior decoration and styling"
+          ],
+          "steps": [
+            "Analysis of the site and your wishes",
+            "Mood boards and 3D",
+            "Selection of materials",
+            "Construction and staging"
+          ]
+        }
+      }
     },
     {
       "slug": "plomberie",
@@ -148,7 +240,26 @@
         "Tests d’étanchéité et mise en service"
       ],
       "featured": true,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Plumbing & sanitary",
+          "short": "Water supply, drainage and concealed sanitary fittings, installed cleanly and tested before closing.",
+          "intro": "We install and renovate your water supply and drainage networks, sanitary fittings and hot-water equipment. Pipes are concealed, gradients respected and every installation is tested before the walls are closed.",
+          "features": [
+            "Water supply and drainage",
+            "Wall-hung toilets and frames",
+            "Walk-in showers",
+            "Water heaters and booster pumps"
+          ],
+          "steps": [
+            "Survey of the existing network",
+            "Layout plan",
+            "Concealed installation",
+            "Leak tests and commissioning"
+          ]
+        }
+      }
     },
     {
       "slug": "electricite",
@@ -171,7 +282,26 @@
         "Contrôle et mise en service"
       ],
       "featured": false,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Electrical & lighting",
+          "short": "New or renovated electrical installations, ambient lighting and safety upgrades.",
+          "intro": "Distribution board, wiring, sockets, decorative lighting and safety upgrades: we carry out your electrical installations from A to Z with reliable equipment designed for your comfort and safety.",
+          "features": [
+            "Distribution boards and wiring",
+            "LED and ambient lighting",
+            "Safety upgrades",
+            "Sockets, switches and home automation"
+          ],
+          "steps": [
+            "Assessment",
+            "Wiring diagram",
+            "Installation",
+            "Testing and commissioning"
+          ]
+        }
+      }
     },
     {
       "slug": "baies-vitrees-fer-metal",
@@ -194,7 +324,26 @@
         "Pose et réglages"
       ],
       "featured": false,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Glazing, ironwork & metal",
+          "short": "Sliding windows, railings, gates and metal staircases combining safety and design.",
+          "intro": "We manufacture and install aluminium, glass and steel structures: sliding doors, windows, railings, gates, security grilles and staircases. Solid, safe structures with carefully finished details.",
+          "features": [
+            "Aluminium sliding doors and windows",
+            "Glass and metal railings",
+            "Gates, doors and security grilles",
+            "Staircases and metal structures"
+          ],
+          "steps": [
+            "Measurements",
+            "Plan and choice of profiles",
+            "Workshop manufacturing",
+            "Installation and adjustments"
+          ]
+        }
+      }
     },
     {
       "slug": "staff-peinture",
@@ -217,7 +366,26 @@
         "Mise en peinture et finitions"
       ],
       "featured": true,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Plasterwork & painting",
+          "short": "Suspended ceilings, cornices, lighting coves and decorative painting for clean finishes.",
+          "intro": "Plasterwork and painting make the difference between a finished space and a well-finished one. Suspended ceilings, cornices, lighting coves, fillers and decorative paints: we use quality products on properly prepared surfaces.",
+          "features": [
+            "Plaster suspended ceilings and cornices",
+            "Lighting coves and recessed spotlights",
+            "Interior and exterior painting",
+            "Decorative coatings and effects"
+          ],
+          "steps": [
+            "Surface assessment",
+            "Preparation and filling",
+            "Plasterwork installation",
+            "Painting and finishing"
+          ]
+        }
+      }
     },
     {
       "slug": "carrelage",
@@ -240,7 +408,26 @@
         "Nettoyage de fin de chantier"
       ],
       "featured": false,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Tiling & floor coverings",
+          "short": "Large-format tiles, wall tiles, mosaics and floor coverings laid with precision.",
+          "intro": "Floors, walls, bathrooms, terraces: we lay all types of tiles, from rectified large formats to mosaics, with careful surface preparation, a well-planned layout and even joints.",
+          "features": [
+            "Large-format tiling",
+            "Wall tiles and mosaics",
+            "Screeds and levelling",
+            "Skirting and corner finishes"
+          ],
+          "steps": [
+            "Surface preparation",
+            "Tile layout planning",
+            "Laying and grouting",
+            "End-of-work cleaning"
+          ]
+        }
+      }
     },
     {
       "slug": "travaux-finition",
@@ -263,7 +450,26 @@
         "Réception et remise des clés"
       ],
       "featured": false,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Finishing works",
+          "short": "Doors, skirting, trims, touch-ups and cleaning: the details that make a flawless site.",
+          "intro": "Finishes are what you see every day. We handle the final stages of your project: fitting doors and hardware, skirting boards, trims, sealing, paint touch-ups and a full clean before handing over the keys.",
+          "features": [
+            "Interior doors and hardware",
+            "Skirting, trims and sealing",
+            "Touch-ups and adjustments",
+            "End-of-work cleaning"
+          ],
+          "steps": [
+            "List of finishes to complete",
+            "Work by each trade",
+            "Quality check",
+            "Acceptance and handover"
+          ]
+        }
+      }
     },
     {
       "slug": "menuiserie-decoration",
@@ -286,7 +492,26 @@
         "Pose et ajustements"
       ],
       "featured": true,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Carpentry & cabinetmaking",
+          "short": "Walk-in wardrobes, cupboards, doors and wood panelling made to measure, to the millimetre.",
+          "intro": "Our carpenters and cabinetmakers build in the workshop, then install pieces that fit your walls and uses exactly: walk-in wardrobes, cupboards, bookcases, doors, headboards and wall panelling, in solid wood or panels.",
+          "features": [
+            "Custom walk-in wardrobes and cupboards",
+            "Bookcases and headboards",
+            "Doors and wall panelling",
+            "Solid wood, MDF, melamine"
+          ],
+          "steps": [
+            "Measurements",
+            "Plan and choice of finishes",
+            "Workshop manufacturing",
+            "Installation and adjustments"
+          ]
+        }
+      }
     },
     {
       "slug": "cuisines-sur-mesure",
@@ -309,7 +534,26 @@
         "Pose et raccordements"
       ],
       "featured": true,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Custom kitchens",
+          "short": "Galley, L-shaped, U-shaped or island kitchens, designed in 3D and built for your space.",
+          "intro": "The kitchen is the heart of the home. We design it with you in 3D, based on the way you cook, then build and install it: cabinets, fronts, worktops, storage and integrated appliances.",
+          "features": [
+            "Ergonomic 3D design",
+            "Galley, L-shaped, U-shaped and island kitchens",
+            "Wood, lacquered or melamine fronts",
+            "Integrated appliances"
+          ],
+          "steps": [
+            "Measurements and needs",
+            "3D plan and quote",
+            "Manufacturing",
+            "Installation and connections"
+          ]
+        }
+      }
     },
     {
       "slug": "tapisserie-mobilier",
@@ -332,7 +576,26 @@
         "Livraison et installation"
       ],
       "featured": false,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Upholstery & furniture",
+          "short": "Sofas, armchairs, headboards and chairs made or refurbished in the fabrics of your choice.",
+          "intro": "We make and restore upholstered furniture: sofas, armchairs, chairs, headboards and benches. Frame, foam and fabric are chosen to last and match your interior.",
+          "features": [
+            "Custom sofas and armchairs",
+            "Headboards and benches",
+            "Re-upholstery and fabric replacement",
+            "Wide choice of fabrics and colours"
+          ],
+          "steps": [
+            "Choice of model and dimensions",
+            "Fabric selection",
+            "Manufacturing",
+            "Delivery and installation"
+          ]
+        }
+      }
     },
     {
       "slug": "deco-murale-tv",
@@ -355,7 +618,26 @@
         "Pose et câblage"
       ],
       "featured": false,
-      "videos": []
+      "videos": [],
+      "i18n": {
+        "en": {
+          "title": "Feature walls & TV units",
+          "short": "TV walls, decorative panels and floating units with hidden cables and built-in lighting.",
+          "intro": "The TV wall often structures the whole living room. We design custom ensembles: decorative panels, niches, floating units, storage, built-in LED lighting and invisible cable management.",
+          "features": [
+            "TV walls and decorative panels",
+            "Floating TV units",
+            "Built-in LED lighting",
+            "Hidden cables and boxes"
+          ],
+          "steps": [
+            "Measurements and choice of style",
+            "3D plan",
+            "Manufacturing",
+            "Installation and wiring"
+          ]
+        }
+      }
     }
   ],
   "projects": [
@@ -383,21 +665,48 @@
         {
           "title": "Conception",
           "text": "Relevé du salon, plan d’aménagement et rendus 3D validés avec le client.",
-          "image": ""
+          "image": "",
+          "i18n": {
+            "en": {
+              "title": "Design",
+              "text": "Survey of the living room, layout plan and 3D renderings approved with the client."
+            }
+          }
         },
         {
           "title": "Staff et électricité",
           "text": "Pose du faux plafond, des gorges lumineuses et des spots encastrés.",
-          "image": "/images/interieur.jpg"
+          "image": "/images/interieur.jpg",
+          "i18n": {
+            "en": {
+              "title": "Plasterwork and electrical",
+              "text": "Installation of the suspended ceiling, lighting coves and recessed spotlights."
+            }
+          }
         },
         {
           "title": "Menuiserie et finitions",
           "text": "Fabrication et pose du meuble TV, peinture et mise en place du mobilier.",
-          "image": "/images/salon1.jpg"
+          "image": "/images/salon1.jpg",
+          "i18n": {
+            "en": {
+              "title": "Carpentry and finishing",
+              "text": "Manufacture and installation of the TV unit, painting and furniture layout."
+            }
+          }
         }
       ],
       "videos": [],
-      "published": true
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "Modern villa – main living room",
+          "description": "Complete living-room makeover: contemporary design, custom furniture and indirect lighting.",
+          "details": "The client wanted an open, bright living room. We reworked the layout, created a suspended ceiling with lighting coves, built a custom TV unit and harmonised the colours of the walls and furniture.",
+          "duration": "6 weeks",
+          "clientLabel": "Private client"
+        }
+      }
     },
     {
       "slug": "cuisine-haut-de-gamme",
@@ -421,7 +730,16 @@
       },
       "steps": [],
       "videos": [],
-      "published": true
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "High-end kitchen with island",
+          "description": "Modern kitchen with a central island, premium finishes and fully custom cabinetry.",
+          "details": "3D design, workshop manufacturing of cabinets and fronts, worktop installation and integrated appliances. The central island serves as both a preparation area and a dining spot.",
+          "duration": "4 weeks",
+          "clientLabel": "Private client"
+        }
+      }
     },
     {
       "slug": "suite-parentale",
@@ -445,7 +763,16 @@
       },
       "steps": [],
       "videos": [],
-      "published": true
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "Elegant master suite",
+          "description": "Master bedroom with built-in walk-in wardrobe, open bathroom and refined decoration.",
+          "details": "We redistributed the space to integrate a custom walk-in wardrobe and an open bathroom, with an upholstered headboard and indirect lighting.",
+          "duration": "5 weeks",
+          "clientLabel": "Private client"
+        }
+      }
     },
     {
       "slug": "salle-de-bain-moderne",
@@ -469,7 +796,16 @@
       },
       "steps": [],
       "videos": [],
-      "published": true
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "Modern bathroom",
+          "description": "Complete renovation: decorative plasterwork, large-format tiles and moisture-resistant paint.",
+          "details": "Removal of existing fittings, surface repairs, plaster suspended ceiling with spotlights, large-format tiling and moisture-resistant paint.",
+          "duration": "3 weeks",
+          "clientLabel": "Private client"
+        }
+      }
     },
     {
       "slug": "installation-sanitaire",
@@ -492,7 +828,16 @@
       },
       "steps": [],
       "videos": [],
-      "published": true
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "Concealed sanitary installation",
+          "description": "Concealed plumbing network with a toilet frame: functional, durable and neat.",
+          "details": "Creation of a concealed water supply and drainage network, installation of a frame and wall-hung toilet, leak tests before closing the partitions.",
+          "duration": "1 week",
+          "clientLabel": "Business client"
+        }
+      }
     },
     {
       "slug": "salle-a-manger",
@@ -516,33 +861,78 @@
       },
       "steps": [],
       "videos": [],
-      "published": true
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "Warm dining room",
+          "description": "Complete dining-room fit-out: a warm atmosphere and custom furniture.",
+          "details": "Custom sideboard and wall panelling, central light fitting highlighted by a plaster cornice, and a warm colour palette.",
+          "duration": "3 weeks",
+          "clientLabel": "Private client"
+        }
+      }
     }
   ],
   "faq": [
     {
       "q": "Le devis est-il gratuit ?",
-      "a": "Oui. Après un premier échange et, si nécessaire, une visite sur place, nous vous remettons un devis détaillé, gratuit et sans engagement."
+      "a": "Oui. Après un premier échange et, si nécessaire, une visite sur place, nous vous remettons un devis détaillé, gratuit et sans engagement.",
+      "i18n": {
+        "en": {
+          "q": "Is the quote free?",
+          "a": "Yes. After a first conversation and, if needed, a site visit, we give you a detailed quote, free and with no obligation."
+        }
+      }
     },
     {
       "q": "Pouvez-vous réaliser mes plans et mon dossier de permis ?",
-      "a": "Oui. Nous réalisons les plans d’architecture, les plans techniques et les rendus 3D, et préparons le dossier nécessaire à votre demande de permis de construire."
+      "a": "Oui. Nous réalisons les plans d’architecture, les plans techniques et les rendus 3D, et préparons le dossier nécessaire à votre demande de permis de construire.",
+      "i18n": {
+        "en": {
+          "q": "Can you produce my plans and building permit file?",
+          "a": "Yes. We produce architectural plans, technical plans and 3D renderings, and prepare the file needed for your building permit application."
+        }
+      }
     },
     {
       "q": "Puis-je suivre mon chantier à distance ?",
-      "a": "Oui. Nous vous envoyons régulièrement des photos et vidéos de l’avancement et restons joignables par téléphone ou WhatsApp, même si vous vivez à l’étranger."
+      "a": "Oui. Nous vous envoyons régulièrement des photos et vidéos de l’avancement et restons joignables par téléphone ou WhatsApp, même si vous vivez à l’étranger.",
+      "i18n": {
+        "en": {
+          "q": "Can I follow my project remotely?",
+          "a": "Yes. We regularly send you photos and videos of the progress and remain available by phone or WhatsApp, even if you live abroad."
+        }
+      }
     },
     {
       "q": "Les délais sont-ils garantis ?",
-      "a": "Le planning est défini et validé avec vous avant le démarrage. Nous nous engageons à le respecter et vous prévenons immédiatement en cas d’imprévu."
+      "a": "Le planning est défini et validé avec vous avant le démarrage. Nous nous engageons à le respecter et vous prévenons immédiatement en cas d’imprévu.",
+      "i18n": {
+        "en": {
+          "q": "Are deadlines guaranteed?",
+          "a": "The schedule is defined and approved with you before work starts. We commit to it and inform you immediately if anything unexpected happens."
+        }
+      }
     },
     {
       "q": "Proposez-vous une formule clés en main ?",
-      "a": "Oui. Nous coordonnons tous les corps de métier, des plans aux finitions : vous n’avez qu’un seul interlocuteur."
+      "a": "Oui. Nous coordonnons tous les corps de métier, des plans aux finitions : vous n’avez qu’un seul interlocuteur.",
+      "i18n": {
+        "en": {
+          "q": "Do you offer a turnkey service?",
+          "a": "Yes. We coordinate every trade, from plans to finishing: you have a single point of contact."
+        }
+      }
     },
     {
       "q": "Mon projet restera-t-il confidentiel ?",
-      "a": "Oui. Nous ne publions jamais votre nom ni votre adresse sans votre accord. Les photos que nous partageons sont choisies pour ne pas permettre de vous identifier."
+      "a": "Oui. Nous ne publions jamais votre nom ni votre adresse sans votre accord. Les photos que nous partageons sont choisies pour ne pas permettre de vous identifier.",
+      "i18n": {
+        "en": {
+          "q": "Will my project remain confidential?",
+          "a": "Yes. We never publish your name or address without your consent. The photos we share are chosen so that you cannot be identified."
+        }
+      }
     }
   ]
 }

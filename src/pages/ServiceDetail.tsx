@@ -5,14 +5,17 @@ import { ProjectCard, ServiceCard } from '../components/Cards';
 import { MediaList, ShareButtons } from '../components/Media';
 import { SafeImage } from '../components/SafeImage';
 import { usePageTitle } from '../lib/usePageTitle';
-import { services, projects, findService, whatsappLink } from '../data/site';
+import { useSite, useUi } from '../i18n/context';
 import { NotFound } from './NotFound';
 import '../styles/pages.css';
 
 export function ServiceDetail() {
   const { slug } = useParams();
+  const ui = useUi();
+  const t = ui.serviceDetail;
+  const { services, projects, findService, categoryLabel, whatsappLink } = useSite();
   const service = findService(slug);
-  usePageTitle(service?.title ?? 'Service introuvable');
+  usePageTitle(service?.title ?? t.notFound);
 
   if (!service) return <NotFound />;
 
@@ -23,12 +26,12 @@ export function ServiceDetail() {
 
   return (
     <>
-      <PageHero eyebrow={service.category} title={service.title} text={service.short} image={service.image} />
+      <PageHero eyebrow={categoryLabel(service.category)} title={service.title} text={service.short} image={service.image} />
 
       <section className="section">
         <div className="container detail-layout">
           <Reveal className="detail-main">
-            <h2>Ce que nous faisons</h2>
+            <h2>{t.whatWeDo}</h2>
             <p className="split-text">{service.intro}</p>
 
             <ul className="check-list">
@@ -37,7 +40,7 @@ export function ServiceDetail() {
               ))}
             </ul>
 
-            <h2>Déroulement</h2>
+            <h2>{t.process}</h2>
             <ol className="timeline">
               {service.steps.map((step, i) => (
                 <li key={step}>
@@ -49,7 +52,7 @@ export function ServiceDetail() {
 
             {hasVideos && (
               <>
-                <h2>En vidéo</h2>
+                <h2>{t.inVideo}</h2>
                 <MediaList videos={service.videos} />
               </>
             )}
@@ -60,21 +63,16 @@ export function ServiceDetail() {
           <Reveal delay={120}>
             <aside className="detail-aside">
               <SafeImage src={service.image} alt={service.title} />
-              <h3>Un projet de {service.title.toLowerCase()} ?</h3>
-              <p>Devis gratuit et sans engagement, établi après un premier échange.</p>
+              <h3>{t.asideTitle(service.title)}</h3>
+              <p>{t.asideText}</p>
               <Link to={`/contact?service=${service.slug}`} className="btn btn-primary">
-                Demander un devis <FileText />
+                {ui.common.requestQuote} <FileText />
               </Link>
               <Link to="/rdv" className="btn btn-outline">
-                Prendre RDV <CalendarDays />
+                {ui.nav.appointment} <CalendarDays />
               </Link>
-              <a
-                href={whatsappLink(`Bonjour Building Service, je souhaite un devis pour : ${service.title}.`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="aside-whatsapp"
-              >
-                Écrire sur WhatsApp
+              <a href={whatsappLink(t.whatsappMessage(service.title))} target="_blank" rel="noopener noreferrer" className="aside-whatsapp">
+                {ui.common.writeWhatsapp}
               </a>
             </aside>
           </Reveal>
@@ -84,7 +82,7 @@ export function ServiceDetail() {
       {related.length > 0 && (
         <section className="section soft-band">
           <div className="container">
-            <SectionIntro eyebrow="Réalisations" title={`Nos projets : ${service.title.toLowerCase()}`} />
+            <SectionIntro eyebrow={t.relatedEyebrow} title={t.relatedTitle(service.title)} />
             <div className="cards-grid-3">
               {related.map(project => (
                 <Reveal key={project.slug}><ProjectCard project={project} /></Reveal>
@@ -96,7 +94,7 @@ export function ServiceDetail() {
 
       <section className="section">
         <div className="container">
-          <SectionIntro eyebrow="À découvrir aussi" title="Services complémentaires" />
+          <SectionIntro eyebrow={t.othersEyebrow} title={t.othersTitle} />
           <div className="cards-grid-3">
             {others.map(s => (
               <Reveal key={s.slug}><ServiceCard service={s} /></Reveal>
@@ -104,7 +102,7 @@ export function ServiceDetail() {
           </div>
           <div className="center-actions">
             <Link to="/services" className="btn btn-dark">
-              Tous nos services <ArrowRight />
+              {t.allServices} <ArrowRight />
             </Link>
           </div>
         </div>

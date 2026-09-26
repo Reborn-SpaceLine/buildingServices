@@ -4,6 +4,7 @@ import { ExternalLink, Film, Link2, Check } from 'lucide-react';
 import { TikTokIcon, FacebookIcon, InstagramIcon, YouTubeIcon, WhatsAppIcon, LinkedInIcon } from './SocialIcons';
 import type { MediaLink, Platform } from '../content/types';
 import { platforms, youtubeId } from '../content/platforms';
+import { useLang, useUi } from '../i18n/context';
 import '../styles/media.css';
 
 export function PlatformIcon({ platform, size = 20 }: { platform: Platform; size?: number }) {
@@ -18,7 +19,9 @@ export function PlatformIcon({ platform, size = 20 }: { platform: Platform; size
 }
 
 export function MediaEmbed({ media }: { media: MediaLink }) {
-  const info = platforms[media.platform] ?? platforms.autre;
+  const ui = useUi();
+  const color = (platforms[media.platform] ?? platforms.autre).color;
+  const label = ui.media.platforms[media.platform] ?? ui.media.platforms.autre;
   const ytId = media.platform === 'youtube' ? youtubeId(media.url) : null;
 
   if (ytId) {
@@ -27,7 +30,7 @@ export function MediaEmbed({ media }: { media: MediaLink }) {
         <div className="media-frame">
           <iframe
             src={`https://www.youtube-nocookie.com/embed/${ytId}`}
-            title={media.title || 'Vidéo YouTube'}
+            title={media.title || ui.media.youtubeVideo}
             loading="lazy"
             allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -50,11 +53,11 @@ export function MediaEmbed({ media }: { media: MediaLink }) {
   }
 
   return (
-    <a href={media.url} target="_blank" rel="noopener noreferrer" className="media-link" style={{ '--platform': info.color } as CSSProperties}>
+    <a href={media.url} target="_blank" rel="noopener noreferrer" className="media-link" style={{ '--platform': color } as CSSProperties}>
       <span className="media-link-icon"><PlatformIcon platform={media.platform} size={22} /></span>
       <span className="media-link-text">
-        <strong>{media.title || `Voir la vidéo`}</strong>
-        <span>Voir sur {info.label}</span>
+        <strong>{media.title || ui.media.watchVideo}</strong>
+        <span>{ui.media.seeOn} {label}</span>
       </span>
       <ExternalLink size={18} />
     </a>
@@ -71,10 +74,17 @@ export function MediaList({ videos }: { videos: MediaLink[] }) {
   );
 }
 
-/** Partage d'une page (projet, service) sur les réseaux */
+/** Partage d'une page (projet, service) sur les réseaux, dans la langue affichée */
 export function ShareButtons({ title }: { title: string }) {
+  const ui = useUi();
+  const { lang } = useLang();
   const [copied, setCopied] = useState(false);
-  const url = typeof window !== 'undefined' ? window.location.href : '';
+
+  const current = new URL(window.location.href);
+  if (lang === 'fr') current.searchParams.delete('lang');
+  else current.searchParams.set('lang', lang);
+  const url = current.toString();
+
   const encoded = encodeURIComponent(url);
   const text = encodeURIComponent(`${title} – Building Service`);
 
@@ -84,17 +94,17 @@ export function ShareButtons({ title }: { title: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      window.prompt('Copiez ce lien :', url);
+      window.prompt(ui.media.copyPrompt, url);
     }
   };
 
   return (
     <div className="share">
-      <span>Partager :</span>
-      <a href={`https://wa.me/?text=${text}%20${encoded}`} target="_blank" rel="noopener noreferrer" aria-label="Partager sur WhatsApp"><WhatsAppIcon size={18} /></a>
-      <a href={`https://www.facebook.com/sharer/sharer.php?u=${encoded}`} target="_blank" rel="noopener noreferrer" aria-label="Partager sur Facebook"><FacebookIcon size={18} /></a>
-      <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encoded}`} target="_blank" rel="noopener noreferrer" aria-label="Partager sur LinkedIn"><LinkedInIcon size={18} /></a>
-      <button onClick={copy} aria-label="Copier le lien">{copied ? <Check size={18} /> : <Link2 size={18} />}</button>
+      <span>{ui.media.share}</span>
+      <a href={`https://wa.me/?text=${text}%20${encoded}`} target="_blank" rel="noopener noreferrer" aria-label={`${ui.media.shareOn} WhatsApp`}><WhatsAppIcon size={18} /></a>
+      <a href={`https://www.facebook.com/sharer/sharer.php?u=${encoded}`} target="_blank" rel="noopener noreferrer" aria-label={`${ui.media.shareOn} Facebook`}><FacebookIcon size={18} /></a>
+      <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encoded}`} target="_blank" rel="noopener noreferrer" aria-label={`${ui.media.shareOn} LinkedIn`}><LinkedInIcon size={18} /></a>
+      <button onClick={copy} aria-label={ui.media.copyLink}>{copied ? <Check size={18} /> : <Link2 size={18} />}</button>
     </div>
   );
 }

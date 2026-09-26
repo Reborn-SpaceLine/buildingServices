@@ -1,20 +1,18 @@
 import { PageHero, Reveal, SectionIntro, CtaBanner } from '../components/ui';
 import { ServiceCard } from '../components/Cards';
 import { usePageTitle } from '../lib/usePageTitle';
-import { images, services, servicesByCategory, processSteps } from '../data/site';
+import { images } from '../data/site';
+import { useSite, useUi } from '../i18n/context';
 import '../styles/pages.css';
 
 export function ServicesPage() {
-  usePageTitle('Nos services');
+  const t = useUi().services;
+  const { services, servicesByCategory, processSteps } = useSite();
+  usePageTitle(t.title);
 
   return (
     <>
-      <PageHero
-        eyebrow="Services"
-        title="Tous les corps de métier, un seul interlocuteur."
-        text={`Plans d’architecture, construction, installations, finitions et aménagement : ${services.length} savoir-faire coordonnés par une seule équipe, pour un projet clés en main.`}
-        image={images.services2}
-      />
+      <PageHero eyebrow={t.heroEyebrow} title={t.heroTitle} text={t.heroText(services.length)} image={images.services2} />
 
       {servicesByCategory.map((group, g) => (
         <section key={group.category} className={`section ${g % 2 === 1 ? 'soft-band' : ''}`}>
@@ -33,11 +31,7 @@ export function ServicesPage() {
 
       <section className="section">
         <div className="container">
-          <SectionIntro
-            eyebrow="Comment ça marche"
-            title="Trois étapes, zéro surprise."
-            text="Chaque projet suit la même méthode éprouvée, pour que vous gardiez le contrôle du début à la fin."
-          />
+          <SectionIntro eyebrow={t.howEyebrow} title={t.howTitle} text={t.howText} />
           <div className="steps-row">
             {processSteps.map((step, i) => (
               <Reveal key={step.title} delay={i * 100} className="step-item">
@@ -50,11 +44,7 @@ export function ServicesPage() {
         </div>
       </section>
 
-      <CtaBanner
-        image={images.cuisine}
-        title="Un projet en tête ? Parlons-en."
-        text="Décrivez-nous votre besoin : nous revenons vers vous rapidement avec une première estimation et une proposition de rendez-vous."
-      />
+      <CtaBanner image={images.cuisine} title={t.ctaTitle} text={t.ctaText} />
     </>
   );
 }

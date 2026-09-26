@@ -1,0 +1,19 @@
+# Lancement en production avec Docker Compose :
+#   cp .env.example .env      (puis renseignez ADMIN_PASSWORD et SITE_URL)
+#   docker compose up -d
+#
+# Mise à jour : docker compose pull && docker compose up -d   (les données du volume sont conservées)
+
+services:
+  site:
+    image: ghcr.io/reborn-spaceline/buildingservices:latest
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file: .env
+    volumes:
+      - site-data:/data
+
+volumes:
+  site-data:

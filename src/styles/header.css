@@ -362,3 +362,60 @@
   text-transform: uppercase;
   color: #f87171;
 }
+/* Sélecteur de langue */
+.lang-switch {
+  display: inline-flex;
+  padding: 3px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.lang-switch:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.lang-switch span {
+  min-width: 34px;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--radius-pill);
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.lang-switch span.active {
+  background: var(--color-white);
+  color: var(--color-dark);
+}
+
+/* Sélecteur de la barre sur téléphone : centré, juste à gauche du bouton menu */
+.header-bar > .mobile-lang {
+  align-self: center;
+  margin-left: auto;
+}
+
+/* Un seul sélecteur à la fois : celui de la barre sur téléphone, celui des actions au-delà */
+@media (min-width: 561px) {
+  .header-bar > .mobile-lang {
+    display: none;
+  }
+}
+
+/* Sur mobile, le choix de langue est dans le menu */
+@media (max-width: 560px) {
+  .header-lang {
+    display: none;
+  }
+}
+
+@media (min-width: 1100px) {
+  .mobile-lang {
+    display: none;
+  }
+}

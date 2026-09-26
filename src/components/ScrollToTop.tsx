@@ -1,8 +1,10 @@
 import  { useState, useEffect } from 'react';
 import { ChevronUp } from 'lucide-react';
 import '../styles/scroll-to-top.css';
+import { useUi } from '../i18n/context';
 
 export function ScrollToTop() {
+  const ui = useUi();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export function ScrollToTop() {
     <button
       className={`scroll-to-top ${isVisible ? 'visible' : ''}`}
       onClick={scrollToTop}
-      aria-label="Retour en haut"
+      aria-label={ui.floating.backToTop}
     >
       <ChevronUp size={50} className='chevronup' />
     </button>

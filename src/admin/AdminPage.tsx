@@ -5,6 +5,7 @@ import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, 
 import { authStatus, setupPassword, login, logout, fetchContent, saveContent, downloadJson, AuthError } from './api';
 import { GeneralTab, ServicesTab, ProjectsTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
 import { TextInput } from './fields';
+import { TranslationsTab } from './translations';
 import type { SiteContent } from '../content/types';
 import '../styles/admin.css';
 
@@ -14,13 +15,14 @@ const tabs = [
   { id: 'projects', label: 'Réalisations' },
   { id: 'videos', label: 'Vidéos' },
   { id: 'faq', label: 'FAQ' },
+  { id: 'translations', label: 'Traductions' },
   { id: 'messages', label: 'Messages' },
   { id: 'security', label: 'Sécurité' },
   { id: 'guide', label: 'Guide' },
 ] as const;
 
 type TabId = typeof tabs[number]['id'];
-type Mode = 'loading' | 'unavailable' | 'setup' | 'login' | 'ready';
+type Mode = 'loading' | 'unavailable' | 'no-password' | 'setup' | 'login' | 'ready';
 type Status = { type: 'idle' | 'saving' | 'saved' | 'error'; message?: string };
 
 /** Vérifie les erreurs bloquantes avant d'enregistrer */
@@ -110,8 +112,8 @@ export default function AdminPage() {
   useEffect(() => {
     document.title = 'Administration | Building Service';
     authStatus()
-      .then(({ configured, authenticated }) => {
-        if (!configured) setMode('setup');
+      .then(({ configured, authenticated, canSetup }) => {
+        if (!configured) setMode(canSetup ? 'setup' : 'no-password');
         else if (!authenticated) setMode('login');
         else loadContent();
       })
@@ -172,6 +174,22 @@ export default function AdminPage() {
     return <LoginScreen setup={mode === 'setup'} onSuccess={loadContent} />;
   }
 
+  if (mode === 'no-password') {
+    return (
+      <div className="a-center">
+        <div className="a-card a-locked">
+          <KeyRound size={32} />
+          <h1>Mot de passe à définir</h1>
+          <p>
+            Pour des raisons de sécurité, le premier mot de passe de l’administration ne se crée pas depuis Internet.
+            Définissez la variable <code>ADMIN_PASSWORD</code> sur le serveur, puis redémarrez-le.
+          </p>
+          <Link to="/" className="a-btn a-btn-dark">Retour au site</Link>
+        </div>
+      </div>
+    );
+  }
+
   if (mode === 'unavailable' || !content) {
     return (
       <div className="a-center">
@@ -179,8 +197,8 @@ export default function AdminPage() {
           <Lock size={32} />
           <h1>Espace d’administration</h1>
           <p>
-            L’administration fonctionne en local, sur l’ordinateur qui contient le projet.
-            Lancez <code>npm run dev</code> dans le dossier du site, puis ouvrez <code>http://localhost:5173/admin</code>.
+            Le serveur d’administration ne répond pas. En production, lancez le site avec son serveur
+            (<code>npm start</code> ou l’image Docker) ; en local, avec <code>npm run dev</code>.
           </p>
           <Link to="/" className="a-btn a-btn-dark">Retour au site</Link>
         </div>
@@ -227,6 +245,7 @@ export default function AdminPage() {
         {tab === 'projects' && <ProjectsTab content={content} update={update} />}
         {tab === 'videos' && <VideosTab content={content} update={update} goTo={setTab} />}
         {tab === 'faq' && <FaqTab content={content} update={update} />}
+        {tab === 'translations' && <TranslationsTab content={content} update={update} />}
         {tab === 'messages' && <MessagesTab />}
         {tab === 'security' && <SecurityTab onLogout={handleLogout} />}
         {tab === 'guide' && <GuideTab />}

@@ -1,0 +1,15 @@
+# Jamais dans l'image
+node_modules
+dist
+data
+content-private
+.git
+.github
+.vscode
+.idea
+*.log
+.env
+.env.*
+!.env.example
+Dockerfile
+docker-compose.yml

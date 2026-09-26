@@ -1,25 +1,23 @@
 {
-  "name": "building",
+  "name": "building-service",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:reseau": "vite --host",
     "build": "tsc -b && vite build",
+    "start": "node server/index.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "check": "npm run lint && npm run build",
-    "apercu": "npm run check && vite preview --open",
-    "render-build": "echo 'No build needed on Render'",
-    "render-start port": "npx serve dist -s -p $PORT",
-    "render-start": "npx serve dist -s"
+    "apercu": "npm run check && npm start"
   },
   "dependencies": {
     "lucide-react": "^0.542.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.18.4",
-    "serve": "^14.2.1"
+    "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
@@ -33,5 +31,8 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

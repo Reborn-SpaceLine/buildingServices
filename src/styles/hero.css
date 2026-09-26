@@ -153,18 +153,23 @@
   color: var(--color-dark);
 }
 
-.hero-call {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.25rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  transition: color 0.2s ease;
+/* Bouton téléphone : même forme que les autres, plus discret (fond translucide) */
+.btn-ghost-white {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  color: var(--color-white);
 }
 
-.hero-call:hover {
-  color: #fca5a5;
+.btn-ghost-white:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.hero-call {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 /* Chiffres clés */
@@ -402,8 +407,15 @@
   }
 }
 
-@media (max-width: 420px) {
-  .hero-socials {
-    display: none;
+/* Téléphone : réseaux sociaux toujours visibles, icônes assez grandes pour le doigt */
+@media (max-width: 768px) {
+  .hero-socials .social-icon-link.sm {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .hero-socials .social-icon-link.sm svg {
+    width: 20px;
+    height: 20px;
   }
 }

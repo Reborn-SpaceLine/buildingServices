@@ -4,8 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { PageHero, Reveal } from '../components/ui';
 import { usePageTitle } from '../lib/usePageTitle';
-import { company, services, whatsappLink } from '../data/site';
-import { addMessage } from '../lib/messages';
+import { useLang, useSite, useUi } from '../i18n/context';
+import { sendMessage } from '../lib/messages';
 import '../styles/pages.css';
 
 interface FormData {
@@ -16,24 +16,33 @@ interface FormData {
   message: string;
 }
 
-type Status = { type: 'success' | 'error' | null; message: string };
-
-const subjects = [...services.map(s => ({ value: s.slug, label: s.title })), { value: 'maintenance', label: 'Maintenance' }, { value: 'autre', label: 'Autre demande' }];
-
 export function ContactPage() {
-  usePageTitle('Contact');
+  const ui = useUi();
+  const t = ui.contact;
+  const { company, services, whatsappLink } = useSite();
+  const { lang } = useLang();
+  usePageTitle(t.title);
+
+  const subjects = [
+    ...services.map(s => ({ value: s.slug, label: s.title })),
+    { value: 'maintenance', label: t.maintenance },
+    { value: 'autre', label: t.otherRequest },
+  ];
+
   const [params] = useSearchParams();
   const initialSubject = subjects.some(s => s.value === params.get('service')) ? params.get('service')! : '';
 
   const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', subject: initialSubject, message: '' });
   const [sendWhatsapp, setSendWhatsapp] = useState(true);
-  const [status, setStatus] = useState<Status>({ type: null, message: '' });
+  const [status, setStatus] = useState<'success' | 'error' | 'rate' | null>(null);
+  const [sending, setSending] = useState(false);
+  const [website, setWebsite] = useState(''); // piège à robots
 
   const contactInfo = [
-    { icon: Phone, title: 'Téléphone', value: company.phone, href: company.phoneHref },
-    { icon: Mail, title: 'Email', value: company.email, href: `mailto:${company.email}` },
-    { icon: MapPin, title: 'Zone d’intervention', value: company.city },
-    { icon: Clock, title: 'Horaires', value: company.hours },
+    { icon: Phone, title: t.infoPhone, value: company.phone, href: company.phoneHref },
+    { icon: Mail, title: t.infoEmail, value: company.email, href: `mailto:${company.email}` },
+    { icon: MapPin, title: t.infoArea, value: company.city },
+    { icon: Clock, title: t.infoHours, value: company.hours },
   ];
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -41,82 +50,81 @@ export function ContactPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const subjectLabel = subjects.find(s => s.value === formData.subject)?.label ?? 'Non précisé';
-
-    try {
-      addMessage({ ...formData, subject: subjectLabel });
-    } catch {
-      setStatus({ type: 'error', message: 'Une erreur est survenue. Veuillez réessayer ou nous appeler directement.' });
-      return;
-    }
+    const subjectLabel = subjects.find(s => s.value === formData.subject)?.label ?? t.notSpecified;
 
     // Ouvert immédiatement (dans le clic) pour ne pas être bloqué par le navigateur
     if (sendWhatsapp) {
-      const text = `Bonjour Building Service,\n\nNom : ${formData.name}\nTéléphone : ${formData.phone}\nEmail : ${formData.email}\nObjet : ${subjectLabel}\n\n${formData.message}`;
-      window.open(whatsappLink(text), '_blank', 'noopener');
+      window.open(whatsappLink(t.whatsappMessage({ ...formData, subject: subjectLabel })), '_blank', 'noopener');
     }
 
-    setStatus({ type: 'success', message: 'Merci ! Votre message a bien été envoyé. Nous vous recontactons rapidement.' });
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    setSending(true);
+    const result = await sendMessage({ ...formData, subject: subjectLabel, lang, website });
+    setSending(false);
+
+    // Envoyé sur WhatsApp : la demande est transmise même si le serveur n'a pas répondu
+    if (result === 'ok' || sendWhatsapp) {
+      setStatus('success');
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } else {
+      setStatus(result === 'rate-limited' ? 'rate' : 'error');
+    }
   };
 
   return (
     <>
-      <PageHero
-        eyebrow="Contact"
-        title="Entrons en contact."
-        text="Une question, un projet, une demande de devis ? Laissez-nous un message : nous vous répondons sous 24 h ouvrées."
-      />
+      <PageHero eyebrow={t.title} title={t.heroTitle} text={t.heroText} />
 
       <section className="section">
         <div className="container contact-layout">
           <Reveal className="contact-form-card">
-            <h2>Envoyez-nous un <span className="highlight">message</span></h2>
-            <p className="form-lead">Décrivez-nous votre projet, nous vous recontactons rapidement.</p>
+            <h2>{t.formTitleStart} <span className="highlight">{t.formTitleHighlight}</span></h2>
+            <p className="form-lead">{t.formLead}</p>
 
-            {status.type && (
-              <div className={`form-status ${status.type}`} role="status">
-                {status.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
-                <span>{status.message}</span>
+            {status && (
+              <div className={`form-status ${status}`} role="status">
+                {status === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
+                <span>{status === 'success' ? t.success : status === 'rate' ? t.rateLimited : t.error}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="form" aria-label="Formulaire de contact">
+            <form onSubmit={handleSubmit} className="form" aria-label={t.formLabel}>
               <div className="form-row">
                 <label className="field">
-                  <span>Nom complet *</span>
-                  <input name="name" required value={formData.name} onChange={handleChange} placeholder="Votre nom complet" autoComplete="name" />
+                  <span>{t.name}</span>
+                  <input name="name" required value={formData.name} onChange={handleChange} placeholder={t.namePlaceholder} autoComplete="name" />
                 </label>
                 <label className="field">
-                  <span>Téléphone *</span>
+                  <span>{t.phone}</span>
                   <input name="phone" type="tel" required value={formData.phone} onChange={handleChange} placeholder="+237 6XX XX XX XX" autoComplete="tel" />
                 </label>
               </div>
               <div className="form-row">
                 <label className="field">
-                  <span>Email</span>
-                  <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="votre.email@exemple.com" autoComplete="email" />
+                  <span>{t.email}</span>
+                  <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder={t.emailPlaceholder} autoComplete="email" />
                 </label>
                 <label className="field">
-                  <span>Objet</span>
+                  <span>{t.subject}</span>
                   <select name="subject" value={formData.subject} onChange={handleChange}>
-                    <option value="">Choisissez un service</option>
+                    <option value="">{t.chooseService}</option>
                     {subjects.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                   </select>
                 </label>
               </div>
               <label className="field">
-                <span>Message *</span>
-                <textarea name="message" required rows={6} value={formData.message} onChange={handleChange} placeholder="Décrivez votre projet : type de travaux, surface, délais souhaités…" />
+                <span>{t.message}</span>
+                <textarea name="message" required rows={6} value={formData.message} onChange={handleChange} placeholder={t.messagePlaceholder} />
               </label>
+              {/* Champ invisible : seuls les robots le remplissent */}
+              <input className="hp-field" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={e => setWebsite(e.target.value)} aria-hidden="true" />
               <label className="checkbox">
                 <input type="checkbox" checked={sendWhatsapp} onChange={e => setSendWhatsapp(e.target.checked)} />
-                <span>M’envoyer aussi sur WhatsApp pour une réponse plus rapide</span>
+                <span>{t.alsoWhatsapp}</span>
               </label>
-              <button type="submit" className="btn btn-primary form-submit">
-                <Send /> Envoyer mon message
+              <button type="submit" className="btn btn-primary form-submit" disabled={sending}>
+                <Send /> {t.send}
               </button>
             </form>
           </Reveal>
@@ -139,8 +147,8 @@ export function ContactPage() {
             })}
             <div className="map-box">
               <iframe
-                title="Carte de notre zone d’intervention"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(company.mapQuery)}&output=embed`}
+                title={t.mapTitle}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(company.mapQuery)}&hl=${ui.locale.slice(0, 2)}&output=embed`}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />

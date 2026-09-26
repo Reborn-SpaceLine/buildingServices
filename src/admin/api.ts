@@ -1,6 +1,6 @@
 import type { SiteContent } from '../content/types';
 
-const API = '/__admin/api';
+const API = '/api/admin';
 const TOKEN_KEY = 'bs_admin_token';
 
 /* ---------- Session (jeton gardé le temps de l'onglet) ---------- */
@@ -40,7 +40,7 @@ const postJson = <T>(url: string, body: unknown) =>
 
 /* ---------- Authentification ---------- */
 export function authStatus() {
-  return request<{ configured: boolean; authenticated: boolean }>(`${API}/auth/status`);
+  return request<{ configured: boolean; authenticated: boolean; canSetup: boolean }>(`${API}/auth/status`);
 }
 
 export async function setupPassword(password: string) {
@@ -95,4 +95,33 @@ export function downloadJson(data: unknown, fileName: string) {
   link.download = fileName;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+/* ---------- Messages des formulaires ---------- */
+export interface ServerMessage {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  subject: string;
+  message: string;
+  lang?: string;
+  timestamp: string;
+  status: 'nouveau' | 'lu' | 'traité';
+}
+
+export function fetchMessages() {
+  return request<ServerMessage[]>(`${API}/messages`);
+}
+
+export function setMessageStatus(id: string, status: ServerMessage['status']) {
+  return request<{ ok: true }>(`${API}/messages/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+}
+
+export function deleteMessage(id: string) {
+  return request<{ ok: true }>(`${API}/messages/${id}`, { method: 'DELETE' });
 }

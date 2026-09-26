@@ -2,55 +2,42 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Award } from 'lucide-react';
 import { PageHero, Reveal, SectionIntro, Counter, CtaBanner } from '../components/ui';
 import { usePageTitle } from '../lib/usePageTitle';
-import { images, stats, values } from '../data/site';
+import { images } from '../data/site';
+import { useSite, useUi } from '../i18n/context';
 import '../styles/pages.css';
 
 export function AboutPage() {
-  usePageTitle('À propos');
+  const ui = useUi();
+  const t = ui.about;
+  const { stats, values } = useSite();
+  usePageTitle(t.title);
+
+  const gallery = [images.about, images.interieur, images.salon, images.cuisine];
 
   return (
     <>
-      <PageHero
-        eyebrow="À propos"
-        title="Bâtir au Cameroun selon les meilleurs standards."
-        text="Découvrez l’histoire, l’équipe et les valeurs qui font de Building Service votre partenaire de confiance."
-        image={images.work}
-      />
+      <PageHero eyebrow={ui.nav.about} title={t.heroTitle} text={t.heroText} image={images.work} />
 
       <section className="section">
         <div className="container split">
           <Reveal>
-            <span className="eyebrow">Qui sommes-nous ?</span>
-            <h2 className="split-title">Transformer vos idées en <span className="highlight">espaces réels</span>.</h2>
-            <p className="split-text">
-              Fondée avec la passion de transformer les espaces de vie et de travail, Building Service est devenue une
-              référence dans le domaine de la construction et de la rénovation. Notre équipe d’experts qualifiés met son
-              savoir-faire au service de vos projets les plus ambitieux.
-            </p>
-            <p className="split-text">
-              De l’architecture d’intérieur à la menuiserie sur mesure, en passant par le staff, la peinture décorative,
-              la plomberie et le carrelage, nous couvrons tous les aspects de l’aménagement pour vous offrir un service
-              complet et personnalisé.
-            </p>
+            <span className="eyebrow">{t.whoEyebrow}</span>
+            <h2 className="split-title">{t.whoTitleStart} <span className="highlight">{t.whoTitleHighlight}</span>.</h2>
+            <p className="split-text">{t.whoText1}</p>
+            <p className="split-text">{t.whoText2}</p>
             <div className="mission-box">
-              <h3>Notre mission</h3>
-              <p>
-                Créer des espaces uniques qui reflètent votre personnalité et répondent à vos besoins, tout en respectant
-                votre budget et vos délais.
-              </p>
+              <h3>{t.missionTitle}</h3>
+              <p>{t.missionText}</p>
             </div>
           </Reveal>
 
           <Reveal delay={120} className="about-gallery">
-            <img src={images.about} alt="Chantier Building Service" loading="lazy" />
-            <img src={images.interieur} alt="Intérieur aménagé" loading="lazy" />
-            <img src={images.salon} alt="Salon rénové" loading="lazy" />
-            <img src={images.cuisine} alt="Cuisine sur mesure" loading="lazy" />
+            {gallery.map((src, i) => <img key={src} src={src} alt={t.galleryAlt[i]} loading="lazy" />)}
             <div className="about-badge">
               <Award />
               <div>
                 <strong>10+</strong>
-                <span>années d’expertise</span>
+                <span>{t.badgeLabel}</span>
               </div>
             </div>
           </Reveal>
@@ -70,11 +57,7 @@ export function AboutPage() {
 
       <section className="section">
         <div className="container">
-          <SectionIntro
-            eyebrow="Nos valeurs"
-            title="Ce qui guide chacun de nos engagements."
-            text="Six principes simples, appliqués sur chaque chantier, quelle que soit sa taille."
-          />
+          <SectionIntro eyebrow={t.valuesEyebrow} title={t.valuesTitle} text={t.valuesText} />
           <div className="values-grid">
             {values.map((value, i) => {
               const Icon = value.icon;
@@ -89,17 +72,13 @@ export function AboutPage() {
           </div>
           <div className="center-actions">
             <Link to="/contact" className="btn btn-primary">
-              Travailler avec nous <ArrowRight />
+              {t.workWithUs} <ArrowRight />
             </Link>
           </div>
         </div>
       </section>
 
-      <CtaBanner
-        image={images.renovation}
-        title="Parlons de votre projet."
-        text="Un premier rendez-vous gratuit et sans engagement pour comprendre vos besoins et vous proposer la meilleure solution."
-      />
+      <CtaBanner image={images.renovation} title={t.ctaTitle} text={t.ctaText} />
     </>
   );
 }

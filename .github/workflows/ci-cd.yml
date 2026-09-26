@@ -1,9 +1,10 @@
-# Intégration continue + déploiement continu
+# Intégration continue + livraison continue (Docker)
 #
-#  Pull Request  → vérification (lint, TypeScript, build) → aperçu en ligne temporaire (lien posté dans la PR)
-#  Push sur main → vérification → mise en production sur Firebase Hosting
+#  Pull Request  → vérification (lint, TypeScript, build) → image Docker testée et publiée en aperçu (tag pr-<numéro>)
+#  Push sur main → vérification → image Docker testée et publiée (tags latest + sha) → déploiement (si configuré)
 #
-# Rien n'est publié si la vérification échoue.
+# Rien n'est publié si une étape échoue.
+# Images : ghcr.io/<propriétaire>/<dépôt> (GitHub Container Registry, onglet « Packages » du dépôt).
 
 name: CI / CD
 
@@ -42,58 +43,100 @@ jobs:
       - name: TypeScript + build de production
         run: npm run build
 
-      - name: Conserver le site construit
-        uses: actions/upload-artifact@v4
-        with:
-          name: site
-          path: dist
-          retention-days: 7
-
-  apercu:
-    name: Aperçu avant validation
+  image:
+    name: Image Docker (test + publication)
     needs: verification
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      checks: write
-      pull-requests: write
+      packages: write
+    # Les PR venant d'un fork ne peuvent pas publier d'image : elles sont seulement testées
+    env:
+      PUBLISH: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: site
-          path: dist
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Publication sur un canal d'aperçu Firebase
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Noms et tags de l'image
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BUILDING_SERVICES_2024 }}
-          projectId: building-services-2024
-          expires: 7d
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=pr
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=sha,prefix=,format=short,enable=${{ github.ref == 'refs/heads/main' }}
 
-  production:
-    name: Mise en production
-    needs: verification
+      - name: Construction
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: building-service:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test de l'image (démarrage, santé, pages, API, sécurité)
+        run: |
+          docker run -d --name site -p 8080:8080 -e ADMIN_PASSWORD=motdepasse-de-test building-service:test
+          for i in $(seq 1 30); do curl -fsS http://localhost:8080/healthz && break; sleep 1; done
+          curl -fsS http://localhost:8080/ | grep -q '<div id="root">'
+          curl -fsS http://localhost:8080/services/plans-architecture | grep -q '<div id="root">'
+          curl -fsS http://localhost:8080/api/content | grep -q '"services"'
+          curl -fsS http://localhost:8080/sitemap.xml | grep -q '<urlset'
+          # L'admin refuse l'accès sans mot de passe, et la création d'un mot de passe depuis l'extérieur
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/admin/content)" = "401"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"password":"x"}' http://localhost:8080/api/admin/auth/login)" = "401"
+          docker logs site
+
+      - name: Connexion au registre GitHub
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publication
+        if: env.PUBLISH == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+
+      - name: Comment essayer cette version
+        if: env.PUBLISH == 'true'
+        run: |
+          {
+            echo "### Image publiée"
+            echo ""
+            echo '```bash'
+            echo "docker run --rm -p 8080:8080 -e ADMIN_PASSWORD=unmotdepasse $(echo '${{ steps.meta.outputs.tags }}' | head -n 1)"
+            echo '```'
+            echo ""
+            echo "Puis ouvrir http://localhost:8080 (admin : http://localhost:8080/admin)."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploiement:
+    name: Déploiement en production
+    needs: image
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://building-services-2024.web.app
+    environment: production
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: site
-          path: dist
-
-      - name: Publication sur Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BUILDING_SERVICES_2024 }}
-          projectId: building-services-2024
-          channelId: live
+      # Hébergeurs compatibles : Render, Coolify, Portainer, CapRover… (« deploy hook » / webhook de redéploiement).
+      # Renseignez le secret DEPLOY_HOOK_URL dans Settings → Secrets and variables → Actions.
+      - name: Déclencher le redéploiement
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK_URL" ]; then
+            echo "::notice::Aucun DEPLOY_HOOK_URL configuré : l'image latest est publiée, redéployez-la sur votre serveur (docker compose pull && docker compose up -d)."
+            exit 0
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK_URL"
+          echo "Redéploiement demandé."

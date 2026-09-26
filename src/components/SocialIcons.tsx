@@ -1,5 +1,5 @@
 import '../styles/socialIcons.css';
-import { company } from '../data/site';
+import { useSite } from '../i18n/context';
 
 // TikTok Icon component (since it's not in lucide-react)
 export const TikTokIcon = ({ size = 24, className = "" }) => (
@@ -86,6 +86,7 @@ interface SocialIconsProps {
 }
 
 export function SocialIcons({ variant = 'dark', size = 'md', className = "" }: SocialIconsProps) {
+  const { company } = useSite();
   const socialLinks = [
     {
       name: "TikTok",

@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-# dist
+dist
 dist-ssr
 *.local
 
@@ -24,4 +24,10 @@ dist-ssr
 *.sw?
 
 # Données privées de l'admin (noms des clients, notes, brouillons, sauvegardes) : ne jamais publier
-content-private/
+#content-private/
+
+# Données de production (serveur local lancé avec npm start)
+data/
+
+# Configuration de production (mot de passe…) : jamais versionnée
+.env

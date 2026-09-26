@@ -1,5 +1,6 @@
 import { Phone, Mail } from "lucide-react";
 import "../styles/floatingContact.css";
+import { useSite, useUi } from "../i18n/context";
 
 const WhatsAppIcon = ({ size = 22, className = "" }) => (
   <svg
@@ -14,24 +15,26 @@ const WhatsAppIcon = ({ size = 22, className = "" }) => (
 );
 
 export function FloatingContact() {
+  const { company } = useSite();
+  const ui = useUi();
   const items = [
     {
       name: "WhatsApp",
-      href: "https://wa.me/237656524739",
+      href: company.socials.whatsapp,
       icon: <WhatsAppIcon />,
-      message: "Discuter sur WhatsApp"
+      message: ui.floating.whatsapp
     },
     {
       name: "Téléphone",
-      href: "tel:+237656524739",
+      href: company.phoneHref,
       icon: <Phone size={22} />,
-      message: "Appeler maintenant"
+      message: ui.floating.call
     },
     {
       name: "Email",
-      href: "mailto:buldingservices97@gmail.com",
+      href: `mailto:${company.email}`,
       icon: <Mail size={22} />,
-      message: "Envoyer un email"
+      message: ui.floating.email
     }
   ];
 
@@ -44,6 +47,7 @@ export function FloatingContact() {
           target="_blank"
           rel="noopener noreferrer"
           className="contact-item"
+          aria-label={item.message}
         >
           {item.icon}
           <span className="contact-tooltip">{item.message}</span>

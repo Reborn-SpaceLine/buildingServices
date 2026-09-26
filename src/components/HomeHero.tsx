@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, FileText, Phone } from 'lucide-react';
 import { SocialIcons } from './SocialIcons';
 import { Counter } from './ui';
-import { company, hero, images, projects, stats } from '../data/site';
+import { images } from '../data/site';
+import { useSite, useUi } from '../i18n/context';
 import '../styles/hero.css';
-
-const slides = hero.slides.length > 0 ? hero.slides : [images.carousel];
-
-/** Légende d'une photo : le projet qui l'utilise, s'il existe */
-const captions = slides.map(src => projects.find(p => p.image === src || p.gallery.includes(src)));
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function HomeHero() {
+  const { company, hero, projects, stats } = useSite();
+  const ui = useUi();
+  const slides = useMemo(() => (hero.slides.length > 0 ? hero.slides : [images.carousel]), [hero.slides]);
+
   const [slide, setSlide] = useState(0);
   const [paused, setPaused] = useState(false);
   const [autoplay] = useState(() => slides.length > 1 && !prefersReducedMotion());
@@ -32,16 +32,18 @@ export function HomeHero() {
   useEffect(() => {
     const next = new Image();
     next.src = slides[(slide + 1) % slides.length];
-  }, [slide]);
+  }, [slide, slides]);
 
-  const caption = captions[slide];
+  // Légende de la photo affichée : le projet qui l'utilise, s'il existe
+  const current = slides[slide];
+  const caption = projects.find(p => p.image === current || p.gallery.includes(current));
 
   return (
     <section
       id="accueil"
       className={`hero ${paused ? 'is-paused' : ''}`}
-      aria-roledescription="carrousel"
-      aria-label="Présentation de Building Service"
+      aria-roledescription={ui.hero.carousel}
+      aria-label={ui.hero.label}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -77,13 +79,13 @@ export function HomeHero() {
 
           <div className="hero-actions">
             <Link to="/contact" className="btn btn-primary">
-              Demander un devis gratuit <FileText />
+              {ui.common.requestFreeQuote} <FileText />
             </Link>
             <Link to="/rdv" className="btn btn-outline-white">
-              Prendre rendez-vous <CalendarDays />
+              {ui.common.bookAppointment} <CalendarDays />
             </Link>
-            <a href={company.phoneHref} className="hero-call">
-              <Phone size={18} /> {company.phone}
+            <a href={company.phoneHref} className="btn btn-ghost-white hero-call" aria-label={`${ui.nav.call} ${company.phone}`}>
+              <Phone /> {company.phone}
             </a>
           </div>
 
@@ -105,7 +107,7 @@ export function HomeHero() {
         <div className="hero-caption" aria-live="polite">
           {caption ? (
             <Link to={`/realisations/${caption.slug}`}>
-              <span>Réalisation</span>
+              <span>{ui.hero.realization}</span>
               <strong>{caption.title}</strong>
               <ArrowRight size={16} />
             </Link>
@@ -114,14 +116,14 @@ export function HomeHero() {
 
         {slides.length > 1 && (
           <div className="hero-controls">
-            <button className="hero-arrow" onClick={() => go(slide - 1)} aria-label="Photo précédente"><ChevronLeft size={20} /></button>
+            <button className="hero-arrow" onClick={() => go(slide - 1)} aria-label={ui.hero.previousPhoto}><ChevronLeft size={20} /></button>
             <div className="hero-indicators">
               {slides.map((_, i) => (
                 <button
                   key={i}
                   className={`hero-indicator ${i === slide ? 'active' : ''} ${i < slide ? 'done' : ''}`}
                   onClick={() => go(i)}
-                  aria-label={`Afficher la photo ${i + 1} sur ${slides.length}`}
+                  aria-label={ui.hero.showPhoto(i + 1, slides.length)}
                   aria-current={i === slide}
                 >
                   <span
@@ -132,13 +134,13 @@ export function HomeHero() {
                 </button>
               ))}
             </div>
-            <button className="hero-arrow" onClick={() => go(slide + 1)} aria-label="Photo suivante"><ChevronRight size={20} /></button>
+            <button className="hero-arrow" onClick={() => go(slide + 1)} aria-label={ui.hero.nextPhoto}><ChevronRight size={20} /></button>
           </div>
         )}
       </div>
 
-      <a href="#decouvrir" className="hero-scroll" aria-label="Découvrir la suite">
-        <span>Découvrir</span>
+      <a href="#decouvrir" className="hero-scroll" aria-label={ui.hero.discoverNext}>
+        <span>{ui.common.discover}</span>
         <ChevronDown size={20} />
       </a>
     </section>

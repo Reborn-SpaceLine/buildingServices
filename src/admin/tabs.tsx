@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type React from 'react';
 import { ShieldCheck, EyeOff, Download, KeyRound, LogOut } from 'lucide-react';
 import { TextInput, TextArea, Select, Toggle, ImageField, ImageListField, StringListField, VideoListField, ListEditor } from './fields';
-import { slugify, changePassword } from './api';
+import { slugify, changePassword, fetchMessages, setMessageStatus, deleteMessage } from './api';
+import type { ServerMessage } from './api';
 import { serviceIcons } from '../content/icons';
 import { publicClientLabel } from '../content/privacy';
 import { serviceCategories } from '../content/types';
 import type { SiteContent, Service, Project, FaqItem, Stat, ClientVisibility, ServiceCategory } from '../content/types';
-import { loadMessages, saveMessages, exportMessages } from '../lib/messages';
-import type { ContactMessage } from '../lib/messages';
+import { exportMessages } from '../lib/messages';
 
 type TabProps = {
   content: SiteContent;
@@ -152,8 +152,8 @@ export function ProjectsTab({ content, update }: TabProps) {
     <section className="a-card">
       <h2>Réalisations ({published} publiées, {content.projects.length - published} brouillons)</h2>
       <p className="a-muted">
-        Documentez chaque chantier, même ceux que vous ne publiez pas : un brouillon reste uniquement sur cet ordinateur
-        (dossier <code>content-private</code>) et n’apparaît jamais sur le site.
+        Documentez chaque chantier, même ceux que vous ne publiez pas : un brouillon reste dans la zone privée du serveur
+        et n’est jamais envoyé aux visiteurs du site.
       </p>
       <ListEditor<Project>
         items={content.projects}
@@ -340,8 +340,9 @@ export function SecurityTab({ onLogout }: { onLogout: () => void }) {
         <h2>Session</h2>
         <p className="a-muted">
           La session se ferme automatiquement après 8 heures d’inactivité ou à la fermeture de l’onglet.
-          Mot de passe oublié : supprimez le fichier <code>content-private/admin.json</code>, puis rouvrez <code>/admin</code> pour en créer un nouveau
-          (seule une personne ayant accès à cet ordinateur peut le faire).
+          Mot de passe oublié : sur le serveur, supprimez le fichier <code>private/admin.json</code> du dossier de données
+          (<code>content-private/admin.json</code> en local), puis redémarrez avec la variable <code>ADMIN_PASSWORD</code>.
+          Seule une personne ayant accès au serveur peut le faire.
         </p>
         <button type="button" className="a-btn a-btn-dark" onClick={onLogout}><LogOut size={16} /> Se déconnecter</button>
       </section>
@@ -374,45 +375,67 @@ export function FaqTab({ content, update }: TabProps) {
 }
 
 /* =========================
-   Messages reçus par les formulaires (enregistrés dans ce navigateur)
+   Messages reçus par les formulaires Contact et RDV (enregistrés sur le serveur)
    ========================= */
 export function MessagesTab() {
-  const [messages, setMessages] = useState<ContactMessage[]>([]);
-  useEffect(() => setMessages(loadMessages()), []);
+  const [messages, setMessages] = useState<ServerMessage[]>([]);
+  const [filter, setFilter] = useState<'tous' | ServerMessage['status']>('tous');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const setStatus = (id: string, status: ContactMessage['status']) => {
-    const next = messages.map(m => (m.id === id ? { ...m, status } : m));
-    setMessages(next);
-    saveMessages(next);
+  const reload = useCallback(() => {
+    setLoading(true);
+    fetchMessages()
+      .then(list => { setMessages(list); setError(''); })
+      .catch(e => setError(e instanceof Error ? e.message : 'Chargement impossible.'))
+      .finally(() => setLoading(false));
+  }, []);
+  useEffect(reload, [reload]);
+
+  const setStatus = async (id: string, status: ServerMessage['status']) => {
+    setMessages(list => list.map(m => (m.id === id ? { ...m, status } : m)));
+    await setMessageStatus(id, status).catch(() => reload());
   };
-  const remove = (id: string) => {
-    if (!confirm('Supprimer ce message ?')) return;
-    const next = messages.filter(m => m.id !== id);
-    setMessages(next);
-    saveMessages(next);
+  const remove = async (id: string) => {
+    if (!confirm('Supprimer définitivement ce message ?')) return;
+    setMessages(list => list.filter(m => m.id !== id));
+    await deleteMessage(id).catch(() => reload());
   };
+
+  const unread = messages.filter(m => m.status === 'nouveau').length;
+  const visible = filter === 'tous' ? messages : messages.filter(m => m.status === filter);
 
   return (
     <section className="a-card">
       <div className="a-row a-between">
-        <h2>Messages ({messages.length})</h2>
-        <button type="button" className="a-btn a-btn-light" disabled={!messages.length} onClick={() => exportMessages(messages)}><Download size={16} /> Exporter</button>
+        <h2>Messages ({messages.length}{unread ? `, ${unread} nouveau${unread > 1 ? 'x' : ''}` : ''})</h2>
+        <div className="a-row">
+          <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)} aria-label="Filtrer">
+            <option value="tous">Tous</option>
+            <option value="nouveau">Nouveaux</option>
+            <option value="lu">Lus</option>
+            <option value="traité">Traités</option>
+          </select>
+          <button type="button" className="a-btn a-btn-light" onClick={reload}>Actualiser</button>
+          <button type="button" className="a-btn a-btn-light" disabled={!messages.length} onClick={() => exportMessages(messages)}><Download size={16} /> Exporter</button>
+        </div>
       </div>
       <p className="a-muted">
-        Les formulaires Contact et RDV vous envoient la demande sur WhatsApp. Ils en gardent aussi une copie dans le navigateur
-        où ils ont été remplis : vous voyez ici celles envoyées depuis cet ordinateur (utile pour les tests).
+        Toutes les demandes envoyées depuis les formulaires Contact et Rendez-vous du site. Les coordonnées des visiteurs sont
+        des données personnelles : ne les partagez pas et supprimez les messages traités dont vous n’avez plus besoin.
       </p>
-      {messages.length === 0 ? <p className="a-empty">Aucun message.</p> : (
+      {error && <p className="a-error">{error}</p>}
+      {loading ? <p className="a-empty">Chargement…</p> : visible.length === 0 ? <p className="a-empty">Aucun message.</p> : (
         <div className="a-messages">
-          {messages.map(m => (
+          {visible.map(m => (
             <article key={m.id} className={`a-message ${m.status}`}>
               <header>
-                <strong>{m.name}</strong> · {m.phone}{m.email && ` · ${m.email}`}
-                <small>{new Date(m.timestamp).toLocaleString('fr-FR')} · {m.subject ?? 'Contact'}</small>
+                <strong>{m.name}</strong> · <a href={`tel:${m.phone.replace(/\s/g, '')}`}>{m.phone}</a>{m.email && <> · <a href={`mailto:${m.email}`}>{m.email}</a></>}
+                <small>{new Date(m.timestamp).toLocaleString('fr-FR')} · {m.subject || 'Contact'}{m.lang && m.lang !== 'fr' ? ` · ${m.lang.toUpperCase()}` : ''}</small>
               </header>
               <p>{m.message}</p>
               <div className="a-row">
-                <select value={m.status} onChange={e => setStatus(m.id, e.target.value as ContactMessage['status'])}>
+                <select value={m.status} onChange={e => setStatus(m.id, e.target.value as ServerMessage['status'])} aria-label="Statut">
                   <option value="nouveau">Nouveau</option>
                   <option value="lu">Lu</option>
                   <option value="traité">Traité</option>
@@ -437,11 +460,11 @@ export function GuideTab() {
       <section className="a-card a-guide">
         <h2>Comment ça marche</h2>
         <ol>
-          <li>Lancez le site en local : <code>npm run dev</code>, puis ouvrez <code>http://localhost:5173/admin</code> et entrez votre mot de passe (modifiable dans l’onglet Sécurité).</li>
-          <li>Modifiez textes, images et vidéos, puis cliquez sur <strong>Enregistrer</strong>. Le site se met à jour immédiatement.</li>
-          <li>Les images et vidéos envoyées sont copiées dans <code>public/uploads/</code>. Pour les vidéos lourdes, préférez un lien YouTube : le site reste rapide.</li>
-          <li>Pour mettre en ligne : <code>npm run build</code> puis déployez comme d’habitude (ou poussez sur GitHub).</li>
-          <li>Chaque enregistrement garde une sauvegarde de l’ancienne version dans <code>content-private/sauvegardes/</code>.</li>
+          <li>Ouvrez <code>/admin</code> sur le site en ligne (ou <code>http://localhost:5173/admin</code> avec <code>npm run dev</code>) et entrez votre mot de passe, modifiable dans l’onglet Sécurité.</li>
+          <li>Modifiez textes, images et vidéos, puis cliquez sur <strong>Enregistrer</strong> : le site en ligne est à jour immédiatement, sans republication.</li>
+          <li>Les images et vidéos envoyées sont stockées sur le serveur. Pour les vidéos lourdes, préférez un lien YouTube : le site reste rapide.</li>
+          <li>Les demandes envoyées par les formulaires Contact et Rendez-vous arrivent dans l’onglet <strong>Messages</strong>.</li>
+          <li>Chaque enregistrement garde une sauvegarde de la version précédente (30 dernières), sur le serveur.</li>
         </ol>
       </section>
 
@@ -449,12 +472,12 @@ export function GuideTab() {
         <h2><ShieldCheck size={20} /> Documenter les chantiers en respectant les clients</h2>
         <ul>
           <li><strong>Brouillon par défaut</strong> : un nouveau chantier n’est pas publié. Vous pouvez tout documenter, puis ne publier que ce qui est validé.</li>
-          <li><strong>Nom du client</strong> : il est stocké uniquement dans <code>content-private/</code> (exclu de Git et du site). Sur le site, choisissez anonyme, initiales ou nom complet (avec accord écrit).</li>
+          <li><strong>Nom du client</strong> : il est stocké dans une zone privée du serveur, jamais envoyée aux visiteurs. Sur le site, choisissez anonyme, initiales ou nom complet (avec accord écrit).</li>
           <li><strong>Lieu</strong> : indiquez la ville ou le quartier, jamais l’adresse.</li>
           <li><strong>Photos</strong> : pas de visages sans accord, pas de plaques d’immatriculation, de numéros de rue, de documents, de photos de famille ou d’objets de valeur identifiables.</li>
           <li><strong>Vidéos</strong> : mêmes règles ; coupez le son si des conversations privées sont audibles.</li>
           <li><strong>Notes internes</strong> : contacts, conditions, montants restent dans les notes privées, jamais dans la description publique.</li>
-          <li><strong>Sauvegarde</strong> : copiez régulièrement le dossier <code>content-private/</code> sur un support sûr : il n’est pas envoyé sur GitHub.</li>
+          <li><strong>Sauvegarde</strong> : utilisez régulièrement le bouton <strong>Exporter</strong> (en haut) et conservez le fichier en lieu sûr ; l’hébergeur doit aussi sauvegarder le volume de données.</li>
         </ul>
       </section>
     </div>

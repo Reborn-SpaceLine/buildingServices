@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronLeft, ChevronRight, X, CalendarDays } from 'lucide-react';
 import { SafeImage } from '../SafeImage';
+import { useUi } from '../../i18n/context';
 import '../../styles/ui.css';
 
 /* =========================
@@ -73,6 +74,7 @@ export function SectionIntro({ eyebrow, title, text, centered, onDark, as = 'h2'
    Counter : chiffre animé
    ========================= */
 export function Counter({ value, prefix = '', suffix = '', duration = 2000 }: { value: number; prefix?: string; suffix?: string; duration?: number }) {
+  const ui = useUi();
   const ref = useRef<HTMLSpanElement>(null);
   const [current, setCurrent] = useState(0);
 
@@ -105,7 +107,7 @@ export function Counter({ value, prefix = '', suffix = '', duration = 2000 }: { 
 
   return (
     <span ref={ref}>
-      {prefix}{current.toLocaleString('fr-FR')}{suffix}
+      {prefix}{current.toLocaleString(ui.locale)}{suffix}
     </span>
   );
 }
@@ -114,9 +116,10 @@ export function Counter({ value, prefix = '', suffix = '', duration = 2000 }: { 
    Marquee : carrousel d'images en défilement continu
    ========================= */
 export function Marquee({ images }: { images: { src: string; alt: string }[] }) {
+  const ui = useUi();
   const loop = [...images, ...images];
   return (
-    <div className="marquee" aria-label="Aperçu de nos réalisations">
+    <div className="marquee" aria-label={ui.common.realizationsPreview}>
       <div className="marquee-track">
         {loop.map((img, i) => (
           <SafeImage key={i} src={img.src} alt={i < images.length ? img.alt : ''} eager />
@@ -162,6 +165,7 @@ export function Accordion({ items }: { items: { q: string; a: string }[] }) {
    Lightbox : galerie plein écran
    ========================= */
 export function Lightbox({ images, index, onClose, onChange }: { images: string[]; index: number | null; onClose: () => void; onChange: (i: number) => void }) {
+  const ui = useUi();
   useEffect(() => {
     if (index === null) return;
     const onKey = (e: KeyboardEvent) => {
@@ -181,11 +185,11 @@ export function Lightbox({ images, index, onClose, onChange }: { images: string[
 
   return (
     <div className="lightbox" role="dialog" aria-modal="true" onClick={onClose}>
-      <button className="lightbox-close" aria-label="Fermer" onClick={onClose}><X /></button>
+      <button className="lightbox-close" aria-label={ui.common.close} onClick={onClose}><X /></button>
       {images.length > 1 && (
         <button
           className="lightbox-nav prev"
-          aria-label="Image précédente"
+          aria-label={ui.common.previousImage}
           onClick={(e) => { e.stopPropagation(); onChange((index - 1 + images.length) % images.length); }}
         >
           <ChevronLeft />
@@ -195,7 +199,7 @@ export function Lightbox({ images, index, onClose, onChange }: { images: string[
       {images.length > 1 && (
         <button
           className="lightbox-nav next"
-          aria-label="Image suivante"
+          aria-label={ui.common.nextImage}
           onClick={(e) => { e.stopPropagation(); onChange((index + 1) % images.length); }}
         >
           <ChevronRight />
@@ -229,7 +233,8 @@ export function PageHero({ eyebrow, title, text, image }: { eyebrow: string; tit
 /* =========================
    CtaBanner : bannière d'appel à l'action avec fond parallax
    ========================= */
-export function CtaBanner({ image, title, text, button = 'Planifier mon entretien', to = '/rdv' }: { image: string; title: string; text: string; button?: string; to?: string }) {
+export function CtaBanner({ image, title, text, button, to = '/rdv' }: { image: string; title: string; text: string; button?: string; to?: string }) {
+  const ui = useUi();
   return (
     <section className="section no-mark">
       <div className="container">
@@ -239,7 +244,7 @@ export function CtaBanner({ image, title, text, button = 'Planifier mon entretie
             <div className="cta-banner-content">
               <h2>{title}</h2>
               <Link to={to} className="btn btn-primary">
-                {button} <CalendarDays />
+                {button ?? ui.common.planMeeting} <CalendarDays />
               </Link>
             </div>
             <p className="cta-banner-note">{text}</p>
