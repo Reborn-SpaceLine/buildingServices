@@ -354,8 +354,31 @@
    Tablettes et mobiles
    ========================= */
 @media (max-width: 1024px) {
+  /* Tablette / mobile : le hero dépasse la hauteur de l'écran, donc « Découvrir » devient une pastille
+     fixée en bas de l'écran, visible à l'arrivée et masquée dès qu'on fait défiler */
   .hero-scroll {
-    display: none;
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 50%;
+    z-index: 40;
+    flex-direction: row;
+    gap: 0.35rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-pill);
+    background: rgba(15, 11, 9, 0.6);
+    backdrop-filter: blur(8px);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-white);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s ease, visibility 0.3s;
+  }
+
+  .hero-scroll.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 }
 
@@ -417,5 +440,120 @@
   .hero-socials .social-icon-link.sm svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+/* =========================
+   Mobile (≤ 640 px) : carrousel en haut de l'écran, contenu en dessous
+   Le hero complet dépasse la hauteur d'un téléphone : l'image, les flèches et les indicateurs
+   occupent donc le haut de l'écran pour être visibles immédiatement.
+   ========================= */
+@media (max-width: 640px) {
+  .hero {
+    --hero-media: 56svh;
+    justify-content: flex-start;
+    min-height: 0;
+    padding-top: calc(var(--hero-media) + 0.5rem);
+    padding-bottom: 3.5rem;
+  }
+
+  .hero-slide {
+    bottom: auto;
+    height: var(--hero-media);
+  }
+
+  /* Image lisible, fondue vers le fond sombre du contenu */
+  .hero-overlay {
+    bottom: auto;
+    height: var(--hero-media);
+    background: linear-gradient(180deg, rgba(15, 11, 9, 0.45) 0%, rgba(15, 11, 9, 0) 28%, rgba(15, 11, 9, 0) 62%, var(--color-dark) 100%);
+  }
+
+  /* Commandes posées sur le bas de l'image, sur toute la largeur */
+  .hero-bottom {
+    position: absolute;
+    top: calc(var(--hero-media) - 64px);
+    left: 0;
+    right: 0;
+    padding: 0 12px;
+  }
+
+  .hero-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .hero-arrow {
+    width: 44px;
+    height: 44px;
+    background: rgba(15, 11, 9, 0.55);
+    backdrop-filter: blur(6px);
+  }
+
+  .hero-indicator {
+    width: 24px;
+  }
+
+  .hero-inner {
+    align-items: flex-start;
+  }
+
+  .hero-content {
+    animation: none;
+  }
+
+  .hero-eyebrow {
+    margin-bottom: 0.9rem;
+  }
+
+  .hero-title {
+    margin-bottom: 0.9rem;
+  }
+
+  .hero-description {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* PC : flèches un peu plus grandes */
+@media (min-width: 1025px) {
+  .hero-arrow {
+    width: 48px;
+    height: 48px;
+  }
+
+  .hero-indicator {
+    width: 40px;
+  }
+}
+/* Mobile : la légende de la réalisation (comme sur grand écran), au-dessus des flèches */
+@media (max-width: 640px) {
+  .hero-bottom {
+    top: calc(var(--hero-media) - 118px);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .hero-caption {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .hero-caption a {
+    max-width: 100%;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .hero-caption strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hero-caption svg {
+    flex-shrink: 0;
   }
 }

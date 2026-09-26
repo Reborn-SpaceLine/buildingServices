@@ -12,6 +12,8 @@ import { MaintenancePage } from './pages/Maintenance';
 import { ContactPage } from './pages/Contact';
 import { RdvPage } from './pages/Rdv';
 import { NotFound } from './pages/NotFound';
+// Styles tablette : importés après ceux des pages pour avoir le dernier mot entre 641 et 1024 px
+import './styles/tablet.css';
 
 // L'administration n'est chargée que lorsqu'on l'ouvre
 const AdminPage = lazy(() => import('./admin/AdminPage'));

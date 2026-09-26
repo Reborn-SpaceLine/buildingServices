@@ -1,48 +1,60 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { FormEvent } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, KeyRound, LogOut, MoreVertical } from 'lucide-react';
+import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, KeyRound, LogOut, Menu, X } from 'lucide-react';
 import { authStatus, setupPassword, login, logout, fetchContent, saveContent, downloadJson, AuthError } from './api';
 import { GeneralTab, ServicesTab, ProjectsTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
 import { TextInput } from './fields';
 import { TranslationsTab } from './translations';
+import { useAdminText } from './i18n';
+import type { AdminText } from './i18n';
+import { Rich, AdminLanguageSwitch } from './Rich';
 import type { SiteContent } from '../content/types';
 import '../styles/admin.css';
 
-const tabs = [
-  { id: 'general', label: 'Général' },
-  { id: 'services', label: 'Services' },
-  { id: 'projects', label: 'Réalisations' },
-  { id: 'videos', label: 'Vidéos' },
-  { id: 'faq', label: 'FAQ' },
-  { id: 'translations', label: 'Traductions' },
-  { id: 'messages', label: 'Messages' },
-  { id: 'security', label: 'Sécurité' },
-  { id: 'guide', label: 'Guide' },
-] as const;
+const tabIds = ['general', 'services', 'projects', 'videos', 'faq', 'translations', 'messages', 'security', 'guide'] as const;
 
-type TabId = typeof tabs[number]['id'];
+type TabId = typeof tabIds[number];
 type Mode = 'loading' | 'unavailable' | 'no-password' | 'setup' | 'login' | 'ready';
-type Status = { type: 'idle' | 'saving' | 'saved' | 'error'; message?: string };
+/** `message` : texte venant du serveur ou de la validation ; sinon le texte suit la langue */
+type Status = { type: 'idle' | 'saving' | 'saved' | 'error' | 'expired'; message?: string };
 
 /** Vérifie les erreurs bloquantes avant d'enregistrer */
-function validate(content: SiteContent) {
+function validate(content: SiteContent, t: AdminText) {
   const errors: string[] = [];
   const check = (kind: string, slugs: string[]) => {
     slugs.forEach((slug, i) => {
-      if (!slug) errors.push(`${kind} n°${i + 1} : l’adresse de la page est vide.`);
-      else if (slugs.indexOf(slug) !== i) errors.push(`${kind} : l’adresse « ${slug} » est utilisée deux fois.`);
+      if (!slug) errors.push(t.status.emptySlug(kind, i + 1));
+      else if (slugs.indexOf(slug) !== i) errors.push(t.status.duplicateSlug(kind, slug));
     });
   };
-  check('Service', content.services.map(s => s.slug));
-  check('Réalisation', content.projects.map(p => p.slug));
+  check(t.status.kindService, content.services.map(s => s.slug));
+  check(t.status.kindProject, content.projects.map(p => p.slug));
   return errors;
+}
+
+/** Écran simple (chargement, accès impossible…) avec le sélecteur de langue */
+function CenteredCard({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
+  const t = useAdminText();
+  return (
+    <div className="a-center">
+      <div className="a-card a-locked">
+        <AdminLanguageSwitch className="a-lang-corner" />
+        {icon}
+        <h1>{title}</h1>
+        <p><Rich text={text} /></p>
+        <Link to="/" className="a-btn a-btn-dark">{t.backToSite}</Link>
+      </div>
+    </div>
+  );
 }
 
 /* =========================
    Écran de connexion / création du mot de passe
    ========================= */
 function LoginScreen({ setup, onSuccess }: { setup: boolean; onSuccess: () => void }) {
+  const t = useAdminText();
+  const l = t.login;
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
   const [error, setError] = useState('');
@@ -52,7 +64,7 @@ function LoginScreen({ setup, onSuccess }: { setup: boolean; onSuccess: () => vo
     e.preventDefault();
     setError('');
     if (setup && password !== confirmation) {
-      setError('Les deux mots de passe ne sont pas identiques.');
+      setError(l.mismatch);
       return;
     }
     setBusy(true);
@@ -61,7 +73,7 @@ function LoginScreen({ setup, onSuccess }: { setup: boolean; onSuccess: () => vo
       else await login(password);
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Connexion impossible.');
+      setError(err instanceof Error ? err.message : l.failed);
       setBusy(false);
     }
   };
@@ -69,55 +81,62 @@ function LoginScreen({ setup, onSuccess }: { setup: boolean; onSuccess: () => vo
   return (
     <div className="a-center">
       <div className="a-card a-locked a-login">
+        <AdminLanguageSwitch className="a-lang-corner" />
         {setup ? <KeyRound size={32} /> : <Lock size={32} />}
-        <h1>{setup ? 'Créer le mot de passe' : 'Administration'}</h1>
-        <p className="a-muted">
-          {setup
-            ? 'Première connexion : choisissez le mot de passe qui protégera l’espace d’administration. Vous pourrez le changer ensuite.'
-            : 'Entrez votre mot de passe pour gérer le contenu du site.'}
-        </p>
+        <h1>{setup ? l.setupTitle : l.title}</h1>
+        <p className="a-muted">{setup ? l.setupText : l.text}</p>
         <form onSubmit={submit}>
-          <TextInput label="Mot de passe" type="password" value={password} onChange={setPassword} hint={setup ? '8 caractères minimum.' : undefined} />
-          {setup && <TextInput label="Confirmer le mot de passe" type="password" value={confirmation} onChange={setConfirmation} />}
+          <TextInput label={l.password} type="password" value={password} onChange={setPassword} hint={setup ? l.min : undefined} />
+          {setup && <TextInput label={l.confirm} type="password" value={confirmation} onChange={setConfirmation} />}
           {error && <p className="a-error" role="alert">{error}</p>}
           <button type="submit" className="a-btn a-btn-primary" disabled={busy || !password}>
-            {busy && <Loader2 size={16} className="a-spin" />} {setup ? 'Créer et entrer' : 'Se connecter'}
+            {busy && <Loader2 size={16} className="a-spin" />} {setup ? l.create : l.submit}
           </button>
         </form>
-        <Link to="/" className="a-btn a-btn-ghost">Retour au site</Link>
+        <Link to="/" className="a-btn a-btn-ghost">{t.backToSite}</Link>
       </div>
     </div>
   );
 }
 
 export default function AdminPage() {
+  const t = useAdminText();
+  const h = t.header;
   const [mode, setMode] = useState<Mode>('loading');
   const [content, setContent] = useState<SiteContent | null>(null);
   const [saved, setSaved] = useState('');
   const [tab, setTab] = useState<TabId>('general');
   const [status, setStatus] = useState<Status>({ type: 'idle' });
   const [menuOpen, setMenuOpen] = useState(false);
-  const moreRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
-  // Menu « ⋮ » (mobile) : se ferme au clic à l'extérieur ou avec Échap
+  // Menu mobile (même principe que celui du site) : fermé au clic à l'extérieur ou avec Échap,
+  // et la page ne défile pas derrière tant qu'il est ouvert
   useEffect(() => {
     if (!menuOpen) return;
     const onPointer = (e: PointerEvent) => {
-      if (!moreRef.current?.contains(e.target as Node)) setMenuOpen(false);
+      if (!headerRef.current?.contains(e.target as Node)) setMenuOpen(false);
     };
     const onKey = (e: globalThis.KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false);
     document.addEventListener('pointerdown', onPointer);
     document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('pointerdown', onPointer);
       document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
     };
   }, [menuOpen]);
 
-  // Onglets (mobile) : l'onglet actif est ramené au centre de la ligne qui défile
   useEffect(() => {
-    document.querySelector('.a-tabs .active')?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-  }, [tab]);
+    document.title = t.pageTitle;
+  }, [t.pageTitle]);
+
+  const openTab = (id: TabId) => {
+    setTab(id);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0 });
+  };
 
   /** Charge le contenu après connexion (sans écraser des modifications en cours) */
   const loadContent = async () => {
@@ -132,7 +151,6 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    document.title = 'Administration | Building Service';
     authStatus()
       .then(({ configured, authenticated, canSetup }) => {
         if (!configured) setMode(canSetup ? 'setup' : 'no-password');
@@ -159,7 +177,7 @@ export default function AdminPage() {
 
   const save = async () => {
     if (!content) return;
-    const errors = validate(content);
+    const errors = validate(content, t);
     if (errors.length) {
       setStatus({ type: 'error', message: errors.join(' ') });
       return;
@@ -168,15 +186,15 @@ export default function AdminPage() {
     try {
       await saveContent(content);
       setSaved(JSON.stringify(content));
-      setStatus({ type: 'saved', message: 'Enregistré. Le site est à jour.' });
+      setStatus({ type: 'saved' });
     } catch (e) {
       if (e instanceof AuthError) {
         // Session expirée : on se reconnecte, les modifications restent en mémoire
-        setStatus({ type: 'error', message: 'Session expirée : reconnectez-vous puis cliquez à nouveau sur Enregistrer.' });
+        setStatus({ type: 'expired' });
         setMode('login');
         return;
       }
-      setStatus({ type: 'error', message: e instanceof Error ? e.message : 'Enregistrement impossible.' });
+      setStatus({ type: 'error', message: e instanceof Error ? e.message : undefined });
     }
   };
 
@@ -185,15 +203,21 @@ export default function AdminPage() {
   };
 
   const handleLogout = async () => {
-    if (dirty && !confirm('Des modifications ne sont pas enregistrées. Se déconnecter quand même ?')) return;
+    if (dirty && !confirm(t.status.confirmLogout)) return;
     await logout();
     setContent(null);
     setSaved('');
     setMode('login');
   };
 
+  const statusText =
+    status.type === 'saved' ? t.status.saved
+      : status.type === 'expired' ? t.status.sessionExpired
+        : status.type === 'error' ? (status.message ?? t.status.saveError)
+          : '';
+
   if (mode === 'loading') {
-    return <div className="a-center"><Loader2 className="a-spin" /> Chargement…</div>;
+    return <div className="a-center"><Loader2 className="a-spin" /> {t.loading}</div>;
   }
 
   if (mode === 'setup' || mode === 'login') {
@@ -201,108 +225,87 @@ export default function AdminPage() {
   }
 
   if (mode === 'no-password') {
-    return (
-      <div className="a-center">
-        <div className="a-card a-locked">
-          <KeyRound size={32} />
-          <h1>Mot de passe à définir</h1>
-          <p>
-            Pour des raisons de sécurité, le premier mot de passe de l’administration ne se crée pas depuis Internet.
-            Définissez la variable <code>ADMIN_PASSWORD</code> sur le serveur, puis redémarrez-le.
-          </p>
-          <Link to="/" className="a-btn a-btn-dark">Retour au site</Link>
-        </div>
-      </div>
-    );
+    return <CenteredCard icon={<KeyRound size={32} />} title={t.login.noPasswordTitle} text={t.login.noPasswordText} />;
   }
 
   if (mode === 'unavailable' || !content) {
-    return (
-      <div className="a-center">
-        <div className="a-card a-locked">
-          <Lock size={32} />
-          <h1>Espace d’administration</h1>
-          <p>
-            Le serveur d’administration ne répond pas. En production, lancez le site avec son serveur
-            (<code>npm start</code> ou l’image Docker) ; en local, avec <code>npm run dev</code>.
-          </p>
-          <Link to="/" className="a-btn a-btn-dark">Retour au site</Link>
-        </div>
-      </div>
-    );
+    return <CenteredCard icon={<Lock size={32} />} title={t.login.unavailableTitle} text={t.login.unavailableText} />;
   }
 
   return (
     <div className="admin">
-      <header className="a-header">
+      <header className="a-header" ref={headerRef}>
         <div className="a-bar">
           <div className="a-brand">
             <strong translate="no">Building Service</strong>
-            <span>Administration</span>
+            <span>{t.brandSub}</span>
           </div>
 
           <div className="a-actions">
+            <AdminLanguageSwitch />
+
             {/* Ordinateur : toutes les actions visibles */}
-            <a className="a-btn a-btn-ghost a-secondary" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /> Voir le site</a>
+            <a className="a-btn a-btn-ghost a-secondary" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /> {h.viewSite}</a>
             <button className="a-btn a-btn-ghost a-secondary" onClick={exportContent}>
-              <Download size={16} /> Exporter
+              <Download size={16} /> {h.export}
             </button>
 
             <button className="a-btn a-btn-primary a-save" disabled={!dirty || status.type === 'saving'} onClick={save}>
               {status.type === 'saving' ? <Loader2 size={16} className="a-spin" /> : <Save size={16} />}
-              {dirty ? 'Enregistrer' : 'Enregistré'}
-              {dirty && <span className="a-dirty" aria-label="Modifications non enregistrées" />}
+              {dirty ? h.save : h.saved}
+              {dirty && <span className="a-dirty" aria-label={h.unsaved} />}
             </button>
 
-            <button className="a-btn a-btn-ghost a-logout a-secondary" onClick={handleLogout} title="Se déconnecter">
-              <LogOut size={16} /> Déconnexion
+            <button className="a-btn a-btn-ghost a-logout a-secondary" onClick={handleLogout} title={h.logoutTitle}>
+              <LogOut size={16} /> {h.logout}
             </button>
 
-            {/* Mobile : actions secondaires regroupées dans un menu */}
-            <div className="a-more" ref={moreRef}>
-              <button
-                className="a-more-btn"
-                aria-label="Plus d’actions"
-                aria-haspopup="menu"
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen(open => !open)}
-              >
-                <MoreVertical size={20} />
-              </button>
-              {menuOpen && (
-                <div className="a-more-menu" role="menu">
-                  <a role="menuitem" href="/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
-                    <ExternalLink size={16} /> Voir le site
-                  </a>
-                  <button role="menuitem" onClick={() => { exportContent(); setMenuOpen(false); }}>
-                    <Download size={16} /> Exporter le contenu
-                  </button>
-                  <button role="menuitem" className="danger" onClick={() => { setMenuOpen(false); handleLogout(); }}>
-                    <LogOut size={16} /> Déconnexion
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* Mobile : bouton menu, comme sur le site */}
+            <button
+              className="a-burger"
+              aria-label={menuOpen ? h.closeMenu : h.openMenu}
+              aria-expanded={menuOpen}
+              aria-controls="admin-mobile-nav"
+              onClick={() => setMenuOpen(open => !open)}
+            >
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
 
-        <nav className="a-tabs" aria-label="Sections de l’administration">
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              className={tab === t.id ? 'active' : ''}
-              aria-current={tab === t.id ? 'page' : undefined}
-              onClick={() => setTab(t.id)}
-            >
-              {t.label}
+        {/* Ordinateur : onglets sur une ligne */}
+        <nav className="a-tabs" aria-label={h.sections}>
+          {tabIds.map(id => (
+            <button key={id} className={tab === id ? 'active' : ''} aria-current={tab === id ? 'page' : undefined} onClick={() => setTab(id)}>
+              {t.tabs[id]}
             </button>
           ))}
         </nav>
+
+        {/* Mobile : panneau déroulant, même style que le menu du site */}
+        <nav id="admin-mobile-nav" className={`a-mobile-nav ${menuOpen ? 'open' : ''}`} aria-label={h.sections}>
+          {tabIds.map(id => (
+            <button key={id} className={`a-mobile-link ${tab === id ? 'active' : ''}`} aria-current={tab === id ? 'page' : undefined} onClick={() => openTab(id)}>
+              {t.tabs[id]}
+            </button>
+          ))}
+          <div className="a-mobile-actions">
+            <a href="/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+              <ExternalLink size={18} /> {h.viewSite}
+            </a>
+            <button onClick={() => { exportContent(); setMenuOpen(false); }}>
+              <Download size={18} /> {h.exportContent}
+            </button>
+            <button className="danger" onClick={() => { setMenuOpen(false); handleLogout(); }}>
+              <LogOut size={18} /> {h.logout}
+            </button>
+          </div>
+        </nav>
       </header>
 
-      {status.message && (
-        <div className={`a-status ${status.type}`} role="status">
-          {status.type === 'saved' ? <CheckCircle size={18} /> : <AlertCircle size={18} />} {status.message}
+      {statusText && (
+        <div className={`a-status ${status.type === 'saved' ? 'saved' : 'error'}`} role="status">
+          {status.type === 'saved' ? <CheckCircle size={18} /> : <AlertCircle size={18} />} {statusText}
         </div>
       )}
 
