@@ -869,10 +869,13 @@
   }
 
   .a-mobile-nav.open {
+    /* Hauteur réellement visible (la barre d'adresse du navigateur mobile apparaît / disparaît) */
     max-height: calc(100vh - 90px);
+    max-height: calc(100dvh - 90px);
     margin-top: 0.6rem;
     padding: 0.5rem 1.25rem 1rem;
     overflow-y: auto;
+    overscroll-behavior: contain;
     opacity: 1;
     visibility: visible;
   }

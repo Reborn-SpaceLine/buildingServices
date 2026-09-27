@@ -93,8 +93,10 @@ export function Header() {
   }, [pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    // Blocage du défilement sur <html> (sur <body>, les éléments « collants » perdent leur repère)
+    const root = document.documentElement;
+    root.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => { root.style.overflow = ''; };
   }, [isMobileMenuOpen]);
 
   // Sur l'accueil, le lien actif suit la section visible ; ailleurs, il suit la page

@@ -118,13 +118,16 @@ export default function AdminPage() {
       if (!headerRef.current?.contains(e.target as Node)) setMenuOpen(false);
     };
     const onKey = (e: globalThis.KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false);
+    // Blocage du défilement sur <html> (et non <body>) : sur <body>, l'en-tête collant perdait
+    // son repère et remontait en haut de la page, hors de l'écran quand on était en bas
+    const root = document.documentElement;
     document.addEventListener('pointerdown', onPointer);
     document.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
+    root.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('pointerdown', onPointer);
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
+      root.style.overflow = '';
     };
   }, [menuOpen]);
 
