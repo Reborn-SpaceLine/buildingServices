@@ -21,6 +21,8 @@ export function adminServer() {
       root = config.root;
     },
     async configureServer(server) {
+      // Clés des alertes (Telegram, MboaSMS…) : fichier .env à la racine, hors Git
+      try { process.loadEnvFile(path.join(root, '.env')); } catch { /* pas de fichier .env */ }
       const contentFile = path.join(root, 'src/content/content.json');
       const api = createApi({
         contentFile,

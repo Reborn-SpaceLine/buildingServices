@@ -26,6 +26,9 @@ import { createApi } from './api.js';
 import { pageMeta, metaTags } from '../shared/seo.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// Réglages secrets (clés d'alertes…) d'un fichier .env à la racine, s'il existe (hors Git).
+// Sous Docker, ils viennent de deploy/.env ; une variable déjà définie n'est jamais remplacée.
+try { process.loadEnvFile(path.join(root, '.env')); } catch { /* pas de fichier .env */ }
 const env = process.env;
 
 const PORT = Number(env.PORT ?? 8080);
