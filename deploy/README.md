@@ -85,9 +85,15 @@ Nécessite un compte **Meta Business** et l'API WhatsApp Cloud (developers.faceb
 Meta n'autorise l'envoi libre que dans les 24 h suivant un message du destinataire : pour des alertes à tout moment,
 faites approuver un **modèle** avec un paramètre de corps et indiquez son nom dans `WHATSAPP_TEMPLATE`.
 
-### SMS (MOASMS ou autre)
+### SMS (MboaSMS)
 
-Renseignez l'adresse d'envoi de votre fournisseur dans `SMS_API_URL` ; `{to}` et `{message}` sont remplacés automatiquement.
+1. Sur <https://mboasms.com>, connectez-vous et copiez votre **clé API** (espace développeur) dans `MBOASMS_API_KEY`.
+2. Demandez la validation d'un **nom d'expéditeur** (Sender ID, ex. `BUILDING`) et indiquez-le dans `MBOASMS_SENDER_ID` :
+   sans Sender ID validé, MboaSMS refuse les envois.
+3. Mettez le ou les numéros qui reçoivent les alertes dans `SMS_TO` (ex. `237656524739`).
+4. Redémarrez (`docker compose up -d`) puis testez depuis l'admin : **Sécurité → Tester les alertes**.
+
+Autre fournisseur SMS : laissez `MBOASMS_API_KEY` vide et renseignez l'adresse d'envoi de votre fournisseur dans `SMS_API_URL` ; `{to}` et `{message}` sont remplacés automatiquement.
 Exemple : `SMS_API_URL=https://api.fournisseur.cm/send?user=XXX&key=YYY&to={to}&text={message}`.
 Pour une API en POST : `SMS_API_METHOD=POST`, `SMS_API_BODY={"to":"{to}","message":"{message}"}`,
 et les en-têtes éventuels dans `SMS_API_HEADERS` (JSON). Destinataire(s) : `SMS_TO`.

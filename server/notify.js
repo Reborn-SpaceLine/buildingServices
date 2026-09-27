@@ -5,8 +5,10 @@
 //   E-mail   : EMAIL_PROVIDER=brevo|resend, EMAIL_API_KEY, EMAIL_FROM, EMAIL_TO
 //   WhatsApp : WHATSAPP_TOKEN, WHATSAPP_PHONE_ID, WHATSAPP_TO   (API WhatsApp Business de Meta)
 //              WHATSAPP_TEMPLATE (+ WHATSAPP_TEMPLATE_LANG)     modèle approuvé, nécessaire hors fenêtre de 24 h
-//   SMS      : SMS_API_URL, SMS_TO, SMS_API_METHOD (GET|POST), SMS_API_BODY, SMS_API_HEADERS
-//              Fournisseur libre (MOASMS ou autre) : {to} et {message} sont remplacés dans l'URL et le corps.
+//   SMS      : SMS_TO (numéros destinataires) +
+//              MboaSMS : MBOASMS_API_KEY, MBOASMS_SENDER_ID (nom d'expéditeur validé), MBOASMS_BASE_URL (facultatif)
+//              ou autre fournisseur : SMS_API_URL, SMS_API_METHOD (GET|POST), SMS_API_BODY, SMS_API_HEADERS
+//              ({to} et {message} sont remplacés dans l'URL et le corps)
 //
 // Aucune dépendance : appels HTTPS avec fetch (Node 22).
 
@@ -104,9 +106,25 @@ const channels = {
   },
 
   sms: {
-    configured: () => Boolean(env.SMS_API_URL && env.SMS_TO),
+    configured: () => Boolean((env.MBOASMS_API_KEY || env.SMS_API_URL) && env.SMS_TO),
     async send(text) {
       const message = text.replace(/\s+/g, ' ').slice(0, 300); // un SMS reste court
+
+      // MboaSMS (https://mboasms.com) : envoi direct avec la clé API du compte
+      if (env.MBOASMS_API_KEY) {
+        const body = { phoneNumbers: list(env.SMS_TO), message };
+        if (env.MBOASMS_SENDER_ID) body.senderId = env.MBOASMS_SENDER_ID;
+        const res = await http(`${env.MBOASMS_BASE_URL || 'https://api.mboasms.com'}/api/v1/developer/sms/send`, {
+          method: 'POST',
+          headers: { 'X-API-Key': env.MBOASMS_API_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        // MboaSMS répond 200 même quand il refuse l'envoi (ex. Sender ID non validé)
+        const result = await res.json().catch(() => ({}));
+        if (result.success === false) throw new Error(result.errorMessage || 'Envoi refusé par MboaSMS.');
+        return;
+      }
+
       const headers = env.SMS_API_HEADERS ? JSON.parse(env.SMS_API_HEADERS) : {};
       const method = (env.SMS_API_METHOD ?? 'POST').toUpperCase();
       for (const to of list(env.SMS_TO)) {
