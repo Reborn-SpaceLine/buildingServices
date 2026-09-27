@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import type React from 'react';
-import { ShieldCheck, EyeOff, Download, KeyRound, LogOut, Bell, Send, Archive } from 'lucide-react';
+import { ShieldCheck, EyeOff, Download, KeyRound, LogOut, Bell, Send, Archive, History, RotateCcw } from 'lucide-react';
 import { TextInput, TextArea, Select, Toggle, ImageField, ImageListField, StringListField, VideoListField, ListEditor, BilingualField } from './fields';
-import { slugify, changePassword, fetchMessages, setMessageStatus, deleteMessage, fetchNotificationStatus, sendTestNotification, runBackup, downloadBackup } from './api';
+import { slugify, changePassword, fetchMessages, setMessageStatus, deleteMessage, fetchNotificationStatus, sendTestNotification, runBackup, downloadBackup, fetchVersions, restoreVersion } from './api';
 import type { ServerMessage, ChannelName } from './api';
 import { useAdminText } from './i18n';
 import { Rich } from './Rich';
 import { serviceIcons } from '../content/icons';
 import { publicClientLabel } from '../content/privacy';
 import { serviceCategories } from '../content/types';
-import type { SiteContent, Service, Project, FaqItem, Stat, ClientVisibility, ServiceCategory, Testimonial } from '../content/types';
+import type { SiteContent, Service, Project, FaqItem, Stat, ClientVisibility, ServiceCategory, Testimonial, MaintenancePlan, Partner } from '../content/types';
 import { exportMessages } from '../lib/messages';
 import { useUi } from '../i18n/context';
 
@@ -344,6 +344,7 @@ export function SecurityTab({ onLogout }: { onLogout: () => void }) {
 
       <AlertsCard />
       <BackupsCard />
+      <VersionsCard />
 
       <section className="a-card">
         <h2>{t.session}</h2>
@@ -401,6 +402,52 @@ function AlertsCard() {
       <button type="button" className="a-btn a-btn-light" disabled={busy || !anyActive} onClick={test}>
         <Send size={16} /> {busy ? t.testing : t.test}
       </button>
+    </section>
+  );
+}
+
+/** Versions précédentes du contenu : restauration en un clic */
+function VersionsCard() {
+  const a = useAdminText();
+  const t = a.versions;
+  const [versions, setVersions] = useState<{ file: string; date: string }[] | null>(null);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  useEffect(() => {
+    fetchVersions().then(setVersions).catch(e => setMessage({ ok: false, text: String(e.message ?? e) }));
+  }, []);
+
+  const format = (iso: string) => new Date(iso).toLocaleString(a.locale, { dateStyle: 'long', timeStyle: 'short' });
+
+  const restore = async (file: string, date: string) => {
+    if (!confirm(t.confirm(format(date)))) return;
+    try {
+      await restoreVersion(file);
+      setMessage({ ok: true, text: t.restored });
+      setTimeout(() => window.location.reload(), 900);
+    } catch (e) {
+      setMessage({ ok: false, text: e instanceof Error ? e.message : String(e) });
+    }
+  };
+
+  return (
+    <section className="a-card">
+      <h2><History size={20} /> {t.title}</h2>
+      <p className="a-muted">{t.intro}</p>
+      {message && <p className={message.ok ? 'a-success' : 'a-error'}>{message.text}</p>}
+      {versions && versions.length === 0 && <p className="a-empty">{t.empty}</p>}
+      {versions && versions.length > 0 && (
+        <ul className="a-versions">
+          {versions.map(v => (
+            <li key={v.file}>
+              <span>{format(v.date)}</span>
+              <button type="button" className="a-btn a-btn-light" onClick={() => restore(v.file, v.date)}>
+                <RotateCcw size={16} /> {t.restore}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
@@ -487,11 +534,88 @@ export function TestimonialsTab({ content, update }: TabProps) {
               </div>
               <BilingualField label={t.role} value={item.role} onChange={v => set({ role: v })} en={en.role ?? ''} onChangeEn={v => setEn({ role: v })} />
               <BilingualField label={t.text} value={item.text} onChange={v => set({ text: v })} en={en.text ?? ''} onChangeEn={v => setEn({ text: v })} hint={t.textHint} multiline rows={4} />
+              <VideoListField
+                label={t.video}
+                value={item.video?.url ? [item.video] : []}
+                onChange={videos => set({ video: videos[videos.length - 1] })}
+                folder="avis"
+              />
+              <small className="a-hint">{t.videoHint}</small>
             </div>
           );
         }}
       />
     </section>
+  );
+}
+
+/* =========================
+   Page Maintenance : formules (prix en FCFA) et partenaires
+   ========================= */
+export function MaintenanceTab({ content, update }: TabProps) {
+  const t = useAdminText().maintenance;
+  const maintenance = content.maintenance ?? { plans: [], partners: [] };
+  const set = (patch: Partial<typeof maintenance>) => update({ maintenance: { ...maintenance, ...patch } });
+
+  return (
+    <div className="a-stack">
+      <section className="a-card">
+        <h2>{t.plans}</h2>
+        <p className="a-muted">{t.intro}</p>
+        <ListEditor<MaintenancePlan>
+          items={maintenance.plans}
+          onChange={plans => set({ plans })}
+          itemTitle={p => `${p.title} — ${p.price}`}
+          itemBadge={p => (p.featured ? <span className="a-badge ok">★</span> : null)}
+          addLabel={t.addPlan}
+          createItem={() => ({ title: t.newPlan, description: '', features: [], price: '', featured: false })}
+          renderItem={(p, setPlan) => {
+            const en = p.i18n?.en ?? {};
+            const setEn = (patch: NonNullable<MaintenancePlan['i18n']>['en']) => setPlan({ i18n: { ...p.i18n, en: { ...en, ...patch } } });
+            return (
+              <div className="a-stack">
+                {/* Une seule formule mise en avant à la fois */}
+                <Toggle
+                  label={t.featured}
+                  checked={p.featured}
+                  onChange={v => set({ plans: maintenance.plans.map(x => (x === p ? { ...x, featured: v } : v ? { ...x, featured: false } : x)) })}
+                />
+                <BilingualField label={t.planTitle} value={p.title} onChange={v => setPlan({ title: v })} en={en.title ?? ''} onChangeEn={v => setEn({ title: v })} />
+                <BilingualField label={t.price} value={p.price} onChange={v => setPlan({ price: v })} en={en.price ?? ''} onChangeEn={v => setEn({ price: v })} hint={t.pricePlaceholder} />
+                <BilingualField label={t.description} value={p.description} onChange={v => setPlan({ description: v })} en={en.description ?? ''} onChangeEn={v => setEn({ description: v })} multiline />
+                <div className="a-grid">
+                  <StringListField label={`${t.features} (FR)`} value={p.features} onChange={v => setPlan({ features: v })} placeholder={t.featuresPlaceholder} />
+                  <StringListField label={`${t.features} (EN)`} value={en.features ?? []} onChange={v => setEn({ features: v })} />
+                </div>
+              </div>
+            );
+          }}
+        />
+      </section>
+
+      <section className="a-card">
+        <h2>{t.partners}</h2>
+        <ListEditor<Partner>
+          items={maintenance.partners}
+          onChange={partners => set({ partners })}
+          itemTitle={p => p.name}
+          addLabel={t.addPartner}
+          createItem={() => ({ name: t.newPartner, description: '' })}
+          renderItem={(p, setPartner) => (
+            <div className="a-stack">
+              <TextInput label={t.partnerName} value={p.name} onChange={v => setPartner({ name: v })} />
+              <BilingualField
+                label={t.description}
+                value={p.description}
+                onChange={v => setPartner({ description: v })}
+                en={p.i18n?.en?.description ?? ''}
+                onChangeEn={v => setPartner({ i18n: { ...p.i18n, en: { description: v } } })}
+              />
+            </div>
+          )}
+        />
+      </section>
+    </div>
   );
 }
 

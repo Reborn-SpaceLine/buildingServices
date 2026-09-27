@@ -3,16 +3,15 @@ import { Wrench, Settings, Shield, Clock, CheckCircle, Phone, Building2, Hammer,
 import { PageHero, Reveal, SectionIntro, CtaBanner } from '../components/ui';
 import { usePageTitle } from '../lib/usePageTitle';
 import { images } from '../data/site';
-import { useUi } from '../i18n/context';
+import { useSite, useUi } from '../i18n/context';
 import '../styles/pages.css';
 
 const planIcons = [Wrench, Settings, Shield, Clock];
 const partnerIcons = [Building2, Hammer, Paintbrush, Zap, Users];
-const FEATURED_PLAN = 2; // « Contrat de maintenance »
-
 export function MaintenancePage() {
   const ui = useUi();
   const t = ui.maintenance;
+  const { maintenance } = useSite(); // formules et partenaires modifiables dans l'admin
   usePageTitle(t.title);
 
   return (
@@ -23,9 +22,9 @@ export function MaintenancePage() {
         <div className="container">
           <SectionIntro eyebrow={t.plansEyebrow} title={t.plansTitle} text={t.plansText} />
           <div className="pricing-grid">
-            {t.plans.map((plan, i) => {
-              const Icon = planIcons[i];
-              const featured = i === FEATURED_PLAN;
+            {maintenance.plans.map((plan, i) => {
+              const Icon = planIcons[i % planIcons.length];
+              const featured = plan.featured;
               return (
                 <Reveal key={plan.title} delay={i * 80} className={`pricing-card ${featured ? 'featured' : ''}`}>
                   {featured && <span className="pricing-flag">{t.mostChosen}</span>}
@@ -52,8 +51,8 @@ export function MaintenancePage() {
         <div className="container">
           <SectionIntro eyebrow={t.partnersEyebrow} title={t.partnersTitle} text={t.partnersText} />
           <div className="partners-row">
-            {t.partners.map((partner, i) => {
-              const Icon = partnerIcons[i];
+            {maintenance.partners.map((partner, i) => {
+              const Icon = partnerIcons[i % partnerIcons.length];
               return (
                 <Reveal key={partner.name} className="partner-tile">
                   <Icon />

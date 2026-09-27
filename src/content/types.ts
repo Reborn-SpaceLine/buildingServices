@@ -138,9 +138,26 @@ export interface Testimonial {
   rating: number;            // 1 à 5
   project: string;           // slug de la réalisation liée (facultatif)
   date: string;              // AAAA-MM
-  consent: boolean;          // accord écrit du client pour publier son avis
+  consent: boolean;          // accord écrit du client pour publier son avis (et sa vidéo)
   published: boolean;
+  video?: MediaLink;         // témoignage vidéo (fichier envoyé ou lien YouTube, TikTok…)
   i18n?: Translations<{ role: string; text: string }>;
+}
+
+/** Formule de la page Maintenance */
+export interface MaintenancePlan {
+  title: string;
+  description: string;
+  features: string[];
+  price: string;             // texte libre, ex. « À partir de 98 000 FCFA / mois »
+  featured: boolean;
+  i18n?: Translations<{ title: string; description: string; features: string[]; price: string }>;
+}
+
+export interface Partner {
+  name: string;
+  description: string;
+  i18n?: Translations<{ description: string }>;
 }
 
 export interface FaqItem {
@@ -158,4 +175,5 @@ export interface SiteContent {
   faq: FaqItem[];
   videos: MediaLink[];       // vidéos mises en avant (accueil et page Vidéos)
   testimonials?: Testimonial[];
+  maintenance?: { plans: MaintenancePlan[]; partners: Partner[] };
 }

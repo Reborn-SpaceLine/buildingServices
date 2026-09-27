@@ -110,8 +110,13 @@ function buildSite(lang: Lang) {
     projects,
     faq: c.faq,
     featuredVideos: c.videos.filter(v => v.url),
+    // Page Maintenance : modifiable dans l'admin ; à défaut (ancien contenu), textes d'origine
+    maintenance: c.maintenance ?? {
+      plans: ui.maintenance.plans.map((p, i) => ({ ...p, featured: i === 2 })),
+      partners: ui.maintenance.partners,
+    },
     // Double sécurité : seuls les avis avec accord du client et publiés s'affichent
-    testimonials: (c.testimonials ?? []).filter(t => t.published && t.consent && t.text.trim()),
+    testimonials: (c.testimonials ?? []).filter(t => t.published && t.consent && (t.text.trim() || t.video?.url)),
     servicesByCategory,
     categoryLabel,
     findService,

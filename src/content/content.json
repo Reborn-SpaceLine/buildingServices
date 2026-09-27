@@ -938,5 +938,156 @@
         }
       }
     }
-  ]
+  ],
+  "maintenance": {
+    "plans": [
+      {
+        "title": "Maintenance préventive",
+        "description": "Inspections régulières et entretien préventif pour éviter les pannes coûteuses",
+        "features": [
+          "Inspection mensuelle",
+          "Nettoyage professionnel",
+          "Remplacement préventif",
+          "Rapport détaillé"
+        ],
+        "price": "À partir de 98 000 FCFA / mois",
+        "featured": false,
+        "i18n": {
+          "en": {
+            "title": "Preventive maintenance",
+            "description": "Regular inspections and preventive servicing to avoid costly breakdowns",
+            "features": [
+              "Monthly inspection",
+              "Professional cleaning",
+              "Preventive replacement",
+              "Detailed report"
+            ],
+            "price": "From 98,000 FCFA / month"
+          }
+        }
+      },
+      {
+        "title": "Maintenance corrective",
+        "description": "Réparations rapides et efficaces pour remettre vos installations en état",
+        "features": [
+          "Intervention rapide",
+          "Diagnostic professionnel",
+          "Réparation sur site",
+          "Garantie pièces"
+        ],
+        "price": "À partir de 52 000 FCFA / intervention",
+        "featured": false,
+        "i18n": {
+          "en": {
+            "title": "Corrective maintenance",
+            "description": "Fast, effective repairs to get your installations working again",
+            "features": [
+              "Rapid response",
+              "Professional diagnosis",
+              "On-site repair",
+              "Parts warranty"
+            ],
+            "price": "From 52,000 FCFA / call-out"
+          }
+        }
+      },
+      {
+        "title": "Contrat de maintenance",
+        "description": "Sérénité totale avec nos contrats de maintenance personnalisés",
+        "features": [
+          "Maintenance complète",
+          "Assistance téléphonique",
+          "Priorité d’intervention",
+          "Tarifs préférentiels"
+        ],
+        "price": "À partir de 131 000 FCFA / mois",
+        "featured": true,
+        "i18n": {
+          "en": {
+            "title": "Maintenance contract",
+            "description": "Complete peace of mind with our tailored maintenance contracts",
+            "features": [
+              "Full maintenance",
+              "Phone support",
+              "Priority response",
+              "Preferential rates"
+            ],
+            "price": "From 131,000 FCFA / month"
+          }
+        }
+      },
+      {
+        "title": "Dépannage d’urgence",
+        "description": "Service d’urgence 24h/24 pour vos pannes critiques",
+        "features": [
+          "Disponible 24h/24",
+          "Intervention sous 2 h",
+          "Équipe qualifiée",
+          "Devis immédiat"
+        ],
+        "price": "À partir de 79 000 FCFA + déplacement",
+        "featured": false,
+        "i18n": {
+          "en": {
+            "title": "Emergency repairs",
+            "description": "24/7 emergency service for critical breakdowns",
+            "features": [
+              "Available 24/7",
+              "On site within 2 hours",
+              "Qualified team",
+              "Immediate quote"
+            ],
+            "price": "From 79,000 FCFA + travel"
+          }
+        }
+      }
+    ],
+    "partners": [
+      {
+        "name": "Constructions Modernes",
+        "description": "Spécialiste en construction neuve et rénovation",
+        "i18n": {
+          "en": {
+            "description": "New builds and renovation specialist"
+          }
+        }
+      },
+      {
+        "name": "Artisans Experts",
+        "description": "Menuiserie, charpente et ébénisterie",
+        "i18n": {
+          "en": {
+            "description": "Carpentry, roof framing and cabinetmaking"
+          }
+        }
+      },
+      {
+        "name": "Déco Pro",
+        "description": "Peinture, décoration et finitions",
+        "i18n": {
+          "en": {
+            "description": "Painting, decoration and finishing"
+          }
+        }
+      },
+      {
+        "name": "Électro Services",
+        "description": "Installations électriques et domotique",
+        "i18n": {
+          "en": {
+            "description": "Electrical installations and home automation"
+          }
+        }
+      },
+      {
+        "name": "Équipe Qualifiée",
+        "description": "Professionnels certifiés et expérimentés",
+        "i18n": {
+          "en": {
+            "description": "Certified, experienced professionals"
+          }
+        }
+      }
+    ]
+  }
 }

@@ -108,6 +108,35 @@ export interface ServerMessage {
   lang?: string;
   timestamp: string;
   status: 'nouveau' | 'lu' | 'traité';
+  appointment?: Appointment;
+}
+
+export type AppointmentStatus = 'en attente' | 'confirmé' | 'refusé' | 'terminé';
+
+export interface Appointment {
+  type: 'appel' | 'visite';
+  date: string;        // AAAA-MM-JJ
+  slot: string;        // ex. « 08:00 – 10:00 »
+  service: string;
+  address: string;
+  status: AppointmentStatus;
+}
+
+export function setAppointmentStatus(id: string, appointmentStatus: AppointmentStatus) {
+  return request<{ ok: true }>(`${API}/messages/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ appointmentStatus }),
+  });
+}
+
+/* ---------- Versions précédentes du contenu ---------- */
+export function fetchVersions() {
+  return request<{ file: string; date: string; size: number }[]>(`${API}/versions`);
+}
+
+export function restoreVersion(file: string) {
+  return postJson<{ ok: true }>(`${API}/versions/restore`, { file });
 }
 
 export function fetchMessages() {

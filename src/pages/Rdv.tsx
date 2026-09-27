@@ -64,7 +64,10 @@ export function RdvPage() {
 
     // WhatsApp d'abord (dans le clic, sinon le navigateur bloque la fenêtre), puis copie dans l'admin
     window.open(whatsappLink(`${t.greeting}\n\n${t.nameLabel} : ${data.name}\n${t.phoneLabel} : ${data.phone}\n${summary}`), '_blank', 'noopener');
-    void sendMessage({ name: data.name, email: data.email, phone: data.phone, subject: `RDV – ${selectedText.title}`, message: summary, lang, website });
+    void sendMessage({
+      name: data.name, email: data.email, phone: data.phone, subject: `RDV – ${selectedText.title}`, message: summary, lang, website,
+      appointment: { type: selected!.id, date: data.date, slot: data.slot, service: data.service, address: data.address },
+    });
     setDone(true);
   };
 

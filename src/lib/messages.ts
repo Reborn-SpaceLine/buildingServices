@@ -7,6 +7,8 @@ export interface OutgoingMessage {
   message: string;
   lang: string;
   website?: string; // piège à robots : doit rester vide
+  /** Demande de rendez-vous : alimente l'agenda de l'admin */
+  appointment?: { type: 'appel' | 'visite'; date: string; slot: string; service: string; address: string };
 }
 
 export type SendResult = 'ok' | 'rate-limited' | 'error';

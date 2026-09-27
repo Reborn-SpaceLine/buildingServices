@@ -331,6 +331,10 @@ const fr = {
     email: 'Envoyer un email',
     backToTop: 'Retour en haut',
   },
+  preview: {
+    banner: 'Aperçu — ces modifications ne sont pas encore publiées.',
+    exit: 'Quitter l’aperçu',
+  },
 };
 
 export type UiText = typeof fr;
@@ -660,6 +664,10 @@ const en: UiText = {
     call: 'Call now',
     email: 'Send an email',
     backToTop: 'Back to top',
+  },
+  preview: {
+    banner: 'Preview — these changes are not published yet.',
+    exit: 'Leave preview',
   },
 };
 

@@ -72,6 +72,16 @@ export function localizeContent(content: SiteContent, lang: Lang): SiteContent {
       a: pick(item.a, item.i18n?.[lang]?.a),
     })),
     videos: (content.videos ?? []).map(v => localizeVideo(v, lang)),
+    maintenance: content.maintenance && {
+      plans: content.maintenance.plans.map(p => ({
+        ...p,
+        title: pick(p.title, p.i18n?.[lang]?.title),
+        description: pick(p.description, p.i18n?.[lang]?.description),
+        features: pickList(p.features, p.i18n?.[lang]?.features),
+        price: pick(p.price, p.i18n?.[lang]?.price),
+      })),
+      partners: content.maintenance.partners.map(p => ({ ...p, description: pick(p.description, p.i18n?.[lang]?.description) })),
+    },
     testimonials: (content.testimonials ?? []).map(t => ({
       ...t,
       role: pick(t.role, t.i18n?.[lang]?.role),

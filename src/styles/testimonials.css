@@ -98,3 +98,33 @@
 .t-google {
   margin-top: 2rem;
 }
+
+/* Témoignage vidéo : format vertical, comme une vidéo de téléphone */
+.t-video {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9 / 16;
+  margin: 0 auto;
+  border-radius: var(--radius-sm);
+  background: #000;
+}
+
+.t-video iframe,
+.t-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+}
+
+.t-card.has-video {
+  padding-top: 1.25rem;
+}
+
+.t-card blockquote:empty {
+  display: none;
+}

@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, KeyRound, LogOut, Menu, X } from 'lucide-react';
+import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, KeyRound, LogOut, Menu, X, Eye } from 'lucide-react';
 import { authStatus, setupPassword, login, logout, fetchContent, saveContent, downloadJson, AuthError } from './api';
-import { GeneralTab, ServicesTab, ProjectsTab, TestimonialsTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
+import { GeneralTab, ServicesTab, ProjectsTab, TestimonialsTab, MaintenanceTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
+import { AgendaTab } from './agenda';
+import { PREVIEW_KEY } from '../content';
+import { toPublicContent } from '../content/privacy';
 import { TextInput } from './fields';
 import { TranslationsTab } from './translations';
 import { useAdminText } from './i18n';
@@ -12,7 +15,7 @@ import { Rich, AdminLanguageSwitch } from './Rich';
 import type { SiteContent } from '../content/types';
 import '../styles/admin.css';
 
-const tabIds = ['general', 'services', 'projects', 'testimonials', 'videos', 'faq', 'translations', 'messages', 'security', 'guide'] as const;
+const tabIds = ['general', 'services', 'projects', 'testimonials', 'maintenance', 'videos', 'faq', 'translations', 'agenda', 'messages', 'security', 'guide'] as const;
 
 type TabId = typeof tabIds[number];
 type Mode = 'loading' | 'unavailable' | 'no-password' | 'setup' | 'login' | 'ready';
@@ -201,6 +204,17 @@ export default function AdminPage() {
     }
   };
 
+  /** Aperçu : le site s'ouvre avec le contenu en cours (filtré comme en ligne), sans rien publier */
+  const preview = () => {
+    if (!content) return;
+    try {
+      localStorage.setItem(PREVIEW_KEY, JSON.stringify(toPublicContent(content)));
+      window.open('/?preview=1', '_blank', 'noopener');
+    } catch (e) {
+      setStatus({ type: 'error', message: e instanceof Error ? e.message : undefined });
+    }
+  };
+
   const exportContent = () => {
     if (content) downloadJson(content, `building-service-contenu-${new Date().toISOString().split('T')[0]}.json`);
   };
@@ -249,6 +263,9 @@ export default function AdminPage() {
 
             {/* Ordinateur : toutes les actions visibles */}
             <a className="a-btn a-btn-ghost a-secondary" href="/" target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /> {h.viewSite}</a>
+            <button className="a-btn a-btn-ghost a-secondary" onClick={preview} title={t.preview.title}>
+              <Eye size={16} /> {t.preview.button}
+            </button>
             <button className="a-btn a-btn-ghost a-secondary" onClick={exportContent}>
               <Download size={16} /> {h.export}
             </button>
@@ -296,6 +313,9 @@ export default function AdminPage() {
             <a href="/" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
               <ExternalLink size={18} /> {h.viewSite}
             </a>
+            <button onClick={() => { preview(); setMenuOpen(false); }}>
+              <Eye size={18} /> {t.preview.title}
+            </button>
             <button onClick={() => { exportContent(); setMenuOpen(false); }}>
               <Download size={18} /> {h.exportContent}
             </button>
@@ -317,9 +337,11 @@ export default function AdminPage() {
         {tab === 'services' && <ServicesTab content={content} update={update} />}
         {tab === 'projects' && <ProjectsTab content={content} update={update} />}
         {tab === 'testimonials' && <TestimonialsTab content={content} update={update} />}
+        {tab === 'maintenance' && <MaintenanceTab content={content} update={update} />}
         {tab === 'videos' && <VideosTab content={content} update={update} goTo={setTab} />}
         {tab === 'faq' && <FaqTab content={content} update={update} />}
         {tab === 'translations' && <TranslationsTab content={content} update={update} />}
+        {tab === 'agenda' && <AgendaTab />}
         {tab === 'messages' && <MessagesTab />}
         {tab === 'security' && <SecurityTab onLogout={handleLogout} />}
         {tab === 'guide' && <GuideTab />}

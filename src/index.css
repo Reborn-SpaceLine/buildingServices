@@ -359,3 +359,15 @@ img.img-fallback {
     --section-space: 56px;
   }
 }
+
+/* Aperçu avant publication (contenu de l'admin non enregistré) */
+.preview-banner {
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px;
+  padding: 8px 16px; background: #f59e0b; color: #1f1300;
+  font-size: 0.9rem; font-weight: 600; text-align: center;
+}
+.preview-banner button {
+  border: 0; border-radius: 999px; padding: 4px 12px; cursor: pointer;
+  background: #1f1300; color: #fff; font: inherit; font-size: 0.8rem;
+}

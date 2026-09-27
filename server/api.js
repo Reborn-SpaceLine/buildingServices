@@ -283,6 +283,18 @@ export function createApi(options) {
           timestamp: new Date().toISOString(),
           status: 'nouveau',
         };
+        // Demande de rendez-vous : données structurées pour l'agenda de l'admin
+        const appt = body.appointment;
+        if (appt && typeof appt === 'object' && /^\d{4}-\d{2}-\d{2}$/.test(str(appt.date, 10))) {
+          message.appointment = {
+            type: appt.type === 'visite' ? 'visite' : 'appel',
+            date: str(appt.date, 10),
+            slot: str(appt.slot, 40),
+            service: str(appt.service, 120),
+            address: str(appt.address, 200),
+            status: 'en attente',
+          };
+        }
         if (!message.name || !message.phone || !message.message) {
           send(res, 400, { error: 'Nom, téléphone et message sont obligatoires.' });
           return true;
@@ -427,6 +439,39 @@ export function createApi(options) {
         return true;
       }
 
+      /* ----- Versions précédentes du contenu (copie faite avant chaque enregistrement) ----- */
+      if (route === '/versions' && req.method === 'GET') {
+        await fs.mkdir(files.backups, { recursive: true });
+        const names = (await fs.readdir(files.backups)).filter(f => /^content-[\w-]+\.json$/.test(f)).sort().reverse();
+        const versions = await Promise.all(names.map(async name => {
+          const stat = await fs.stat(path.join(files.backups, name));
+          return { file: name, date: stat.mtime.toISOString(), size: stat.size };
+        }));
+        send(res, 200, versions);
+        return true;
+      }
+
+      if (route === '/versions/restore' && req.method === 'POST') {
+        const { file } = await readJsonBody(req);
+        if (typeof file !== 'string' || !/^content-[\w-]+\.json$/.test(file)) {
+          send(res, 400, { error: 'Version inconnue.' });
+          return true;
+        }
+        const source = path.join(files.backups, file);
+        const restored = await readJson(source, null);
+        if (!restored || !Array.isArray(restored.services)) {
+          send(res, 404, { error: 'Version introuvable ou illisible.' });
+          return true;
+        }
+        // La version actuelle est d'abord sauvegardée : la restauration peut elle-même être annulée
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+        await fs.copyFile(contentFile, path.join(files.backups, `content-${stamp}.json`)).catch(() => {});
+        await writeJson(contentFile, restored);
+        publicCache = null;
+        send(res, 200, { ok: true });
+        return true;
+      }
+
       /* ----- Sauvegardes ----- */
       if (route === '/backup/run' && req.method === 'POST') {
         send(res, 200, await backups.run());
@@ -459,12 +504,22 @@ export function createApi(options) {
         if (req.method === 'DELETE') {
           await writeJson(files.messages, messages.filter(m => m.id !== id));
         } else {
-          const { status } = await readJsonBody(req);
-          if (!['nouveau', 'lu', 'traité'].includes(status)) {
+          const { status, appointmentStatus } = await readJsonBody(req);
+          if (status !== undefined && !['nouveau', 'lu', 'traité'].includes(status)) {
             send(res, 400, { error: 'Statut invalide.' });
             return true;
           }
-          await writeJson(files.messages, messages.map(m => (m.id === id ? { ...m, status } : m)));
+          if (appointmentStatus !== undefined && !['en attente', 'confirmé', 'refusé', 'terminé'].includes(appointmentStatus)) {
+            send(res, 400, { error: 'Statut de rendez-vous invalide.' });
+            return true;
+          }
+          await writeJson(files.messages, messages.map(m => {
+            if (m.id !== id) return m;
+            const next = { ...m };
+            if (status !== undefined) next.status = status;
+            if (appointmentStatus !== undefined && m.appointment) next.appointment = { ...m.appointment, status: appointmentStatus };
+            return next;
+          }));
         }
         send(res, 200, { ok: true });
         return true;
