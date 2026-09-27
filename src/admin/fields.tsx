@@ -40,6 +40,25 @@ export function TextArea({ label, value, onChange, hint, rows = 4 }: {
   );
 }
 
+/** Texte en français + sa traduction anglaise, l'un sous l'autre (la traduction ne peut pas être oubliée) */
+export function BilingualField({ label, value, onChange, en, onChangeEn, hint, multiline = false, rows = 3 }: {
+  label: string; value: string; onChange: (v: string) => void; en: string; onChangeEn: (v: string) => void;
+  hint?: ReactNode; multiline?: boolean; rows?: number;
+}) {
+  const t = useAdminText();
+  const input = (v: string, set: (v: string) => void, placeholder?: string) => (multiline
+    ? <textarea rows={rows} value={v ?? ''} placeholder={placeholder} onChange={e => set(e.target.value)} />
+    : <input value={v ?? ''} placeholder={placeholder} onChange={e => set(e.target.value)} />);
+  return (
+    <div className="a-field a-bilingual">
+      <span className="a-label">{label}</span>
+      <div className="a-bilingual-row"><span className="a-lang-tag">FR</span>{input(value, onChange)}</div>
+      <div className="a-bilingual-row"><span className="a-lang-tag en">EN</span>{input(en, onChangeEn, t.fields.enPlaceholder)}</div>
+      {hint && <small className="a-hint">{hint}</small>}
+    </div>
+  );
+}
+
 export function Select<T extends string>({ label, value, options, onChange, hint }: {
   label: string; value: T; options: { value: T; label: string }[]; onChange: (v: T) => void; hint?: ReactNode;
 }) {

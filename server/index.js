@@ -13,6 +13,9 @@
 //   SITE_URL        adresse publique, pour le sitemap          (ex. https://www.building-service.cm)
 //   TRUST_PROXY     1 si le serveur est derrière un proxy / hébergeur (IP réelle via X-Forwarded-For)
 //   MAX_UPLOAD_MB   taille maximale d'un envoi dans l'admin    (défaut 300)
+//   BACKUP_HOUR     heure de la sauvegarde quotidienne         (défaut 3)
+//   BACKUP_KEEP     nombre d'archives gardées sur le serveur   (défaut 14)
+//   Alertes (Telegram, e-mail, WhatsApp, SMS) : voir server/notify.js et deploy/.env.example
 import http from 'node:http';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
@@ -44,6 +47,7 @@ const api = createApi({
   initialPassword: env.ADMIN_PASSWORD,
   trustProxy: env.TRUST_PROXY === '1' || env.TRUST_PROXY === 'true',
   maxUploadMb: Number(env.MAX_UPLOAD_MB ?? 300),
+  siteUrl: SITE_URL,
 });
 
 /* =========================
@@ -263,6 +267,7 @@ server.requestTimeout = 10 * 60 * 1000; // envois de vidéos volumineuses
 server.headersTimeout = 60 * 1000;
 
 await api.init();
+if (env.BACKUP_DISABLED !== '1') api.backups.schedule(); // sauvegarde quotidienne (voir server/backup.js)
 server.listen(PORT, HOST, () => {
   console.log(`Building Service en ligne sur http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
   console.log(`Données : ${DATA_DIR}`);

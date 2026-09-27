@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import type React from 'react';
-import { ShieldCheck, EyeOff, Download, KeyRound, LogOut } from 'lucide-react';
-import { TextInput, TextArea, Select, Toggle, ImageField, ImageListField, StringListField, VideoListField, ListEditor } from './fields';
-import { slugify, changePassword, fetchMessages, setMessageStatus, deleteMessage } from './api';
-import type { ServerMessage } from './api';
+import { ShieldCheck, EyeOff, Download, KeyRound, LogOut, Bell, Send, Archive } from 'lucide-react';
+import { TextInput, TextArea, Select, Toggle, ImageField, ImageListField, StringListField, VideoListField, ListEditor, BilingualField } from './fields';
+import { slugify, changePassword, fetchMessages, setMessageStatus, deleteMessage, fetchNotificationStatus, sendTestNotification, runBackup, downloadBackup } from './api';
+import type { ServerMessage, ChannelName } from './api';
 import { useAdminText } from './i18n';
 import { Rich } from './Rich';
 import { serviceIcons } from '../content/icons';
@@ -26,6 +26,9 @@ export function GeneralTab({ content, update }: TabProps) {
   const company = content.company;
   const setCompany = (patch: Partial<typeof company>) => update({ company: { ...company, ...patch } });
   const setSocial = (key: keyof typeof company.socials, value: string) => setCompany({ socials: { ...company.socials, [key]: value } });
+  const companyEn = company.i18n?.en ?? {};
+  const setCompanyEn = (patch: Partial<NonNullable<NonNullable<typeof company.i18n>['en']>>) =>
+    setCompany({ i18n: { ...company.i18n, en: { ...companyEn, ...patch } } });
 
   return (
     <div className="a-stack">
@@ -33,15 +36,35 @@ export function GeneralTab({ content, update }: TabProps) {
         <h2>{t.company}</h2>
         <div className="a-grid">
           <TextInput label={t.name} value={company.name} onChange={v => setCompany({ name: v })} />
-          <TextInput label={t.tagline} value={company.tagline} onChange={v => setCompany({ tagline: v })} />
+          <BilingualField label={t.tagline} value={company.tagline} onChange={v => setCompany({ tagline: v })} en={companyEn.tagline ?? ''} onChangeEn={v => setCompanyEn({ tagline: v })} />
           <TextInput label={t.phone} value={company.phone} onChange={v => setCompany({ phone: v })} />
           <TextInput label={t.whatsapp} value={company.whatsapp} onChange={v => setCompany({ whatsapp: v.replace(/\D/g, '') })} hint={t.whatsappHint} />
           <TextInput label={t.email} type="email" value={company.email} onChange={v => setCompany({ email: v })} />
           <TextInput label={t.website} value={company.website} onChange={v => setCompany({ website: v })} />
-          <TextInput label={t.area} value={company.city} onChange={v => setCompany({ city: v })} />
-          <TextInput label={t.hours} value={company.hours} onChange={v => setCompany({ hours: v })} />
+          <BilingualField label={t.area} value={company.city} onChange={v => setCompany({ city: v })} en={companyEn.city ?? ''} onChangeEn={v => setCompanyEn({ city: v })} />
+          <BilingualField label={t.hours} value={company.hours} onChange={v => setCompany({ hours: v })} en={companyEn.hours ?? ''} onChangeEn={v => setCompanyEn({ hours: v })} />
           <TextInput label={t.map} value={company.mapQuery} onChange={v => setCompany({ mapQuery: v })} hint={t.mapHint} />
         </div>
+      </section>
+
+      <section className="a-card">
+        <h2>{t.footer}</h2>
+        <p className="a-muted">{t.footerHint}</p>
+        <BilingualField
+          label={t.footerTitle}
+          value={company.footerTitle ?? ''}
+          onChange={v => setCompany({ footerTitle: v })}
+          en={companyEn.footerTitle ?? ''}
+          onChangeEn={v => setCompanyEn({ footerTitle: v })}
+        />
+        <BilingualField
+          label={t.footerText}
+          value={company.footerText ?? ''}
+          onChange={v => setCompany({ footerText: v })}
+          en={companyEn.footerText ?? ''}
+          onChangeEn={v => setCompanyEn({ footerText: v })}
+          multiline
+        />
       </section>
 
       <section className="a-card">
@@ -318,12 +341,100 @@ export function SecurityTab({ onLogout }: { onLogout: () => void }) {
         </form>
       </section>
 
+      <AlertsCard />
+      <BackupsCard />
+
       <section className="a-card">
         <h2>{t.session}</h2>
         <p className="a-muted"><Rich text={t.sessionText} /></p>
         <button type="button" className="a-btn a-btn-dark" onClick={onLogout}><LogOut size={16} /> {t.logout}</button>
       </section>
     </div>
+  );
+}
+
+/** Canaux d'alerte actifs + test */
+function AlertsCard() {
+  const t = useAdminText().security;
+  const [status, setStatus] = useState<Record<ChannelName, boolean> | null>(null);
+  const [results, setResults] = useState<Partial<Record<ChannelName, string>> | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchNotificationStatus().then(setStatus).catch(e => setError(e instanceof Error ? e.message : String(e)));
+  }, []);
+
+  const test = async () => {
+    setBusy(true);
+    setError('');
+    try {
+      setResults(await sendTestNotification());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const names = Object.keys(t.channels) as ChannelName[];
+  const anyActive = status && names.some(n => status[n]);
+
+  return (
+    <section className="a-card">
+      <h2><Bell size={20} /> {t.alertsTitle}</h2>
+      <p className="a-muted"><Rich text={t.alertsIntro} /></p>
+      {status && (
+        <ul className="a-channels">
+          {names.map(name => (
+            <li key={name} className={status[name] ? 'on' : ''}>
+              <strong>{t.channels[name]}</strong>
+              <span>{status[name] ? t.active : t.inactive}</span>
+              {results?.[name] && <small>{results[name] === 'ok' ? `✓ ${t.testOk}` : `✗ ${results[name]}`}</small>}
+            </li>
+          ))}
+        </ul>
+      )}
+      {status && !anyActive && <p className="a-warning"><Rich text={t.noChannel} /></p>}
+      {error && <p className="a-error">{error}</p>}
+      <button type="button" className="a-btn a-btn-light" disabled={busy || !anyActive} onClick={test}>
+        <Send size={16} /> {busy ? t.testing : t.test}
+      </button>
+    </section>
+  );
+}
+
+/** Sauvegarde immédiate + téléchargement */
+function BackupsCard() {
+  const t = useAdminText().security;
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const now = async () => {
+    setBusy(true);
+    try {
+      const { name, sent } = await runBackup();
+      const channels = Object.entries(sent).map(([k, v]) => `${k} : ${v}`).join(', ');
+      setMessage({ ok: true, text: `${t.backupDone(name)}${channels ? ` (${channels})` : ''}` });
+    } catch (e) {
+      setMessage({ ok: false, text: e instanceof Error ? e.message : String(e) });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="a-card">
+      <h2><Archive size={20} /> {t.backupsTitle}</h2>
+      <p className="a-muted">{t.backupsIntro}</p>
+      {message && <p className={message.ok ? 'a-success' : 'a-error'}>{message.text}</p>}
+      <div className="a-row">
+        <button type="button" className="a-btn a-btn-light" disabled={busy} onClick={now}><Archive size={16} /> {t.backupNow}</button>
+        <button type="button" className="a-btn a-btn-light" onClick={() => downloadBackup().catch(e => setMessage({ ok: false, text: String(e.message ?? e) }))}>
+          <Download size={16} /> {t.download}
+        </button>
+      </div>
+    </section>
   );
 }
 

@@ -21,9 +21,13 @@
       "en": {
         "tagline": "Building, renovating and fitting out spaces that last.",
         "city": "Yaoundé & Douala, Cameroon",
-        "hours": "Mon – Sat: 8:00 am – 6:00 pm"
+        "hours": "Mon – Sat: 8:00 am – 6:00 pm",
+        "footerTitle": "Let’s design your next project together.",
+        "footerText": "Your trusted partner for all your construction, renovation and interior fit-out projects."
       }
-    }
+    },
+    "footerTitle": "Concevons ensemble votre prochain projet.",
+    "footerText": "Votre partenaire de confiance pour tous vos projets de construction, de rénovation et d’aménagement intérieur."
   },
   "hero": {
     "eyebrow": "Construction · Rénovation · Aménagement",

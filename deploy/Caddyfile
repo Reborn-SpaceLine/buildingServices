@@ -1,0 +1,8 @@
+# Caddy obtient et renouvelle seul le certificat HTTPS de SITE_HOST (défini dans .env).
+# Sans nom de domaine : SITE_HOST=<ip-avec-tirets>.sslip.io (ex. 203-0-113-5.sslip.io).
+# Avec un domaine : SITE_HOST=www.mon-domaine.cm, puis « docker compose up -d ».
+
+{$SITE_HOST} {
+	encode zstd gzip
+	reverse_proxy site:8080
+}

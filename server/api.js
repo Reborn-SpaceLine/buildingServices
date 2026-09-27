@@ -5,6 +5,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { toPublicContent } from '../shared/privacy.js';
+import { notificationStatus, notifyNewMessage, broadcast } from './notify.js';
+import { createBackups } from './backup.js';
 
 const SESSION_TTL = 8 * 60 * 60 * 1000;          // session admin : 8 h d'inactivité
 const MIN_PASSWORD = 8;
@@ -31,8 +33,10 @@ const ALLOWED_EXT = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.mp4', 
 export function createApi(options) {
   const {
     contentFile, seedFile, privateDir, uploadsDir,
-    canSetup, canAccess = () => true, initialPassword, trustProxy = false, maxUploadMb = 300,
+    canSetup, canAccess = () => true, initialPassword, trustProxy = false, maxUploadMb = 300, siteUrl = '',
   } = options;
+
+  const backups = createBackups({ contentFile, privateDir });
 
   const files = {
     private: path.join(privateDir, 'private.json'),
@@ -277,6 +281,7 @@ export function createApi(options) {
         }
         const messages = await readJson(files.messages, []);
         await writeJson(files.messages, [message, ...messages].slice(0, MAX_MESSAGES));
+        notifyNewMessage(message, siteUrl); // alertes Telegram / e-mail / WhatsApp / SMS, sans attendre
         send(res, 201, { ok: true });
         return true;
       }
@@ -395,6 +400,37 @@ export function createApi(options) {
         return true;
       }
 
+      /* ----- Alertes ----- */
+      if (route === '/notifications' && req.method === 'GET') {
+        send(res, 200, notificationStatus());
+        return true;
+      }
+
+      if (route === '/notifications/test' && req.method === 'POST') {
+        const results = await broadcast(
+          `✅ Test des alertes Building Service (${new Date().toLocaleString('fr-FR')}).\nSi vous lisez ceci, ce canal fonctionne.`,
+          'Test des alertes – Building Service',
+        );
+        send(res, 200, results);
+        return true;
+      }
+
+      /* ----- Sauvegardes ----- */
+      if (route === '/backup/run' && req.method === 'POST') {
+        send(res, 200, await backups.run());
+        return true;
+      }
+
+      if (route === '/backup/download' && req.method === 'GET') {
+        const { name, data } = await backups.createArchive();
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/gzip');
+        res.setHeader('Content-Disposition', `attachment; filename="${name}"`);
+        res.setHeader('Cache-Control', 'no-store');
+        res.end(data);
+        return true;
+      }
+
       if (route === '/messages' && req.method === 'GET') {
         send(res, 200, await readJson(files.messages, []));
         return true;
@@ -431,5 +467,5 @@ export function createApi(options) {
     }
   }
 
-  return { init, handle, publicContent };
+  return { init, handle, publicContent, backups };
 }

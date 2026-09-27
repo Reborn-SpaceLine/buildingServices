@@ -24,6 +24,8 @@ export function localizeContent(content: SiteContent, lang: Lang): SiteContent {
       tagline: pick(company.tagline, companyTr?.tagline),
       city: pick(company.city, companyTr?.city),
       hours: pick(company.hours, companyTr?.hours),
+      footerTitle: pick(company.footerTitle ?? '', companyTr?.footerTitle),
+      footerText: pick(company.footerText ?? '', companyTr?.footerText),
     },
     hero: {
       ...hero,

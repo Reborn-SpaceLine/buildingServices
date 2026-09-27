@@ -53,6 +53,8 @@ function collectEntries(content: SiteContent, update: TabProps['update'], lang: 
   add({ group: g.home, label: l.tagline, source: content.company.tagline, value: companyTr?.tagline ?? '', set: v => setCompany({ tagline: v }) });
   add({ group: g.home, label: l.area, source: content.company.city, value: companyTr?.city ?? '', set: v => setCompany({ city: v }) });
   add({ group: g.home, label: l.hours, source: content.company.hours, value: companyTr?.hours ?? '', set: v => setCompany({ hours: v }) });
+  add({ group: g.home, label: a.general.footerTitle, source: content.company.footerTitle ?? '', value: companyTr?.footerTitle ?? '', set: v => setCompany({ footerTitle: v }) });
+  add({ group: g.home, label: a.general.footerText, source: content.company.footerText ?? '', value: companyTr?.footerText ?? '', multiline: true, set: v => setCompany({ footerText: v }) });
 
   /* Chiffres */
   content.stats.forEach((stat, i) => {

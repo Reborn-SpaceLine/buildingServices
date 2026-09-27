@@ -125,3 +125,31 @@ export function setMessageStatus(id: string, status: ServerMessage['status']) {
 export function deleteMessage(id: string) {
   return request<{ ok: true }>(`${API}/messages/${id}`, { method: 'DELETE' });
 }
+/* ---------- Alertes et sauvegardes ---------- */
+export type ChannelName = 'telegram' | 'email' | 'whatsapp' | 'sms';
+
+export function fetchNotificationStatus() {
+  return request<Record<ChannelName, boolean>>(`${API}/notifications`);
+}
+
+export function sendTestNotification() {
+  return request<Partial<Record<ChannelName, string>>>(`${API}/notifications/test`, { method: 'POST' });
+}
+
+export function runBackup() {
+  return request<{ name: string; size: number; sent: Partial<Record<ChannelName, string>> }>(`${API}/backup/run`, { method: 'POST' });
+}
+
+/** Télécharge une archive de sauvegarde (contenu, clients, brouillons, messages) */
+export async function downloadBackup() {
+  const res = await fetch(`${API}/backup/download`, { headers: { 'x-admin-token': getToken() } });
+  if (res.status === 401) throw new AuthError('Session expirée');
+  if (!res.ok) throw new Error(`Erreur ${res.status}`);
+  const name = res.headers.get('Content-Disposition')?.match(/filename="(.+)"/)?.[1] ?? 'sauvegarde.json.gz';
+  const url = URL.createObjectURL(await res.blob());
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.click();
+  URL.revokeObjectURL(url);
+}

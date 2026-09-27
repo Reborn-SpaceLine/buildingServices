@@ -154,6 +154,8 @@ Le logo s’affiche en filigrane fixe dans les sections sans image de fond, et r
 
 ## Mise en production (Docker)
 
+> **Sur un VPS, sans nom de domaine** : suivez [deploy/README.md](deploy/README.md) — installation en une commande, HTTPS automatique avec une adresse `…sslip.io`, mise à jour à chaque push, alertes Telegram / e-mail / WhatsApp / SMS, sauvegardes quotidiennes.
+
 ### Avec Docker Compose (serveur ou VPS)
 
 ```bash

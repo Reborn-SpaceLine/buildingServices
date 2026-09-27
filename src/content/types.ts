@@ -42,7 +42,9 @@ export interface Company {
     youtube: string;
     linkedin: string;
   };
-  i18n?: Translations<{ tagline: string; city: string; hours: string }>;
+  footerTitle?: string;      // grand titre du pied de page
+  footerText?: string;       // texte sous le logo du pied de page
+  i18n?: Translations<{ tagline: string; city: string; hours: string; footerTitle: string; footerText: string }>;
 }
 
 export interface Hero {

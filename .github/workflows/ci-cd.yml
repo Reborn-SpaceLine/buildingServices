@@ -127,16 +127,27 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
     steps:
-      # Hébergeurs compatibles : Render, Coolify, Portainer, CapRover… (« deploy hook » / webhook de redéploiement).
-      # Renseignez le secret DEPLOY_HOOK_URL dans Settings → Secrets and variables → Actions.
-      - name: Déclencher le redéploiement
-        env:
-          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+      # VPS (deploy/README.md) : secrets VPS_HOST, VPS_USER, VPS_SSH_KEY (et VPS_PORT si différent de 22)
+      - name: Mise à jour du VPS
+        if: env.VPS_HOST != ''
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: cd /opt/building-service && ./update.sh
+
+      # Autres hébergeurs (Render, Coolify, Portainer…) : secret DEPLOY_HOOK_URL
+      - name: Déclencher un redéploiement par webhook
+        if: env.DEPLOY_HOOK_URL != ''
+        run: curl -fsS -X POST "$DEPLOY_HOOK_URL" && echo "Redéploiement demandé."
+
+      - name: Aucun déploiement configuré
+        if: env.VPS_HOST == '' && env.DEPLOY_HOOK_URL == ''
         run: |
-          if [ -z "$DEPLOY_HOOK_URL" ]; then
-            echo "::notice::Aucun DEPLOY_HOOK_URL configuré : l'image latest est publiée, redéployez-la sur votre serveur (docker compose pull && docker compose up -d)."
-            exit 0
-          fi
-          curl -fsS -X POST "$DEPLOY_HOOK_URL"
-          echo "Redéploiement demandé."
+          echo "::notice::Aucun serveur configuré (VPS_HOST ou DEPLOY_HOOK_URL) : l'image latest est publiée, mettez le serveur à jour avec deploy/update.sh."

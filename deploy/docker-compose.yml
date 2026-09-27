@@ -1,0 +1,38 @@
+# Production sur un VPS : le site + Caddy (HTTPS automatique)
+#
+# Installation : voir deploy/README.md (script install.sh)
+# Mise à jour  : ./update.sh   (fait automatiquement par la CI à chaque push sur main si configurée)
+
+services:
+  site:
+    image: ${IMAGE:-ghcr.io/reborn-spaceline/buildingservices:latest}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SITE_URL: https://${SITE_HOST}
+      TRUST_PROXY: "1"
+    volumes:
+      # Données vivantes : contenu, médias, messages, mot de passe, sauvegardes (à sauvegarder)
+      - ./data:/data
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - site
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_HOST: ${SITE_HOST}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

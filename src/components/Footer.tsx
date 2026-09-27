@@ -14,7 +14,7 @@ export function Footer() {
     <footer className="site-footer">
       <div className="container">
         <div className="footer-top">
-          <h2>{ui.footer.ctaTitle}</h2>
+          <h2>{company.footerTitle || ui.footer.ctaTitle}</h2>
           <Link to="/rdv" className="btn btn-primary">
             {ui.nav.appointment} <CalendarDays />
           </Link>
@@ -31,7 +31,7 @@ export function Footer() {
                 <span className="logo-sub">SERVICE</span>
               </div>
             </Link>
-            <p className="footer-tagline">{ui.footer.tagline}</p>
+            <p className="footer-tagline">{company.footerText || ui.footer.tagline}</p>
             <SocialIcons variant="light" size="sm" className="footer-socials" />
           </div>
 
