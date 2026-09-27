@@ -11,6 +11,11 @@
 //              ({to} et {message} sont remplacés dans l'URL et le corps)
 //
 // Aucune dépendance : appels HTTPS avec fetch (Node 22).
+import dns from 'node:dns';
+
+// Adresses IPv4 d'abord : sur beaucoup de connexions (box, VPS), l'IPv6 est annoncé mais ne répond pas,
+// et les appels aux fournisseurs (MboaSMS…) restaient bloqués jusqu'au délai d'attente.
+dns.setDefaultResultOrder('ipv4first');
 
 const env = process.env;
 const list = (value) => (value ?? '').split(',').map(s => s.trim()).filter(Boolean);
