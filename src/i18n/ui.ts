@@ -104,6 +104,15 @@ const fr = {
     faqTitle: 'Vos questions, nos réponses.',
     faqText: 'Un projet réussi commence par des réponses claires. Vous ne trouvez pas la vôtre ? Écrivez-nous.',
   },
+  testimonials: {
+    eyebrow: 'Avis clients',
+    title: 'Ils nous ont fait confiance.',
+    text: 'Ce que nos clients disent de leur chantier, publié avec leur accord.',
+    rating: (n: number) => `Note : ${n} sur 5`,
+    seeProject: 'Voir le chantier',
+    google: 'Voir nos avis Google',
+    leaveReview: 'Laisser un avis',
+  },
   reasons: [
     { title: 'Du plan à la clé', text: 'Plans, 3D, travaux et finitions : un seul interlocuteur pour tout votre projet.' },
     { title: 'Matériaux choisis', text: 'Des matériaux durables et des fournisseurs sélectionnés pour leur fiabilité.' },
@@ -424,6 +433,15 @@ const en: UiText = {
     faqEyebrow: 'FAQ',
     faqTitle: 'Your questions, our answers.',
     faqText: 'A successful project starts with clear answers. Can’t find yours? Get in touch.',
+  },
+  testimonials: {
+    eyebrow: 'Client reviews',
+    title: 'They trusted us.',
+    text: 'What our clients say about their project, published with their consent.',
+    rating: n => `Rating: ${n} out of 5`,
+    seeProject: 'View the project',
+    google: 'See our Google reviews',
+    leaveReview: 'Leave a review',
   },
   reasons: [
     { title: 'From plans to keys', text: 'Plans, 3D, works and finishing: a single point of contact for your whole project.' },

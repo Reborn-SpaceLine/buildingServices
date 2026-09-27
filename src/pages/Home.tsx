@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Reveal, SectionIntro, Counter, Marquee, Accordion, CtaBanner } from '../components/ui';
 import { ServiceCard, ProjectCard } from '../components/Cards';
 import { HomeHero } from '../components/HomeHero';
+import { Testimonials } from '../components/Testimonials';
 import { MediaList } from '../components/Media';
 import { SafeImage } from '../components/SafeImage';
 import { usePageTitle } from '../lib/usePageTitle';
@@ -124,6 +125,9 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* Avis clients (affichés dès qu'un avis est publié avec l'accord du client) */}
+      <Testimonials />
 
       {/* 6. Bannière CTA */}
       <CtaBanner image={images.carousel} title={t.ctaTitle} text={t.ctaText} />

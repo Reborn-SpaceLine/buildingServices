@@ -29,10 +29,14 @@ export function toPublicProject(project) {
   };
 }
 
-/** Contenu publiable : brouillons retirés, données clients anonymisées */
+/** Un avis n'est publié qu'avec l'accord du client ET la case « publier » */
+export const isPublicTestimonial = (t) => Boolean(t.published && t.consent);
+
+/** Contenu publiable : brouillons retirés, données clients anonymisées, avis sans accord retirés */
 export function toPublicContent(content) {
   return {
     ...content,
     projects: content.projects.filter(p => p.published).map(toPublicProject),
+    testimonials: (content.testimonials ?? []).filter(isPublicTestimonial),
   };
 }

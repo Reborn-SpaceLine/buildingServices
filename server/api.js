@@ -4,7 +4,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { toPublicContent } from '../shared/privacy.js';
+import { toPublicContent, isPublicTestimonial } from '../shared/privacy.js';
 import { notificationStatus, notifyNewMessage, broadcast } from './notify.js';
 import { createBackups } from './backup.js';
 
@@ -127,10 +127,15 @@ export function createApi(options) {
       ...project,
       client: { ...project.client, ...(priv.clients?.[project.slug] ?? {}) },
     });
+    // Avis : on reprend l'ordre d'origine (publiés et brouillons mélangés) grâce à la liste privée des identifiants
+    const testimonials = [...(pub.testimonials ?? []), ...(priv.testimonialDrafts ?? [])];
+    const order = priv.testimonialOrder ?? [];
+    testimonials.sort((a, b) => (order.indexOf(a.id) + 1 || Infinity) - (order.indexOf(b.id) + 1 || Infinity));
     return {
       videos: [],
       ...pub,
       projects: [...pub.projects.map(withPrivate), ...(priv.drafts ?? [])],
+      testimonials,
     };
   }
 
@@ -148,7 +153,14 @@ export function createApi(options) {
     for (const project of full.projects.filter(p => p.published)) {
       clients[project.slug] = { name: project.client.name ?? '', notes: project.client.notes ?? '' };
     }
-    await writeJson(files.private, { clients, drafts: full.projects.filter(p => !p.published) });
+    const testimonials = full.testimonials ?? [];
+    await writeJson(files.private, {
+      clients,
+      drafts: full.projects.filter(p => !p.published),
+      // Avis sans accord du client ou non publiés : jamais dans le contenu public
+      testimonialDrafts: testimonials.filter(t => !isPublicTestimonial(t)),
+      testimonialOrder: testimonials.map(t => t.id),
+    });
     await writeJson(contentFile, toPublicContent(full));
     publicCache = null;
   }

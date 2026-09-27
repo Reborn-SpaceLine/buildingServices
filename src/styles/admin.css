@@ -1140,3 +1140,7 @@
 .a-channels small {
   overflow-wrap: anywhere;
 }
+.a-badge.warn {
+  background: #fef3c7;
+  color: #92400e;
+}

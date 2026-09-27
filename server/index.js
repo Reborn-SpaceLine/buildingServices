@@ -23,6 +23,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { createApi } from './api.js';
+import { pageMeta, metaTags } from '../shared/seo.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const env = process.env;
@@ -164,6 +165,40 @@ async function serveFile(req, res, file, stat, urlPath, status = 200) {
 }
 
 /* =========================
+   Pages : HTML de l'application avec les balises de référencement de la page demandée
+   (titre, description, aperçu de partage, versions FR/EN, données structurées)
+   ========================= */
+let indexCache = null; // { mtime, html }
+
+async function renderPage(req, res, urlPath) {
+  const file = path.join(DIST_DIR, 'index.html');
+  const stat = await fileStat(file);
+  if (!stat) {
+    res.statusCode = 500;
+    return res.end('Site non construit : lancez « npm run build ».');
+  }
+  if (!indexCache || indexCache.mtime !== stat.mtimeMs) {
+    indexCache = { mtime: stat.mtimeMs, html: await fsp.readFile(file, 'utf8') };
+  }
+
+  const lang = new URL(req.url ?? '/', 'http://localhost').searchParams.get('lang') === 'en' ? 'en' : 'fr';
+  const meta = pageMeta(urlPath, lang, await api.publicContent(), SITE_URL);
+  const html = indexCache.html
+    .replace(/<!-- SEO:start -->[\s\S]*?<!-- SEO:end -->/, metaTags(meta))
+    .replace(/<html lang="[^"]*"/, `<html lang="${lang}"`);
+
+  res.statusCode = meta.notFound ? 404 : 200;
+  res.setHeader('Content-Type', MIME['.html']);
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Vary', 'Accept-Encoding');
+  if (/\bgzip\b/.test(req.headers['accept-encoding'] ?? '')) {
+    res.setHeader('Content-Encoding', 'gzip');
+    return res.end(req.method === 'HEAD' ? undefined : zlib.gzipSync(html));
+  }
+  return res.end(req.method === 'HEAD' ? undefined : html);
+}
+
+/* =========================
    robots.txt et sitemap.xml (générés à partir du contenu)
    ========================= */
 function robotsTxt() {
@@ -249,13 +284,7 @@ const server = http.createServer(async (req, res) => {
       res.statusCode = 404;
       return res.end('Not found');
     }
-    const index = path.join(DIST_DIR, 'index.html');
-    const indexStat = await fileStat(index);
-    if (!indexStat) {
-      res.statusCode = 500;
-      return res.end('Site non construit : lancez « npm run build ».');
-    }
-    return serveFile(req, res, index, indexStat, '/index.html');
+    return renderPage(req, res, urlPath);
   } catch (error) {
     console.error('[serveur]', error);
     if (!res.headersSent) res.statusCode = 500;

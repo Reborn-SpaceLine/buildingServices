@@ -42,6 +42,7 @@ export interface Company {
     youtube: string;
     linkedin: string;
   };
+  googleReviewsUrl?: string; // lien vers la fiche Google (avis clients)
   footerTitle?: string;      // grand titre du pied de page
   footerText?: string;       // texte sous le logo du pied de page
   i18n?: Translations<{ tagline: string; city: string; hours: string; footerTitle: string; footerText: string }>;
@@ -128,6 +129,20 @@ export interface Project {
   i18n?: Translations<{ title: string; description: string; details: string; location: string; duration: string; clientLabel: string }>;
 }
 
+/** Avis client : publié seulement avec l'accord du client (consent) ET la case « publier » */
+export interface Testimonial {
+  id: string;
+  name: string;              // nom affiché, ex. « Aline M. »
+  role: string;              // ex. « Particulier, Yaoundé »
+  text: string;
+  rating: number;            // 1 à 5
+  project: string;           // slug de la réalisation liée (facultatif)
+  date: string;              // AAAA-MM
+  consent: boolean;          // accord écrit du client pour publier son avis
+  published: boolean;
+  i18n?: Translations<{ role: string; text: string }>;
+}
+
 export interface FaqItem {
   q: string;
   a: string;
@@ -142,4 +157,5 @@ export interface SiteContent {
   projects: Project[];
   faq: FaqItem[];
   videos: MediaLink[];       // vidéos mises en avant (accueil et page Vidéos)
+  testimonials?: Testimonial[];
 }

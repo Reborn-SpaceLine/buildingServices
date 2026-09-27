@@ -110,6 +110,8 @@ function buildSite(lang: Lang) {
     projects,
     faq: c.faq,
     featuredVideos: c.videos.filter(v => v.url),
+    // Double sécurité : seuls les avis avec accord du client et publiés s'affichent
+    testimonials: (c.testimonials ?? []).filter(t => t.published && t.consent && t.text.trim()),
     servicesByCategory,
     categoryLabel,
     findService,

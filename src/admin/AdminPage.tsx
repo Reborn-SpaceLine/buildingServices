@@ -3,7 +3,7 @@ import type { FormEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, KeyRound, LogOut, Menu, X } from 'lucide-react';
 import { authStatus, setupPassword, login, logout, fetchContent, saveContent, downloadJson, AuthError } from './api';
-import { GeneralTab, ServicesTab, ProjectsTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
+import { GeneralTab, ServicesTab, ProjectsTab, TestimonialsTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
 import { TextInput } from './fields';
 import { TranslationsTab } from './translations';
 import { useAdminText } from './i18n';
@@ -12,7 +12,7 @@ import { Rich, AdminLanguageSwitch } from './Rich';
 import type { SiteContent } from '../content/types';
 import '../styles/admin.css';
 
-const tabIds = ['general', 'services', 'projects', 'videos', 'faq', 'translations', 'messages', 'security', 'guide'] as const;
+const tabIds = ['general', 'services', 'projects', 'testimonials', 'videos', 'faq', 'translations', 'messages', 'security', 'guide'] as const;
 
 type TabId = typeof tabIds[number];
 type Mode = 'loading' | 'unavailable' | 'no-password' | 'setup' | 'login' | 'ready';
@@ -316,6 +316,7 @@ export default function AdminPage() {
         {tab === 'general' && <GeneralTab content={content} update={update} />}
         {tab === 'services' && <ServicesTab content={content} update={update} />}
         {tab === 'projects' && <ProjectsTab content={content} update={update} />}
+        {tab === 'testimonials' && <TestimonialsTab content={content} update={update} />}
         {tab === 'videos' && <VideosTab content={content} update={update} goTo={setTab} />}
         {tab === 'faq' && <FaqTab content={content} update={update} />}
         {tab === 'translations' && <TranslationsTab content={content} update={update} />}

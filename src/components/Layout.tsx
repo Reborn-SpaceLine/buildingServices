@@ -4,6 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { FloatingContact } from './FloatingContact';
 import { ScrollToTop } from './ScrollToTop';
+import { SeoHead } from './SeoHead';
 
 export function Layout() {
   const { pathname } = useLocation();
@@ -15,6 +16,7 @@ export function Layout() {
 
   return (
     <div className="app">
+      <SeoHead />
       <Header />
       <main>
         <Outlet />

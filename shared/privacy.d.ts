@@ -1,4 +1,6 @@
-import type { Project, ProjectClient, SiteContent } from '../src/content/types';
+import type { Project, ProjectClient, SiteContent, Testimonial } from '../src/content/types';
+
+export function isPublicTestimonial(t: Testimonial): boolean;
 
 export function initials(name: string): string;
 export function publicClientLabel(client: ProjectClient): string;

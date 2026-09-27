@@ -9,7 +9,7 @@ import { Rich } from './Rich';
 import { serviceIcons } from '../content/icons';
 import { publicClientLabel } from '../content/privacy';
 import { serviceCategories } from '../content/types';
-import type { SiteContent, Service, Project, FaqItem, Stat, ClientVisibility, ServiceCategory } from '../content/types';
+import type { SiteContent, Service, Project, FaqItem, Stat, ClientVisibility, ServiceCategory, Testimonial } from '../content/types';
 import { exportMessages } from '../lib/messages';
 import { useUi } from '../i18n/context';
 
@@ -76,6 +76,7 @@ export function GeneralTab({ content, update }: TabProps) {
           <TextInput label="TikTok" value={company.socials.tiktok} onChange={v => setSocial('tiktok', v)} placeholder="https://tiktok.com/@…" />
           <TextInput label="YouTube" value={company.socials.youtube} onChange={v => setSocial('youtube', v)} placeholder="https://youtube.com/@…" />
           <TextInput label="LinkedIn" value={company.socials.linkedin} onChange={v => setSocial('linkedin', v)} placeholder="https://linkedin.com/company/…" />
+          <TextInput label={t.googleReviews} value={company.googleReviewsUrl ?? ''} onChange={v => setCompany({ googleReviewsUrl: v })} placeholder="https://g.page/r/…" hint={t.googleReviewsHint} />
         </div>
       </section>
 
@@ -434,6 +435,62 @@ function BackupsCard() {
           <Download size={16} /> {t.download}
         </button>
       </div>
+    </section>
+  );
+}
+
+/* =========================
+   Avis clients (publiés uniquement avec l'accord écrit du client)
+   ========================= */
+export function TestimonialsTab({ content, update }: TabProps) {
+  const t = useAdminText().testimonials;
+  const items = content.testimonials ?? [];
+  const published = items.filter(i => i.published && i.consent).length;
+  const projectOptions = [{ value: '', label: t.noProject }, ...content.projects.map(p => ({ value: p.slug, label: p.title }))];
+  const ratingOptions = [5, 4, 3, 2, 1].map(n => ({ value: String(n), label: t.stars(n) }));
+
+  return (
+    <section className="a-card">
+      <h2>{t.title(published, items.length)}</h2>
+      <p className="a-muted"><Rich text={t.intro} /></p>
+      <ListEditor<Testimonial>
+        items={items}
+        onChange={testimonials => update({ testimonials })}
+        itemTitle={i => i.name}
+        itemBadge={i => (i.published && i.consent
+          ? <span className="a-badge ok">{t.badgePublished}</span>
+          : !i.consent
+            ? <span className="a-badge warn">{t.badgeNoConsent}</span>
+            : <span className="a-badge"><EyeOff size={12} /> {t.badgeDraft}</span>)}
+        addLabel={t.add}
+        createItem={() => ({
+          id: `avis_${Date.now().toString(36)}`, name: t.newName, role: '', text: '', rating: 5, project: '',
+          date: new Date().toISOString().slice(0, 7), consent: false, published: false,
+        })}
+        renderItem={(item, set) => {
+          const en = item.i18n?.en ?? {};
+          const setEn = (patch: Record<string, string>) => set({ i18n: { ...item.i18n, en: { ...en, ...patch } } });
+          return (
+            <div className="a-stack">
+              <Toggle label={t.consent} checked={item.consent} onChange={v => set({ consent: v, published: v ? item.published : false })} hint={t.consentHint} />
+              <Toggle
+                label={t.publish}
+                checked={item.published && item.consent}
+                onChange={v => item.consent && set({ published: v })}
+                hint={item.consent ? undefined : t.publishNeedsConsent}
+              />
+              <div className="a-grid">
+                <TextInput label={t.name} value={item.name} onChange={v => set({ name: v })} hint={t.nameHint} />
+                <Select<string> label={t.rating} value={String(item.rating)} options={ratingOptions} onChange={v => set({ rating: Number(v) })} />
+                <Select<string> label={t.project} value={item.project} options={projectOptions} onChange={v => set({ project: v })} />
+                <TextInput label={t.date} type="month" value={item.date} onChange={v => set({ date: v })} />
+              </div>
+              <BilingualField label={t.role} value={item.role} onChange={v => set({ role: v })} en={en.role ?? ''} onChangeEn={v => setEn({ role: v })} />
+              <BilingualField label={t.text} value={item.text} onChange={v => set({ text: v })} en={en.text ?? ''} onChangeEn={v => setEn({ text: v })} hint={t.textHint} multiline rows={4} />
+            </div>
+          );
+        }}
+      />
     </section>
   );
 }

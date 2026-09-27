@@ -115,6 +115,16 @@ function collectEntries(content: SiteContent, update: TabProps['update'], lang: 
     add({ ...base, label: l.answer, source: item.a, value: tr?.a ?? '', multiline: true, set: v => set({ a: v }) });
   });
 
+  /* Avis clients */
+  (content.testimonials ?? []).forEach((item, i) => {
+    const tr = item.i18n?.[lang];
+    const set = (patch: Record<string, unknown>) =>
+      update({ testimonials: (content.testimonials ?? []).map((t, j) => (j === i ? withTr(t, lang, patch) : t)) });
+    const base = { group: a.tabs.testimonials, subgroup: item.name };
+    add({ ...base, label: a.testimonials.role, source: item.role, value: tr?.role ?? '', set: v => set({ role: v }) });
+    add({ ...base, label: a.testimonials.text, source: item.text, value: tr?.text ?? '', multiline: true, set: v => set({ text: v }) });
+  });
+
   /* Vidéos mises en avant */
   addVideos(content.videos ?? [], { group: g.videos }, videos => update({ videos }));
 
