@@ -182,3 +182,18 @@ export async function downloadBackup() {
   link.click();
   URL.revokeObjectURL(url);
 }
+/* ---------- Statistiques de visite (sans cookie) ---------- */
+export type StatsCount = { key: string; count: number };
+export interface StatsSummary {
+  days: { date: string; views: number; visitors: number }[];
+  views: number;
+  visitors: number;
+  pages: StatsCount[];
+  sources: StatsCount[];
+  devices: StatsCount[];
+  langs: StatsCount[];
+}
+
+export function fetchStats(days: number) {
+  return request<StatsSummary>(`${API}/stats?days=${days}`);
+}

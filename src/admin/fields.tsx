@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Upload, Trash2, ArrowUp, ArrowDown, Plus, ChevronDown, Loader2 } from 'lucide-react';
 import { uploadFile } from './api';
+import { compressImage } from './compress';
 import { useAdminText } from './i18n';
 import { platforms, detectPlatform, youtubeId } from '../content/platforms';
 import { useUi } from '../i18n/context';
@@ -95,7 +96,7 @@ function useUpload(folder: string) {
     setBusy(true);
     setError('');
     try {
-      return await uploadFile(file, folder);
+      return await uploadFile(await compressImage(file), folder);
     } catch (e) {
       setError(e instanceof Error ? e.message : t.fields.uploadFailed);
       return null;

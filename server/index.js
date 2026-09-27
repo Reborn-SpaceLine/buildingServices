@@ -306,7 +306,8 @@ server.listen(PORT, HOST, () => {
 for (const signal of ['SIGTERM', 'SIGINT']) {
   process.on(signal, () => {
     console.log(`${signal} reçu, arrêt du serveur…`);
-    server.close(() => process.exit(0));
+    // Les statistiques du jour en mémoire sont écrites avant de quitter
+    server.close(() => api.stats.flush().catch(() => {}).finally(() => process.exit(0)));
     setTimeout(() => process.exit(0), 10_000).unref();
   });
 }

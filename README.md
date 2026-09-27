@@ -48,7 +48,8 @@ npm run dev
 | Commande | Rôle |
 |---|---|
 | `npm run dev` | Site en local avec rechargement automatique, API et administration |
-| `npm run check` | Mêmes contrôles que la CI : lint + TypeScript + build |
+| `npm run check` | Mêmes contrôles que la CI : lint + tests + TypeScript + build |
+| `npm test` | Tests automatiques (`tests/`) : confidentialité des clients, référencement, formulaires, admin, versions, statistiques |
 | `npm run apercu` | Contrôles, puis lancement de la **vraie version de production** (serveur Node) sur <http://localhost:8080> |
 | `npm run build` | Construit le site dans `dist/` |
 | `npm start` | Lance le serveur de production (après `npm run build`) |

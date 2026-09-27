@@ -1,6 +1,6 @@
 # Intégration continue + livraison continue (Docker)
 #
-#  Pull Request  → vérification (lint, TypeScript, build) → image Docker testée et publiée en aperçu (tag pr-<numéro>)
+#  Pull Request  → vérification (lint, tests, TypeScript, build) → image Docker testée et publiée en aperçu (tag pr-<numéro>)
 #  Push sur main → vérification → image Docker testée et publiée (tags latest + sha) → déploiement (si configuré)
 #
 # Rien n'est publié si une étape échoue.
@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   verification:
-    name: Vérification (lint, TypeScript, build)
+    name: Vérification (lint, tests, TypeScript, build)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +39,10 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      # Confidentialité des clients, référencement, formulaires, admin, versions, statistiques (tests/)
+      - name: Tests automatiques
+        run: npm test
 
       - name: TypeScript + build de production
         run: npm run build
@@ -85,6 +89,7 @@ jobs:
           curl -fsS http://localhost:8080/services/plans-architecture | grep -q '<div id="root">'
           curl -fsS http://localhost:8080/api/content | grep -q '"services"'
           curl -fsS http://localhost:8080/sitemap.xml | grep -q '<urlset'
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -A 'Mozilla/5.0' -d '{"path":"/","entry":true}' http://localhost:8080/api/stats)" = "204"
           # L'admin refuse l'accès sans mot de passe, et la création d'un mot de passe depuis l'extérieur
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/admin/content)" = "401"
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"password":"x"}' http://localhost:8080/api/admin/auth/login)" = "401"

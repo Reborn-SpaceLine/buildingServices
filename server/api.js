@@ -7,6 +7,7 @@ import crypto from 'node:crypto';
 import { toPublicContent, isPublicTestimonial } from '../shared/privacy.js';
 import { notificationStatus, notifyNewMessage, broadcast } from './notify.js';
 import { createBackups } from './backup.js';
+import { createStats } from './stats.js';
 
 const SESSION_TTL = 8 * 60 * 60 * 1000;          // session admin : 8 h d'inactivité
 const MIN_PASSWORD = 8;
@@ -37,6 +38,7 @@ export function createApi(options) {
   } = options;
 
   const backups = createBackups({ contentFile, privateDir });
+  const stats = createStats({ privateDir });
 
   const files = {
     private: path.join(privateDir, 'private.json'),
@@ -310,6 +312,24 @@ export function createApi(options) {
         return true;
       }
 
+      // Page vue (statistiques sans cookie, voir server/stats.js)
+      if (pathname === '/api/stats' && req.method === 'POST') {
+        const body = await readJsonBody(req, 4 * 1024);
+        await stats.hit({
+          path: body.path,
+          referrer: body.referrer,
+          entry: body.entry === true,
+          lang: body.lang,
+          ip: clientIp(req),
+          ua: str(req.headers['user-agent'], 400),
+          host: str(req.headers.host, 200).replace(/:\d+$/, '').replace(/^www\./, ''),
+          dnt: req.headers.dnt === '1' || req.headers['sec-gpc'] === '1',
+        });
+        res.statusCode = 204;
+        res.end();
+        return true;
+      }
+
       /* ----- Administration ----- */
       if (!pathname.startsWith('/api/admin/')) {
         send(res, 404, { error: 'Route inconnue.' });
@@ -472,6 +492,11 @@ export function createApi(options) {
         return true;
       }
 
+      if (route === '/stats' && req.method === 'GET') {
+        send(res, 200, await stats.summary(Number(url.searchParams.get('days')) || 30));
+        return true;
+      }
+
       /* ----- Sauvegardes ----- */
       if (route === '/backup/run' && req.method === 'POST') {
         send(res, 200, await backups.run());
@@ -534,5 +559,5 @@ export function createApi(options) {
     }
   }
 
-  return { init, handle, publicContent, backups };
+  return { init, handle, publicContent, backups, stats };
 }

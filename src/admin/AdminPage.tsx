@@ -5,6 +5,7 @@ import { Save, Download, ExternalLink, Loader2, CheckCircle, AlertCircle, Lock, 
 import { authStatus, setupPassword, login, logout, fetchContent, saveContent, downloadJson, AuthError } from './api';
 import { GeneralTab, ServicesTab, ProjectsTab, TestimonialsTab, MaintenanceTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
 import { AgendaTab } from './agenda';
+import { StatsTab } from './stats';
 import { PREVIEW_KEY } from '../content';
 import { toPublicContent } from '../content/privacy';
 import { TextInput } from './fields';
@@ -15,7 +16,7 @@ import { Rich, AdminLanguageSwitch } from './Rich';
 import type { SiteContent } from '../content/types';
 import '../styles/admin.css';
 
-const tabIds = ['general', 'services', 'projects', 'testimonials', 'maintenance', 'videos', 'faq', 'translations', 'agenda', 'messages', 'security', 'guide'] as const;
+const tabIds = ['general', 'services', 'projects', 'testimonials', 'maintenance', 'videos', 'faq', 'translations', 'agenda', 'messages', 'stats', 'security', 'guide'] as const;
 
 type TabId = typeof tabIds[number];
 type Mode = 'loading' | 'unavailable' | 'no-password' | 'setup' | 'login' | 'ready';
@@ -343,6 +344,7 @@ export default function AdminPage() {
         {tab === 'translations' && <TranslationsTab content={content} update={update} />}
         {tab === 'agenda' && <AgendaTab />}
         {tab === 'messages' && <MessagesTab />}
+        {tab === 'stats' && <StatsTab />}
         {tab === 'security' && <SecurityTab onLogout={handleLogout} />}
         {tab === 'guide' && <GuideTab />}
       </main>
