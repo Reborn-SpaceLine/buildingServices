@@ -1089,5 +1089,330 @@
         }
       }
     ]
-  }
+  },
+  "estimator": {
+    "rates": [
+      {
+        "id": "plans",
+        "service": "plans-architecture",
+        "label": "Plans d’architecture (maison individuelle)",
+        "unit": "m2",
+        "low": 2500,
+        "high": 5000,
+        "i18n": {
+          "en": {
+            "label": "Architectural plans (detached house)"
+          }
+        }
+      },
+      {
+        "id": "amenagement",
+        "service": "architecture-interieur",
+        "label": "Aménagement intérieur clé en main",
+        "unit": "m2",
+        "low": 60000,
+        "high": 150000,
+        "i18n": {
+          "en": {
+            "label": "Turnkey interior fit-out"
+          }
+        }
+      },
+      {
+        "id": "carrelage-sol",
+        "service": "carrelage",
+        "label": "Carrelage sol (fourniture + pose)",
+        "unit": "m2",
+        "low": 12000,
+        "high": 25000,
+        "i18n": {
+          "en": {
+            "label": "Floor tiling (supply + laying)"
+          }
+        }
+      },
+      {
+        "id": "peinture",
+        "service": "staff-peinture",
+        "label": "Peinture intérieure (2 couches)",
+        "unit": "m2",
+        "low": 2500,
+        "high": 4500,
+        "i18n": {
+          "en": {
+            "label": "Interior painting (2 coats)"
+          }
+        }
+      },
+      {
+        "id": "staff",
+        "service": "staff-peinture",
+        "label": "Faux plafond en staff",
+        "unit": "m2",
+        "low": 8000,
+        "high": 15000,
+        "i18n": {
+          "en": {
+            "label": "Plaster false ceiling"
+          }
+        }
+      },
+      {
+        "id": "sdb",
+        "service": "plomberie",
+        "label": "Salle de bain complète (plomberie + sanitaires)",
+        "unit": "unite",
+        "low": 650000,
+        "high": 1500000,
+        "i18n": {
+          "en": {
+            "label": "Complete bathroom (plumbing + fixtures)"
+          }
+        }
+      },
+      {
+        "id": "electricite",
+        "service": "electricite",
+        "label": "Installation électrique (par point : prise, interrupteur, lampe)",
+        "unit": "unite",
+        "low": 15000,
+        "high": 30000,
+        "i18n": {
+          "en": {
+            "label": "Electrical installation (per point: socket, switch, light)"
+          }
+        }
+      },
+      {
+        "id": "cuisine",
+        "service": "cuisines-sur-mesure",
+        "label": "Cuisine sur mesure (meubles bas + hauts)",
+        "unit": "ml",
+        "low": 250000,
+        "high": 450000,
+        "i18n": {
+          "en": {
+            "label": "Custom kitchen (base + wall units)"
+          }
+        }
+      },
+      {
+        "id": "baie",
+        "service": "baies-vitrees-fer-metal",
+        "label": "Baie vitrée aluminium",
+        "unit": "m2",
+        "low": 65000,
+        "high": 120000,
+        "i18n": {
+          "en": {
+            "label": "Aluminium sliding window"
+          }
+        }
+      },
+      {
+        "id": "porte",
+        "service": "menuiserie-decoration",
+        "label": "Porte intérieure en bois (posée)",
+        "unit": "unite",
+        "low": 120000,
+        "high": 250000,
+        "i18n": {
+          "en": {
+            "label": "Interior wooden door (fitted)"
+          }
+        }
+      }
+    ],
+    "finishes": {
+      "standard": 1,
+      "confort": 1.3,
+      "premium": 1.75
+    },
+    "note": "Estimation indicative basée sur nos prix moyens à Yaoundé et Douala. Le devis final dépend de l’état du chantier, des matériaux choisis et de l’accès. La visite et le devis sont gratuits.",
+    "i18n": {
+      "en": {
+        "note": "Indicative estimate based on our average prices in Yaoundé and Douala. The final quote depends on the site condition, the materials chosen and access. The visit and quote are free."
+      }
+    }
+  },
+  "catalog": [
+    {
+      "id": "gres-60",
+      "name": "Carrelage grès cérame 60 × 60",
+      "category": "Carrelage",
+      "description": "Aspect pierre ou marbre, très résistant, pour salons, terrasses et commerces.",
+      "price": 9500,
+      "priceNote": "/ m² (fourniture)",
+      "image": "/images/careaux.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "Porcelain tiles 60 × 60",
+          "category": "Tiles",
+          "description": "Stone or marble look, very hard-wearing, for living rooms, terraces and shops.",
+          "priceNote": "/ m² (supply)"
+        }
+      }
+    },
+    {
+      "id": "faience-30",
+      "name": "Faïence murale 30 × 60",
+      "category": "Carrelage",
+      "description": "Pour murs de salle de bain et de cuisine, finition brillante ou mate.",
+      "price": 7500,
+      "priceNote": "/ m² (fourniture)",
+      "image": "/images/ploberie.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "Wall tiles 30 × 60",
+          "category": "Tiles",
+          "description": "For bathroom and kitchen walls, gloss or matt finish.",
+          "priceNote": "/ m² (supply)"
+        }
+      }
+    },
+    {
+      "id": "peinture-20",
+      "name": "Peinture acrylique intérieure",
+      "category": "Peinture",
+      "description": "Seau de 20 L, lessivable, environ 100 m² par couche. Teintes au choix.",
+      "price": 35000,
+      "priceNote": "le seau de 20 L",
+      "image": "/images/services3.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "Interior acrylic paint",
+          "category": "Paint",
+          "description": "20 L bucket, washable, about 100 m² per coat. Any colour.",
+          "priceNote": "per 20 L bucket"
+        }
+      }
+    },
+    {
+      "id": "wc-suspendu",
+      "name": "WC suspendu avec bâti",
+      "category": "Sanitaires",
+      "description": "Cuvette, bâti-support et plaque de commande. Gain de place et entretien facile.",
+      "price": 185000,
+      "priceNote": "fourniture",
+      "image": "/images/installation.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "Wall-hung toilet with frame",
+          "category": "Sanitary ware",
+          "description": "Bowl, support frame and flush plate. Space-saving and easy to clean.",
+          "priceNote": "supply"
+        }
+      }
+    },
+    {
+      "id": "cuisine-ml",
+      "name": "Cuisine équipée sur mesure",
+      "category": "Cuisine",
+      "description": "Caissons hydrofuges, façades au choix, plan de travail et quincaillerie à fermeture douce.",
+      "price": 280000,
+      "priceNote": "/ mètre linéaire, pose comprise",
+      "image": "/images/cuisine11.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "Custom fitted kitchen",
+          "category": "Kitchen",
+          "description": "Moisture-resistant units, fronts of your choice, worktop and soft-close hardware.",
+          "priceNote": "per linear metre, fitting included"
+        }
+      }
+    },
+    {
+      "id": "porte-bois",
+      "name": "Porte intérieure en bois massif",
+      "category": "Menuiserie",
+      "description": "Bois local (iroko, sapelli), cadre et quincaillerie inclus.",
+      "price": 145000,
+      "priceNote": "posée",
+      "image": "/images/services1.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "Solid wood interior door",
+          "category": "Carpentry",
+          "description": "Local hardwood (iroko, sapele), frame and hardware included.",
+          "priceNote": "fitted"
+        }
+      }
+    },
+    {
+      "id": "meuble-tv",
+      "name": "Meuble TV mural sur mesure",
+      "category": "Mobilier",
+      "description": "Conçu selon votre mur : rangements, éclairage LED, niches décoratives.",
+      "price": 0,
+      "priceNote": "",
+      "image": "/images/carousel.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "Custom wall TV unit",
+          "category": "Furniture",
+          "description": "Designed for your wall: storage, LED lighting, decorative niches.",
+          "priceNote": ""
+        }
+      }
+    },
+    {
+      "id": "canape",
+      "name": "Canapé tapissé 3 places",
+      "category": "Mobilier",
+      "description": "Structure bois, mousse haute densité, tissu ou simili cuir au choix.",
+      "price": 0,
+      "priceNote": "",
+      "image": "/images/salon1.jpg",
+      "available": true,
+      "i18n": {
+        "en": {
+          "name": "3-seater upholstered sofa",
+          "category": "Furniture",
+          "description": "Wooden frame, high-density foam, fabric or faux leather of your choice.",
+          "priceNote": ""
+        }
+      }
+    }
+  ],
+  "posts": [
+    {
+      "slug": "etapes-chantier-reussi",
+      "title": "Construire au Cameroun : les 6 étapes d’un chantier réussi",
+      "excerpt": "Du terrain à la remise des clés, voici les étapes à ne pas bâcler pour construire sereinement et sans mauvaise surprise sur le budget.",
+      "body": "Construire sa maison est souvent le projet d’une vie. Pour qu’il reste un bon souvenir, chaque étape doit être préparée. Voici notre méthode, appliquée sur tous nos chantiers à Yaoundé et Douala.\n\n## 1. Vérifier le terrain\n\nTitre foncier, bornage, nature du sol, accès et raccordements : ces vérifications évitent les litiges et les surcoûts de fondations.\n\n## 2. Faire dessiner des plans complets\n\nDes plans d’architecture précis (façades, coupes, électricité, plomberie) permettent d’obtenir un devis fiable et le permis de bâtir.\n\n## 3. Établir un budget réaliste\n\nPrévoyez une marge de 10 à 15 % pour les imprévus. Notre estimateur en ligne donne une première fourchette, affinée ensuite lors de la visite.\n\n## 4. Suivre le gros œuvre\n\nFondations, élévation, dalle, toiture : c’est la solidité de la maison. Des photos régulières et des visites de contrôle sont indispensables.\n\n## 5. Soigner les finitions\n\nCarrelage, staff, peinture, menuiserie : c’est ce que vous verrez tous les jours. Un seul interlocuteur pour tous les corps de métier évite les retards.\n\n## 6. Réceptionner les travaux\n\nFaites le tour de chaque pièce avec l’entreprise, notez les réserves et ne signez le procès-verbal qu’une fois tout corrigé.",
+      "image": "/images/work.jpg",
+      "date": "2026-09-01",
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "Building in Cameroon: 6 steps to a successful project",
+          "excerpt": "From the plot to the handover, here are the steps not to rush to build with peace of mind and without budget surprises.",
+          "body": "Building your home is often a lifetime project. To keep it a good memory, every step must be prepared. Here is our method, applied on all our sites in Yaoundé and Douala.\n\n## 1. Check the plot\n\nLand title, boundaries, soil type, access and utility connections: these checks prevent disputes and extra foundation costs.\n\n## 2. Get complete plans drawn up\n\nPrecise architectural plans (elevations, sections, electrical, plumbing) give you a reliable quote and the building permit.\n\n## 3. Set a realistic budget\n\nKeep a 10 to 15% margin for the unexpected. Our online estimator gives a first range, refined during the site visit.\n\n## 4. Monitor the structural work\n\nFoundations, walls, slab, roof: this is the strength of the house. Regular photos and inspection visits are essential.\n\n## 5. Take care of the finishing\n\nTiling, plasterwork, painting, carpentry: this is what you will see every day. One contact for all trades avoids delays.\n\n## 6. Accept the works\n\nWalk through every room with the contractor, list any defects and only sign the handover report once everything is fixed."
+        }
+      }
+    },
+    {
+      "slug": "choisir-son-carrelage",
+      "title": "Carrelage : grès cérame ou faïence, lequel choisir ?",
+      "excerpt": "Sol, mur, intérieur ou terrasse : chaque carrelage a son usage. Nos conseils pour choisir un revêtement beau et durable.",
+      "body": "Le carrelage représente une part importante du budget de finition. Bien le choisir, c’est éviter les carreaux fissurés ou glissants quelques mois après la pose.\n\n## Le grès cérame, pour les sols\n\nTrès dur et peu poreux, il supporte le passage, les meubles et l’humidité. C’est le choix idéal pour les salons, couloirs, terrasses et commerces.\n\n## La faïence, pour les murs\n\nPlus légère et plus facile à couper, elle habille les murs de salle de bain et de cuisine. Elle n’est pas faite pour être posée au sol.\n\n## Nos conseils de pose\n\nPrévoyez 10 % de carreaux en plus pour les coupes et la casse, un joint adapté aux pièces humides et un support parfaitement plan. Pour l’extérieur, choisissez un carreau antidérapant.",
+      "image": "/images/careaux.jpg",
+      "date": "2026-09-15",
+      "published": true,
+      "i18n": {
+        "en": {
+          "title": "Tiles: porcelain or ceramic wall tiles, which to choose?",
+          "excerpt": "Floor, wall, indoors or terrace: each tile has its use. Our advice for choosing a beautiful, long-lasting finish.",
+          "body": "Tiling is a large part of the finishing budget. Choosing well means avoiding cracked or slippery tiles a few months after laying.\n\n## Porcelain tiles, for floors\n\nVery hard and non-porous, they withstand foot traffic, furniture and moisture. The ideal choice for living rooms, hallways, terraces and shops.\n\n## Ceramic tiles, for walls\n\nLighter and easier to cut, they cover bathroom and kitchen walls. They are not made to be laid on floors.\n\n## Our laying tips\n\nPlan 10% extra tiles for cuts and breakage, a grout suited to wet rooms and a perfectly flat base. Outdoors, choose a non-slip tile."
+        }
+      }
+    }
+  ]
 }

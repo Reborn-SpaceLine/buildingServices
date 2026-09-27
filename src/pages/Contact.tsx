@@ -32,7 +32,9 @@ export function ContactPage() {
   const [params] = useSearchParams();
   const initialSubject = subjects.some(s => s.value === params.get('service')) ? params.get('service')! : '';
 
-  const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', subject: initialSubject, message: '' });
+  // Message pré-rempli (ex. depuis l'estimateur de budget)
+  const initialMessage = (params.get('message') ?? '').slice(0, 2000);
+  const [formData, setFormData] = useState<FormData>({ name: '', email: '', phone: '', subject: initialSubject, message: initialMessage });
   const [sendWhatsapp, setSendWhatsapp] = useState(true);
   const [status, setStatus] = useState<'success' | 'error' | 'rate' | null>(null);
   const [sending, setSending] = useState(false);

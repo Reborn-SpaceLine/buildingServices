@@ -6,6 +6,7 @@ import { authStatus, setupPassword, login, logout, fetchContent, saveContent, do
 import { GeneralTab, ServicesTab, ProjectsTab, TestimonialsTab, MaintenanceTab, VideosTab, FaqTab, MessagesTab, SecurityTab, GuideTab } from './tabs';
 import { AgendaTab } from './agenda';
 import { StatsTab } from './stats';
+import { EstimatorTab, CatalogTab, BlogTab, ClientsTab } from './shop';
 import { PREVIEW_KEY } from '../content';
 import { toPublicContent } from '../content/privacy';
 import { TextInput } from './fields';
@@ -16,7 +17,12 @@ import { Rich, AdminLanguageSwitch } from './Rich';
 import type { SiteContent } from '../content/types';
 import '../styles/admin.css';
 
-const tabIds = ['general', 'services', 'projects', 'testimonials', 'maintenance', 'videos', 'faq', 'translations', 'agenda', 'messages', 'stats', 'security', 'guide'] as const;
+const tabIds = [
+  'general', 'services', 'projects', 'testimonials', 'videos', 'blog', 'faq',
+  'catalog', 'estimator', 'maintenance',
+  'clients', 'agenda', 'messages', 'stats',
+  'translations', 'security', 'guide',
+] as const;
 
 type TabId = typeof tabIds[number];
 type Mode = 'loading' | 'unavailable' | 'no-password' | 'setup' | 'login' | 'ready';
@@ -34,6 +40,7 @@ function validate(content: SiteContent, t: AdminText) {
   };
   check(t.status.kindService, content.services.map(s => s.slug));
   check(t.status.kindProject, content.projects.map(p => p.slug));
+  check(t.status.kindPost, (content.posts ?? []).map(p => p.slug));
   return errors;
 }
 
@@ -339,6 +346,10 @@ export default function AdminPage() {
         {tab === 'projects' && <ProjectsTab content={content} update={update} />}
         {tab === 'testimonials' && <TestimonialsTab content={content} update={update} />}
         {tab === 'maintenance' && <MaintenanceTab content={content} update={update} />}
+        {tab === 'estimator' && <EstimatorTab content={content} update={update} />}
+        {tab === 'catalog' && <CatalogTab content={content} update={update} />}
+        {tab === 'blog' && <BlogTab content={content} update={update} />}
+        {tab === 'clients' && <ClientsTab content={content} update={update} />}
         {tab === 'videos' && <VideosTab content={content} update={update} goTo={setTab} />}
         {tab === 'faq' && <FaqTab content={content} update={update} />}
         {tab === 'translations' && <TranslationsTab content={content} update={update} />}

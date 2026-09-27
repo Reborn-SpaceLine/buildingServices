@@ -160,6 +160,74 @@ export interface Partner {
   i18n?: Translations<{ description: string }>;
 }
 
+/* ---------- Estimateur de budget ----------
+   Fourchette de prix indicative par service, en FCFA par unité (m², mètre linéaire, pièce ou forfait). */
+export type EstimateUnit = 'm2' | 'ml' | 'unite' | 'forfait';
+
+export interface EstimateRate {
+  id: string;
+  service: string;           // slug du service lié (pour le formulaire de contact)
+  label: string;             // ex. « Carrelage sol (pose + fourniture) »
+  unit: EstimateUnit;
+  low: number;               // FCFA par unité, gamme standard
+  high: number;
+  i18n?: Translations<{ label: string }>;
+}
+
+/** Coefficients appliqués selon la gamme de finition choisie */
+export interface EstimatorSettings {
+  rates: EstimateRate[];
+  finishes: { standard: number; confort: number; premium: number };
+  note: string;              // avertissement affiché sous le résultat
+  i18n?: Translations<{ note: string }>;
+}
+
+/* ---------- Catalogue ---------- */
+export interface CatalogItem {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  price: number;             // FCFA ; 0 = « sur devis »
+  priceNote: string;         // ex. « / m² », « pose comprise »
+  image: string;
+  available: boolean;
+  i18n?: Translations<{ name: string; category: string; description: string; priceNote: string }>;
+}
+
+/* ---------- Blog / conseils ---------- */
+export interface Post {
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;              // paragraphes séparés par une ligne vide ; « ## » pour un intertitre
+  image: string;
+  date: string;              // AAAA-MM-JJ
+  published: boolean;        // brouillon = jamais publié
+  i18n?: Translations<{ title: string; excerpt: string; body: string }>;
+}
+
+/* ---------- Espace client (suivi de chantier privé) ----------
+   Jamais publié : accessible seulement avec le code secret remis au client (/suivi/<code>). */
+export interface ClientUpdate {
+  date: string;
+  text: string;
+  images: string[];
+}
+
+export interface ClientSpace {
+  code: string;
+  clientName: string;
+  phone: string;             // pour envoyer le lien par WhatsApp (jamais montré sur la page de suivi)
+  projectTitle: string;
+  status: 'etude' | 'en cours' | 'finitions' | 'termine';
+  progress: number;          // 0 à 100
+  nextStep: string;
+  updates: ClientUpdate[];
+  documents: { title: string; url: string }[];
+  active: boolean;           // désactivé : le lien ne fonctionne plus
+}
+
 export interface FaqItem {
   q: string;
   a: string;
@@ -176,4 +244,8 @@ export interface SiteContent {
   videos: MediaLink[];       // vidéos mises en avant (accueil et page Vidéos)
   testimonials?: Testimonial[];
   maintenance?: { plans: MaintenancePlan[]; partners: Partner[] };
+  estimator?: EstimatorSettings;
+  catalog?: CatalogItem[];
+  posts?: Post[];
+  clientSpaces?: ClientSpace[]; // privé : retiré du contenu public, gardé sur le serveur
 }

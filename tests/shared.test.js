@@ -81,3 +81,34 @@ test('contenu livré : identifiants uniques et liens valides', () => {
   for (const p of content.projects) assert.ok(slugs.includes(p.service), `service inconnu pour « ${p.title} »`);
   for (const t of content.testimonials ?? []) assert.ok(isPublicTestimonial(t), `avis « ${t.name} » publié sans accord`);
 });
+
+test('référencement : blog publié indexé, brouillon et espace client jamais indexés', () => {
+  const withPosts = { ...content, posts: [
+    { slug: 'ok', title: 'Article', excerpt: 'Résumé', body: '', image: '', date: '2026-09-01', published: true },
+    { slug: 'brouillon', title: 'Brouillon', excerpt: '', body: '', image: '', date: '2026-09-01', published: false },
+  ] };
+  const article = pageMeta('/blog/ok', 'fr', withPosts);
+  assert.equal(article.notFound, false);
+  assert.ok(article.jsonLd.some(d => d['@type'] === 'BlogPosting'));
+  assert.equal(pageMeta('/blog/brouillon', 'fr', withPosts).notFound, true);
+  const tracking = pageMeta('/suivi/abcdef0123456789', 'fr', content);
+  assert.equal(tracking.notFound, false);
+  assert.equal(tracking.noindex, true);
+  for (const page of ['/estimation', '/catalogue', '/blog']) assert.equal(pageMeta(page, 'en', content).notFound, false, page);
+});
+
+test('confidentialité : espaces clients et articles en brouillon retirés du contenu public', () => {
+  const pub = toPublicContent({ ...content, clientSpaces: [{ code: 'x' }], posts: [{ slug: 'a', published: true }, { slug: 'b', published: false }] });
+  assert.ok(!('clientSpaces' in pub));
+  assert.deepEqual(pub.posts.map(p => p.slug), ['a']);
+});
+
+test('contenu livré : estimateur et catalogue cohérents', () => {
+  const slugs = content.services.map(s => s.slug);
+  for (const r of content.estimator?.rates ?? []) {
+    assert.ok(slugs.includes(r.service), `service inconnu pour « ${r.label} »`);
+    assert.ok(r.low > 0 && r.high >= r.low, `fourchette invalide pour « ${r.label} »`);
+  }
+  const ids = (content.catalog ?? []).map(i => i.id);
+  assert.equal(new Set(ids).size, ids.length, 'deux produits ont le même identifiant');
+});

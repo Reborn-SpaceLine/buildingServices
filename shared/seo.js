@@ -16,6 +16,10 @@ const texts = {
     '/maintenance': { title: 'Maintenance', description: 'Formules de maintenance préventive, corrective et dépannage d’urgence pour vos bâtiments.' },
     '/contact': { title: 'Contact', description: 'Contactez Building Service : devis gratuit, réponse sous 24 h ouvrées. Téléphone, WhatsApp, e-mail.' },
     '/rdv': { title: 'Prendre rendez-vous', description: 'Réservez un appel découverte gratuit ou une visite sur site avec un conseiller Building Service.' },
+    '/estimation': { title: 'Estimer mon budget', description: 'Estimez en quelques clics le budget de vos travaux au Cameroun : carrelage, peinture, plomberie, cuisine, construction… Fourchette indicative en FCFA.' },
+    '/catalogue': { title: 'Catalogue et prix', description: 'Carrelage, sanitaires, cuisines, menuiserie, peinture… nos produits et prestations avec leurs prix en FCFA.' },
+    '/blog': { title: 'Conseils et actualités', description: 'Conseils pratiques pour construire, rénover et entretenir votre maison au Cameroun, et actualités de nos chantiers.' },
+    '/suivi': { title: 'Suivi de chantier', description: 'Espace privé de suivi de chantier.' },
     notFound: { title: 'Page introuvable', description: 'Cette page n’existe pas ou plus.' },
   },
   en: {
@@ -31,6 +35,10 @@ const texts = {
     '/maintenance': { title: 'Maintenance', description: 'Preventive and corrective maintenance plans and emergency repairs for your buildings.' },
     '/contact': { title: 'Contact', description: 'Contact Building Service: free quote, reply within one business day. Phone, WhatsApp, email.' },
     '/rdv': { title: 'Book a meeting', description: 'Book a free discovery call or an on-site visit with a Building Service adviser.' },
+    '/estimation': { title: 'Estimate my budget', description: 'Estimate the budget of your building works in Cameroon in a few clicks: tiling, painting, plumbing, kitchens, construction… Indicative range in FCFA.' },
+    '/catalogue': { title: 'Catalogue and prices', description: 'Tiles, sanitary ware, kitchens, carpentry, paint… our products and services with their prices in FCFA.' },
+    '/blog': { title: 'Tips and news', description: 'Practical advice for building, renovating and maintaining your home in Cameroon, and news from our projects.' },
+    '/suivi': { title: 'Project tracking', description: 'Private project tracking area.' },
     notFound: { title: 'Page not found', description: 'This page doesn’t exist (anymore).' },
   },
 };
@@ -100,6 +108,8 @@ export function pageMeta(pathname, lang, content, siteUrl = '') {
 
   const service = path.match(/^\/services\/([\w-]+)$/);
   const project = path.match(/^\/realisations\/([\w-]+)$/);
+  const post = path.match(/^\/blog\/([\w-]+)$/);
+  const tracking = /^\/suivi(\/[\w-]+)?$/.test(path); // espace client : jamais indexé
 
   if (path === '/') {
     jsonLd.push(localBusiness(content, siteUrl, lang));
@@ -138,6 +148,26 @@ export function pageMeta(pathname, lang, content, siteUrl = '') {
       image = p.image || image;
       type = 'article';
     } else notFound = true;
+  } else if (post) {
+    const p = content?.posts?.find(x => x.slug === post[1] && x.published);
+    if (p) {
+      title = withSuffix(tr(p, 'title', lang));
+      description = clip(tr(p, 'excerpt', lang) || tr(p, 'body', lang));
+      image = p.image || image;
+      type = 'article';
+      jsonLd.push({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: tr(p, 'title', lang),
+        datePublished: p.date,
+        image: siteUrl && p.image ? absolute(siteUrl, p.image) : undefined,
+        author: { '@id': `${siteUrl}/#entreprise` },
+        url,
+      });
+    } else notFound = true;
+  } else if (tracking) {
+    title = withSuffix(t['/suivi'].title);
+    description = t['/suivi'].description;
   } else if (t[path]) {
     title = withSuffix(t[path].title);
     description = t[path].description;
@@ -160,7 +190,7 @@ export function pageMeta(pathname, lang, content, siteUrl = '') {
     type,
     jsonLd,
     notFound,
-    noindex: notFound || path === '/admin',
+    noindex: notFound || tracking || path === '/admin',
   };
 }
 

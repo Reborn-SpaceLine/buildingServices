@@ -11,6 +11,10 @@ import { VideosPage } from './pages/Videos';
 import { MaintenancePage } from './pages/Maintenance';
 import { ContactPage } from './pages/Contact';
 import { RdvPage } from './pages/Rdv';
+import { EstimationPage } from './pages/Estimation';
+import { CataloguePage } from './pages/Catalogue';
+import { BlogPage, BlogPostPage } from './pages/Blog';
+import { TrackingPage } from './pages/Tracking';
 import { NotFound } from './pages/NotFound';
 // Styles tablette : importés après ceux des pages pour avoir le dernier mot entre 641 et 1024 px
 import './styles/tablet.css';
@@ -37,6 +41,12 @@ function App() {
           <Route path="maintenance" element={<MaintenancePage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="rdv" element={<RdvPage />} />
+          <Route path="estimation" element={<EstimationPage />} />
+          <Route path="catalogue" element={<CataloguePage />} />
+          <Route path="blog" element={<BlogPage />} />
+          <Route path="blog/:slug" element={<BlogPostPage />} />
+          <Route path="suivi" element={<TrackingPage />} />
+          <Route path="suivi/:code" element={<TrackingPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

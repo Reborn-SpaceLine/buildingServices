@@ -34,9 +34,12 @@ export const isPublicTestimonial = (t) => Boolean(t.published && t.consent);
 
 /** Contenu publiable : brouillons retirés, données clients anonymisées, avis sans accord retirés */
 export function toPublicContent(content) {
+  const rest = { ...content };
+  delete rest.clientSpaces; // espaces clients (suivi de chantier privé) : jamais dans le contenu public
   return {
-    ...content,
+    ...rest,
     projects: content.projects.filter(p => p.published).map(toPublicProject),
     testimonials: (content.testimonials ?? []).filter(isPublicTestimonial),
+    posts: (content.posts ?? []).filter(p => p.published),
   };
 }

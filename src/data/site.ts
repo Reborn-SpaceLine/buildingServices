@@ -95,9 +95,18 @@ function buildSite(lang: Lang) {
       children: [
         { name: ui.nav.allRealizations, to: '/realisations' },
         { name: ui.nav.videos, to: '/videos' },
+        { name: ui.nav.blog, to: '/blog' },
       ],
     },
-    { name: ui.nav.maintenance, to: '/maintenance' },
+    {
+      name: ui.nav.prices,
+      to: '/catalogue',
+      children: [
+        { name: ui.nav.catalog, to: '/catalogue' },
+        { name: ui.nav.estimate, to: '/estimation' },
+        { name: ui.nav.maintenance, to: '/maintenance' },
+      ],
+    },
     { name: ui.nav.contact, to: '/contact', section: 'contact' },
   ];
 
@@ -115,6 +124,10 @@ function buildSite(lang: Lang) {
       plans: ui.maintenance.plans.map((p, i) => ({ ...p, featured: i === 2 })),
       partners: ui.maintenance.partners,
     },
+    estimator: c.estimator ?? { rates: [], finishes: { standard: 1, confort: 1.3, premium: 1.75 }, note: '' },
+    catalog: c.catalog ?? [],
+    // Articles publiés, du plus récent au plus ancien
+    posts: (c.posts ?? []).filter(p => p.published).sort((a, b) => b.date.localeCompare(a.date)),
     // Double sécurité : seuls les avis avec accord du client et publiés s'affichent
     testimonials: (c.testimonials ?? []).filter(t => t.published && t.consent && (t.text.trim() || t.video?.url)),
     servicesByCategory,

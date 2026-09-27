@@ -42,6 +42,9 @@ export function Footer() {
                 <li key={item.to}><Link to={item.to}>{item.name}</Link></li>
               ))}
               <li><Link to="/rdv">{ui.nav.appointmentLong}</Link></li>
+              <li><Link to="/estimation">{ui.nav.estimate}</Link></li>
+              <li><Link to="/blog">{ui.nav.blog}</Link></li>
+              <li><Link to="/suivi">{ui.nav.clientArea}</Link></li>
             </ul>
           </nav>
 

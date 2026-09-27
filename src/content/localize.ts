@@ -82,6 +82,25 @@ export function localizeContent(content: SiteContent, lang: Lang): SiteContent {
       })),
       partners: content.maintenance.partners.map(p => ({ ...p, description: pick(p.description, p.i18n?.[lang]?.description) })),
     },
+    estimator: content.estimator && {
+      ...content.estimator,
+      note: pick(content.estimator.note, content.estimator.i18n?.[lang]?.note),
+      rates: content.estimator.rates.map(r => ({ ...r, label: pick(r.label, r.i18n?.[lang]?.label) })),
+    },
+    catalog: (content.catalog ?? []).map(item => {
+      const tr = item.i18n?.[lang];
+      return {
+        ...item,
+        name: pick(item.name, tr?.name),
+        category: pick(item.category, tr?.category),
+        description: pick(item.description, tr?.description),
+        priceNote: pick(item.priceNote, tr?.priceNote),
+      };
+    }),
+    posts: (content.posts ?? []).map(post => {
+      const tr = post.i18n?.[lang];
+      return { ...post, title: pick(post.title, tr?.title), excerpt: pick(post.excerpt, tr?.excerpt), body: pick(post.body, tr?.body) };
+    }),
     testimonials: (content.testimonials ?? []).map(t => ({
       ...t,
       role: pick(t.role, t.i18n?.[lang]?.role),

@@ -172,3 +172,40 @@ test('statistiques : pages vues comptées, robots et refus du suivi ignorés', a
   assert.ok(!stored.includes(ip) && !stored.includes('tel=123'));
   assert.equal((await call('GET', '/api/admin/stats')).status, 401);
 });
+
+test('espace client et articles : privés tant qu’ils doivent l’être', async () => {
+  const { json: full } = await call('GET', '/api/admin/content', { auth: true });
+  const space = {
+    code: 'abcdef0123456789', clientName: 'Mme Ekane', phone: '237600000000', projectTitle: 'Villa Odza', status: 'en cours',
+    progress: 40, nextStep: 'Dalle', updates: [{ date: '2026-09-01', text: 'Fondations coulées', images: [] }], documents: [], active: true,
+  };
+  const posts = [
+    { slug: 'publie', title: 'Publié', excerpt: '', body: 'x', image: '', date: '2026-09-01', published: true },
+    { slug: 'brouillon-secret', title: 'Brouillon', excerpt: '', body: 'y', image: '', date: '2026-09-02', published: false },
+  ];
+  assert.equal((await call('POST', '/api/admin/content', { auth: true, body: { ...full, clientSpaces: [space, { ...space, code: 'desactive0123456', active: false }], posts } })).status, 200);
+
+  const pub = (await call('GET', '/api/content')).text;
+  for (const secret of ['Mme Ekane', 'abcdef0123456789', 'Fondations coulées', 'brouillon-secret']) {
+    assert.ok(!pub.includes(secret), `« ${secret} » est visible publiquement`);
+  }
+  assert.ok(pub.includes('"publie"'));
+
+  // Le client voit son chantier avec le bon code, sans son téléphone ni le code
+  const ok = await call('GET', '/api/suivi/abcdef0123456789');
+  assert.equal(ok.status, 200);
+  assert.equal(ok.json.projectTitle, 'Villa Odza');
+  assert.ok(!('phone' in ok.json) && !('code' in ok.json));
+  assert.equal((await call('GET', '/api/suivi/desactive0123456')).status, 404, 'un lien désactivé doit être refusé');
+
+  // L'admin retrouve tout
+  const again = (await call('GET', '/api/admin/content', { auth: true })).json;
+  assert.equal(again.clientSpaces.length, 2);
+  assert.deepEqual(again.posts.map(p => p.slug), ['publie', 'brouillon-secret']);
+});
+
+test('espace client : blocage après trop de codes erronés', async () => {
+  const ip = newIp();
+  for (let i = 0; i < 10; i++) assert.equal((await call('GET', `/api/suivi/mauvais-code-${i}`, { ip })).status, 404);
+  assert.equal((await call('GET', '/api/suivi/abcdef0123456789', { ip })).status, 429, 'même le bon code est bloqué pendant 15 min');
+});

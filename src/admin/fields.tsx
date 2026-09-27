@@ -107,7 +107,7 @@ function useUpload(folder: string) {
   return { busy, error, upload };
 }
 
-function UploadButton({ accept, folder, onUploaded, label, multiple = false }: {
+export function UploadButton({ accept, folder, onUploaded, label, multiple = false }: {
   accept: string; folder: string; onUploaded: (urls: string[]) => void; label?: string; multiple?: boolean;
 }) {
   const t = useAdminText();

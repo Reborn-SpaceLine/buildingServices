@@ -206,6 +206,7 @@ function robotsTxt() {
     'User-agent: *',
     'Disallow: /admin',
     'Disallow: /api/',
+    'Disallow: /suivi/',
     SITE_URL ? `Sitemap: ${SITE_URL}/sitemap.xml` : '',
   ].filter(Boolean).join('\n') + '\n';
 }
@@ -214,9 +215,10 @@ async function sitemapXml() {
   const content = await api.publicContent();
   const base = SITE_URL || '';
   const pages = [
-    '/', '/a-propos', '/services', '/realisations', '/videos', '/maintenance', '/contact', '/rdv',
+    '/', '/a-propos', '/services', '/realisations', '/videos', '/maintenance', '/estimation', '/catalogue', '/blog', '/contact', '/rdv',
     ...(content?.services ?? []).map(s => `/services/${s.slug}`),
     ...(content?.projects ?? []).map(p => `/realisations/${p.slug}`),
+    ...(content?.posts ?? []).filter(p => p.published).map(p => `/blog/${p.slug}`),
   ];
   const escape = (s) => s.replace(/&/g, '&amp;');
   const urls = pages.map(p => [

@@ -17,7 +17,9 @@ const LOGIN_MAX_FAILURES = 5;                     // puis blocage…
 const LOGIN_BLOCK_MS = 15 * 60 * 1000;            // …de 15 minutes
 const MESSAGE_LIMIT = 5;                          // messages par adresse IP…
 const MESSAGE_WINDOW_MS = 10 * 60 * 1000;         // …sur 10 minutes
-const ALLOWED_EXT = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.mp4', '.webm', '.mov', '.pdf'];
+const CLIENT_CODE_MIN = 12;                       // code d'accès à l'espace client
+const TRACKING_MAX_FAILURES = 10;                 // codes erronés par adresse IP avant blocage (15 min)
+const ALLOWED_EXT =['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.mp4', '.webm', '.mov', '.pdf'];
 
 /**
  * @param {object} options
@@ -133,11 +135,17 @@ export function createApi(options) {
     const testimonials = [...(pub.testimonials ?? []), ...(priv.testimonialDrafts ?? [])];
     const order = priv.testimonialOrder ?? [];
     testimonials.sort((a, b) => (order.indexOf(a.id) + 1 || Infinity) - (order.indexOf(b.id) + 1 || Infinity));
+    // Articles : même principe (brouillons gardés à part)
+    const posts = [...(pub.posts ?? []), ...(priv.postDrafts ?? [])];
+    const postOrder = priv.postOrder ?? [];
+    posts.sort((a, b) => (postOrder.indexOf(a.slug) + 1 || Infinity) - (postOrder.indexOf(b.slug) + 1 || Infinity));
     return {
       videos: [],
       ...pub,
       projects: [...pub.projects.map(withPrivate), ...(priv.drafts ?? [])],
       testimonials,
+      posts,
+      clientSpaces: priv.clientSpaces ?? [],
     };
   }
 
@@ -162,6 +170,10 @@ export function createApi(options) {
       // Avis sans accord du client ou non publiés : jamais dans le contenu public
       testimonialDrafts: testimonials.filter(t => !isPublicTestimonial(t)),
       testimonialOrder: testimonials.map(t => t.id),
+      postDrafts: (full.posts ?? []).filter(p => !p.published),
+      postOrder: (full.posts ?? []).map(p => p.slug),
+      // Suivi de chantier : uniquement ici, jamais dans le contenu public
+      clientSpaces: (full.clientSpaces ?? []).filter(s => typeof s.code === 'string' && s.code.length >= CLIENT_CODE_MIN),
     });
     await writeJson(contentFile, toPublicContent(full));
     publicCache = null;
@@ -213,6 +225,7 @@ export function createApi(options) {
 
   /* ---------- Messages des formulaires ---------- */
   const messageTimes = new Map();      // IP → horodatages récents
+  const trackingFailures = new Map();  // IP → { count, until } (codes d'espace client erronés)
 
   const messageAllowed = (ip) => {
     const now = Date.now();
@@ -228,6 +241,7 @@ export function createApi(options) {
     for (const [token, expires] of sessions) if (expires < now) sessions.delete(token);
     for (const [ip, entry] of loginFailures) if (entry.blockedUntil < now && entry.count === 0) loginFailures.delete(ip);
     for (const [ip, times] of messageTimes) if (times.every(t => now - t > MESSAGE_WINDOW_MS)) messageTimes.delete(ip);
+    for (const [ip, entry] of trackingFailures) if (entry.until < now && entry.count === 0) trackingFailures.delete(ip);
   }, 10 * 60 * 1000);
   cleanup.unref?.();
 
@@ -309,6 +323,32 @@ export function createApi(options) {
         await writeJson(files.messages, [message, ...messages].slice(0, MAX_MESSAGES));
         notifyNewMessage(message, siteUrl); // alertes Telegram / e-mail / WhatsApp / SMS, sans attendre
         send(res, 201, { ok: true });
+        return true;
+      }
+
+      // Espace client : suivi de chantier privé, accessible avec le code secret remis au client
+      const tracking = pathname.match(/^\/api\/suivi\/([\w-]+)$/);
+      if (tracking && req.method === 'GET') {
+        const ip = clientIp(req);
+        const failures = trackingFailures.get(ip) ?? { count: 0, until: 0 };
+        if (failures.until > Date.now()) {
+          send(res, 429, { error: 'Trop de tentatives. Réessayez dans 15 minutes.' });
+          return true;
+        }
+        const priv = await readJson(files.private, {});
+        const space = (priv.clientSpaces ?? []).find(s => s.active && s.code === tracking[1]);
+        if (!space) {
+          failures.count += 1;
+          if (failures.count >= TRACKING_MAX_FAILURES) Object.assign(failures, { count: 0, until: Date.now() + LOGIN_BLOCK_MS });
+          trackingFailures.set(ip, failures);
+          await wait(500);
+          send(res, 404, { error: 'Lien de suivi invalide ou expiré.' });
+          return true;
+        }
+        send(res, 200, {
+          clientName: space.clientName, projectTitle: space.projectTitle, status: space.status,
+          progress: space.progress, nextStep: space.nextStep, updates: space.updates ?? [], documents: space.documents ?? [],
+        });
         return true;
       }
 
