@@ -41,7 +41,7 @@ export function Header() {
   const [activeSection, setActiveSection] = useState('accueil');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const { pathname } = useLocation();
+  const { pathname, key: locationKey } = useLocation();
   const navigate = useNavigate();
 
   // Logo : 1 clic = accueil (lien normal) ; 3 clics rapprochés = administration
@@ -86,11 +86,11 @@ export function Header() {
     };
   }, [isHome]);
 
-  // Ferme les menus à chaque changement de page
+  // Ferme les menus à chaque navigation, y compris un clic sur la page déjà affichée
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setOpenDropdown(null);
-  }, [pathname]);
+  }, [locationKey]);
 
   useEffect(() => {
     // Blocage du défilement sur <html> (sur <body>, les éléments « collants » perdent leur repère)

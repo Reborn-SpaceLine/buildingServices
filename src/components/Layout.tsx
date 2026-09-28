@@ -10,12 +10,25 @@ import { useLang } from '../i18n/context';
 import { trackPageView } from '../lib/analytics';
 
 export function Layout() {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
 
-  // Nouvelle page : on repart du haut
+  // Retour en haut :
+  // - nouvelle page : immédiatement ;
+  // - clic sur un lien vers la page déjà affichée (logo ou « Accueil » en bas de l'accueil…) :
+  //   défilement doux jusqu'en haut. Le routeur crée alors une nouvelle entrée (nouvelle clé)
+  //   sans changer l'adresse ; un simple changement de filtre (?service=…) ne remonte pas.
+  const previous = useRef(location);
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  }, [pathname]);
+    const before = previous.current;
+    previous.current = location;
+    if (before.pathname !== location.pathname) {
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    } else if (before.key !== location.key && before.search === location.search && !location.hash) {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    }
+  }, [location]);
 
   // Statistiques de visite (sans cookie) : une page vue par changement de page, pas par changement de langue
   const { lang } = useLang();
