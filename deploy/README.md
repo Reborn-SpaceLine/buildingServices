@@ -4,6 +4,8 @@ Le site tourne dans Docker derrière **Caddy**, qui fournit le HTTPS automatique
 **Pas besoin de nom de domaine** : l'adresse gratuite `https://<ip-avec-tirets>.sslip.io` fonctionne tout de suite
 (ex. `https://203-0-113-5.sslip.io`). Le jour où vous avez un domaine, une seule ligne change.
 
+> **Variante Nginx** (machine virtuelle Infomaniak ou tout serveur où vous préférez Nginx) : voir [INFOMANIAK.md](INFOMANIAK.md).
+
 ## 1. Louer un VPS
 
 N'importe quel fournisseur convient (Contabo, Hetzner, OVH, DigitalOcean…) :

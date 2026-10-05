@@ -1,0 +1,19 @@
+# Production derrière Nginx installé sur la machine (ex. machine virtuelle Infomaniak)
+#
+# Le site n'écoute que sur 127.0.0.1:8080 : seul Nginx (HTTPS, Let's Encrypt) est joignable depuis internet.
+# Installation : sudo bash install-nginx.sh   ·   Mise à jour : ./update.sh
+# Ce fichier est choisi automatiquement par la ligne COMPOSE_FILE du .env.
+
+services:
+  site:
+    image: ${IMAGE:-ghcr.io/reborn-spaceline/buildingservices:latest}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      SITE_URL: https://${SITE_HOST}
+      TRUST_PROXY: "1"
+    volumes:
+      # Données vivantes : contenu, médias, messages, mot de passe, sauvegardes (à sauvegarder)
+      - ./data:/data
+    ports:
+      - "127.0.0.1:8080:8080"
