@@ -123,5 +123,5 @@ Pour une copie des médias hors du VPS, ajoutez un transfert (rclone, rsync…) 
 | Voir les journaux du site | `docker compose logs -f site` |
 | Voir les journaux HTTPS | `docker compose logs -f caddy` |
 | Le site ne répond pas | `docker compose ps` puis `./update.sh` |
-| Mot de passe admin oublié | `rm data/private/admin.json`, vérifier `ADMIN_PASSWORD` dans `.env`, puis `docker compose restart site` |
+| Mot de passe admin oublié (ou jamais créé) | `docker compose exec site node server/admin-password.js` : saisissez le nouveau mot de passe, il est actif tout de suite |
 | Restaurer le contenu | décompresser une archive de sauvegarde et replacer `content.json` dans `data/` (restauration depuis l'admin : prochaine étape) |

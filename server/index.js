@@ -39,7 +39,11 @@ const SEED_FILE = path.resolve(root, env.SEED_FILE ?? 'src/content/content.json'
 const SITE_URL = (env.SITE_URL ?? '').replace(/\/$/, '');
 const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 
-const isLocal = (req) => ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress ?? '');
+// Requête faite depuis le serveur lui-même. Derrière Nginx installé sur la même machine, TOUTES les requêtes
+// arrivent de 127.0.0.1 : une requête relayée (en-têtes de proxy) ne compte donc jamais comme locale,
+// sinon n'importe qui pourrait créer le premier mot de passe de l'admin.
+const isLocal = (req) => ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress ?? '')
+  && !req.headers['x-forwarded-for'] && !req.headers['x-real-ip'] && !req.headers.forwarded;
 
 const api = createApi({
   contentFile: path.join(DATA_DIR, 'content.json'),

@@ -69,9 +69,9 @@ const fr = {
     create: 'Créer et entrer',
     submit: 'Se connecter',
     noPasswordTitle: 'Mot de passe à définir',
-    noPasswordText: 'Pour des raisons de sécurité, le premier mot de passe de l’administration ne se crée pas depuis Internet. Définissez la variable `ADMIN_PASSWORD` sur le serveur, puis redémarrez-le.',
+    noPasswordText: 'Pour des raisons de sécurité, le premier mot de passe de l’administration ne se crée pas depuis Internet. Sur le serveur, lancez `docker compose exec site node server/admin-password.js` (ou `npm run admin:password` sans Docker), puis rechargez cette page.',
     unavailableTitle: 'Espace d’administration',
-    unavailableText: 'Le serveur d’administration ne répond pas. En production, lancez le site avec son serveur (`npm start` ou l’image Docker) ; en local, avec `npm run dev`.',
+    unavailableText: 'Le serveur d’administration ne répond pas. En production, lancez le site avec son serveur (image Docker ou `npm start`) : un hébergement de fichiers seuls (Netlify, GitHub Pages…) ne peut pas faire tourner l’admin. En local : `npm run dev` ou `npm run preview`.',
   },
   fields: {
     uploadFailed: 'Envoi impossible',
@@ -587,9 +587,9 @@ const en: AdminText = {
     create: 'Create and enter',
     submit: 'Log in',
     noPasswordTitle: 'Password required',
-    noPasswordText: 'For security reasons, the first admin password cannot be created over the Internet. Set the `ADMIN_PASSWORD` variable on the server, then restart it.',
+    noPasswordText: 'For security reasons, the first admin password cannot be created over the Internet. On the server, run `docker compose exec site node server/admin-password.js` (or `npm run admin:password` without Docker), then reload this page.',
     unavailableTitle: 'Admin area',
-    unavailableText: 'The admin server is not responding. In production, run the site with its server (`npm start` or the Docker image); locally, with `npm run dev`.',
+    unavailableText: 'The admin server is not responding. In production, run the site with its server (Docker image or `npm start`): static-only hosting (Netlify, GitHub Pages…) cannot run the admin. Locally: `npm run dev` or `npm run preview`.',
   },
   fields: {
     uploadFailed: 'Upload failed',

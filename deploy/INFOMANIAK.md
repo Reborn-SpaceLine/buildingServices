@@ -84,4 +84,5 @@ Identique à la version Caddy : voir [README.md](README.md), sections 4 et 5.
 | Le site répond-il derrière Nginx ? | `curl http://127.0.0.1:8080/healthz` |
 | Certificat refusé | ports 80/443 ouverts dans le Manager Infomaniak ? le nom pointe vers la bonne IP ? puis `sudo bash install-nginx.sh` |
 | État du certificat | `sudo certbot certificates` (renouvellement : `sudo certbot renew --dry-run`) |
+| Mot de passe admin oublié | `docker compose exec site node server/admin-password.js` |
 | Envoi d'une grosse vidéo refusé | augmenter `client_max_body_size` dans `/etc/nginx/sites-available/building-service`, puis `sudo systemctl reload nginx` |

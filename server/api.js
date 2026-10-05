@@ -10,7 +10,7 @@ import { createBackups } from './backup.js';
 import { createStats } from './stats.js';
 
 const SESSION_TTL = 8 * 60 * 60 * 1000;          // session admin : 8 h d'inactivité
-const MIN_PASSWORD = 8;
+export const MIN_PASSWORD = 8;
 const MAX_BACKUPS = 30;
 const MAX_MESSAGES = 2000;
 const LOGIN_MAX_FAILURES = 5;                     // puis blocage…
@@ -20,6 +20,16 @@ const MESSAGE_WINDOW_MS = 10 * 60 * 1000;         // …sur 10 minutes
 const CLIENT_CODE_MIN = 12;                       // code d'accès à l'espace client
 const TRACKING_MAX_FAILURES = 10;                 // codes erronés par adresse IP avant blocage (15 min)
 const ALLOWED_EXT =['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.mp4', '.webm', '.mov', '.pdf'];
+
+/* ---------- Mot de passe (haché avec scrypt, jamais stocké en clair) ----------
+   Partagé avec server/admin-password.js (création ou remise à zéro depuis le serveur). */
+const hashPassword = (password, salt = crypto.randomBytes(16).toString('hex')) => ({
+  salt,
+  hash: crypto.scryptSync(password, salt, 64).toString('hex'),
+});
+
+/** Contenu du fichier admin.json pour ce mot de passe */
+export const adminPasswordRecord = (password) => ({ ...hashPassword(password), updatedAt: new Date().toISOString() });
 
 /**
  * @param {object} options
@@ -183,11 +193,6 @@ export function createApi(options) {
   const sessions = new Map();          // jeton → expiration
   const loginFailures = new Map();     // IP → { count, blockedUntil }
 
-  const hashPassword = (password, salt = crypto.randomBytes(16).toString('hex')) => ({
-    salt,
-    hash: crypto.scryptSync(password, salt, 64).toString('hex'),
-  });
-
   const checkPassword = async (password) => {
     const stored = await readJson(files.auth, null);
     if (!stored) return false;
@@ -195,7 +200,7 @@ export function createApi(options) {
     return crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(stored.hash, 'hex'));
   };
 
-  const setPassword = (password) => writeJson(files.auth, { ...hashPassword(password), updatedAt: new Date().toISOString() });
+  const setPassword = (password) => writeJson(files.auth, adminPasswordRecord(password));
 
   const newSession = () => {
     const token = crypto.randomBytes(32).toString('hex');
